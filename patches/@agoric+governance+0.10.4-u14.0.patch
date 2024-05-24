@@ -1,0 +1,35 @@
+diff --git a/node_modules/@agoric/governance/src/contractGovernance/governParam.js b/node_modules/@agoric/governance/src/contractGovernance/governParam.js
+index c27c6d8..95af1b5 100644
+--- a/node_modules/@agoric/governance/src/contractGovernance/governParam.js
++++ b/node_modules/@agoric/governance/src/contractGovernance/governParam.js
+@@ -133,11 +133,11 @@ const setupParamGovernance = (
+         return negative;
+       });
+ 
+-    return {
++    return harden({
+       outcomeOfUpdate,
+       instance: voteCounter,
+       details: E(counterPublicFacet).getDetails(),
+-    };
++    });
+   };
+ 
+   return Far('paramGovernor', {
+diff --git a/node_modules/@agoric/governance/tools/puppetContractGovernor.js b/node_modules/@agoric/governance/tools/puppetContractGovernor.js
+index 65fdda0..650f702 100644
+--- a/node_modules/@agoric/governance/tools/puppetContractGovernor.js
++++ b/node_modules/@agoric/governance/tools/puppetContractGovernor.js
+@@ -38,8 +38,10 @@ export const start = async (zcf, privateArgs) => {
+     },
+   } = zcf.getTerms();
+ 
+-  // in the fake there's no electionManager to augment the terms
+-  const augmentedTerms = contractTerms;
++  const augmentedTerms = {
++    ...contractTerms,
++    electionManager: zcf.getInstance(),
++  };
+ 
+   const {
+     creatorFacet: governedCF,

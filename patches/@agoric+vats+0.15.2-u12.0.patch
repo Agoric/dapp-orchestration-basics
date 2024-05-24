@@ -1,0 +1,16 @@
+diff --git a/node_modules/@agoric/vats/index.js b/node_modules/@agoric/vats/index.js
+new file mode 100644
+index 0000000..05aabbc
+--- /dev/null
++++ b/node_modules/@agoric/vats/index.js
+@@ -0,0 +1,10 @@
++// @ts-check
++// Ambient types
++import './src/core/types.js';
++
++// eslint-disable-next-line import/export -- no named exports
++export * from './src/types.js';
++export * from './src/nameHub.js';
++export * from './src/bridge.js';
++export { makePromiseSpace } from './src/core/promise-space.js';
++export { makeAgoricNamesAccess } from './src/core/utils.js';
