@@ -56,12 +56,14 @@ export const startContract = async (
   const installation = await consumeInstallation[name];
 
   console.log(name, 'start args:', startArgs);
+  
   const started = await E(startUpgradable)({
     ...startArgs,
     installation,
     label: name,
     privateArgs,
   });
+
   const { instance } = started;
   produceInstance[name].reset();
   produceInstance[name].resolve(instance);

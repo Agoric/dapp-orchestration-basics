@@ -19,8 +19,18 @@ import {
   configureOptions,
 } from './tools/rollup-plugin-core-eval.js';
 
-import { permit as daoPermit } from './src/dao.proposal.js';
+// import { permit as daoPermit } from './src/privacy-coin.proposal.js';
+import { permit as orcaPermit } from './src/orca.proposal.js';
+
 import { permit as boardAuxPermit } from './src/platform-goals/board-aux.core.js';
+
+// symlinks
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import replace from '@rollup/plugin-replace';
+import typescript from '@rollup/plugin-typescript';
+
 
 /**
  * @param {*} opts
@@ -58,6 +68,23 @@ const config1 = ({
       : []),
     moduleToScript(),
     emitPermit({ permit, file: permitFile }),
+    nodeResolve({
+      preferBuiltins: true,
+      mainFields: ['module', 'main'],
+      // moduleDirectories: ['node_modules'],
+      moduleDirectories: ['node_modules'],
+      // modulePaths: ['../../agoric-sdk/packages'],
+      dedupe: ['@agoric/vow', '@agoric/orchestration', '@agoric/vats'],
+    }),
+    commonjs(),
+    // json(),
+    // replace({
+    //   'process.env.NODE_ENV': JSON.stringify('production'),
+    //   preventAssignment: true,
+    // }),
+    typescript({
+      tsconfig: './tsconfig.json',  // Ensure you have a tsconfig.json file in your project root
+    }),
   ],
 });
 
@@ -72,8 +99,8 @@ const config = [
     contractEntry: null,
   }),
   config1({
-    name: 'dao',
-    permit: daoPermit,
+    name: 'orca',
+    permit: orcaPermit,
   }),
 ];
 export default config;

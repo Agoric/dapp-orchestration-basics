@@ -7,28 +7,25 @@ import {
 } from './platform-goals/start-contract.js';
 
 import { E } from '@endo/far';
+import { makeTracer } from '@agoric/internal';
+
 
 const { Fail } = assert;
 
 const pathSegmentPattern = /^[a-zA-Z0-9_-]{1,100}$/;
 
-/** @type {(name: string) => void} */
-const assertPathSegment = name => {
-  pathSegmentPattern.test(name) ||
-    Fail`Path segment names must consist of 1 to 100 characters limited to ASCII alphanumerics, underscores, and/or dashes: ${name}`;
-};
-harden(assertPathSegment);
+// /** @type {(name: string) => void} */
+// const assertPathSegment = name => {
+//   pathSegmentPattern.test(name) ||
+//     Fail`Path segment names must consist of 1 to 100 characters limited to ASCII alphanumerics, underscores, and/or dashes: ${name}`;
+// };
+// harden(assertPathSegment);
 
-const contractName = 'simpleDAO';
+const contractName = 'ORCA';
 
-export const makeTerms = (daoTokensBrand, daoTokensUnits, membershipBrand) => {
-  return {
-    DaoTerms: {
-      DaoToken: AmountMath.make(daoTokensBrand, daoTokensUnits),
-      Membership: AmountMath.make(membershipBrand, 10n),
-    }
-  };
-};
+
+
+// const trace = makeTracer('StartOrca', true);
 
 
 /**
@@ -56,7 +53,14 @@ export const startDaoContract = async (
 
   
   const {
-    consume: { board, chainStorage, startUpgradable },
+    consume: { 
+      agoricNames,
+      board, 
+      chainStorage, 
+      startUpgradable,
+      // orchestration,
+      chainTimerService,
+    },
     installation: {
       consume: { [contractName]: committee },
     },
@@ -65,6 +69,8 @@ export const startDaoContract = async (
     },
   } = powers;
 
+  // trace('start Orca', {});
+
   const installation = await installContract(powers, {
     name: contractName,
     bundleID,
@@ -72,17 +78,17 @@ export const startDaoContract = async (
 
 
   //basic terms
-  const terms = makeTerms("DaoToken", 100n, "Membership");
+  const terms = {};
 
-  const committeesNode = await E(chainStorage).makeChildNode("dao-proposals");
-  const storageNode = await E(committeesNode).makeChildNode("proposal");
+  const mainNode = await E(chainStorage).makeChildNode("orca");
+  const storageNode = await E(mainNode).makeChildNode("state");
   const marshaller = await E(board).getPublishingMarshaller();
   
   
-  const privateArgs = {
-    storageNode,
-    marshaller,
-  };
+  // const privateArgs = {
+  //   storageNode,
+  //   marshaller,
+  // };
 
   const started = await startContract(powers, {
     name: contractName,
@@ -90,8 +96,18 @@ export const startDaoContract = async (
       installation,
       terms,
     },
-    issuerNames: ['DaoToken', 'Membership'],
-  }, privateArgs);
+    issuerNames: [],
+  }, 
+  // privateArgs
+  { 
+    privateArgs: {
+    orchestration: await orchestration,
+    storageNode,
+    marshaller,
+    timer: await chainTimerService,
+    }
+  }
+  );
 
   console.log(contractName, '(re)started');
   produceInstance.resolve(started.instance);
@@ -107,6 +123,8 @@ export const permit = harden({
     zoe: true,
     board: true,
     chainStorage: true,
+    orchestration: true,
+    chainTimerService: true
   },
   installation: {
     consume: { [contractName]: true },
@@ -114,8 +132,8 @@ export const permit = harden({
   },
   instance: { produce: { [contractName]: true } },
   // permitting brands
-  issuer: { consume: { IST: true, Membership: true, DaoToken: true }, produce: { Membership: true, DaoToken: true} },
-  brand: { consume: { IST: true, Membership: true, DaoToken: true }, produce: { Membership: true, DaoToken: true} },
+  issuer: { consume: { IST: true }, produce: { } },
+  brand: { consume: { IST: true  }, produce: { } },
 });
 
 export const main = startDaoContract;

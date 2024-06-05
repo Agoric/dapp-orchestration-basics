@@ -60,13 +60,13 @@ vote:
 instance-q:
 	agd query vstorage data published.agoricNames.instance -o json
 
-start-contract: start-contract-dao
+start-contract: start-contract-orca
 
-start-contract-dao:
+start-contract-orca:
 	yarn node scripts/deploy-contract.js \
-		--install src/dao.contract.js \
+		--install src/orca.contract.js \
 		--eval src/platform-goals/board-aux.core.js \
-		--eval src/dao.proposal.js
+		--eval src/orca.proposal.js
 
 # bundle-X.json.installed show that bundle-X.json was installed
 # see also e2e-tools.js
@@ -87,3 +87,11 @@ bundles/deploy-swaparoo.js: src/swaparoo.proposal.js
 
 clean:
 	@rm -rf bundles/
+
+# yarn links for local @agoric/orchestrate, @agoric/vow, @agoric/vats
+yl:
+	yarn link @agoric/orchestration ; yarn link @agoric/vow; yarn link @agoric/vats; yarn link @agoric/swingset-liveslots; yarn link @agoric/cosmic-proto; yarn link @agoric/time; yarn link @agoric/store; yarn link @endo/patterns;
+
+# ln -s ../../agoric-sdk/packages/sharing-service node_modules/@agoric/sharing-service;
+ss:
+	yarn add https://registry.npmjs.org/@agoric/sharing-service/-/sharing-service-0.2.12-u14.0.tgz

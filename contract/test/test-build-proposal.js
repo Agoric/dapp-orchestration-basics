@@ -10,6 +10,9 @@ import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 test.before(async t => {
   const bundleCache = await makeNodeBundleCache('bundles', {}, s => import(s));
 
+  console.log("running..")
+
+
   /**
    * @param {string} name of an _already cached_ bundle
    */
@@ -23,7 +26,7 @@ test.before(async t => {
   };
 
   const $ = (file, ...args) => {
-    // console.error(cmd);
+    console.error(cmd);
 
     return new Promise((resolve, reject) => {
       execFile(file, args, { encoding: 'utf8' }, (err, out) => {
@@ -39,7 +42,7 @@ test.before(async t => {
   const listBundles = async (bundleDir = 'bundles') => {
     const candidates = await fs.readdir(bundleDir);
     const matches = candidates.filter(n => /^bundle-.*\.js$/.test(n));
-    // console.log('listBundles', { candidates, matches });
+    console.log('listBundles', { candidates, matches });
     return matches.map(base => {
       const name = base.replace(/^bundle-/, '').replace(/\.js$/, '');
       return name;

@@ -37,7 +37,8 @@
     "@endo/check-bundle": "0.2.18",
     "@endo/ses-ava": "0.2.40",
     "@endo/netstring": "0.3.26",
-    "@endo/stream-node": "0.2.26"
+    "@endo/stream-node": "0.2.26",
+    "@agoric/sharing-service": "^0.2.12-u14.0"
   },
   "scripts": {
     "postinstall": "patch-package",
