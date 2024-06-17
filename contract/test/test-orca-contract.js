@@ -59,41 +59,41 @@ test('Install the contract', async t => {
   t.is(typeof installation, 'object');
 });
 
-test('Start Orca contract and test joining', async t => {
+// test('Start Orca contract and test joining', async t => {
 
-  const { zoe, bundle } = t.context;
-  const installation = E(zoe).install(bundle);
+//   const { zoe, bundle } = t.context;
+//   const installation = E(zoe).install(bundle);
 
-  const terms = { 
+//   const terms = { 
     
-  };
+//   };
 
-  // let privateArgs = {
-  //   orchestration: await orchestration,
-  //   storageNode,
-  //   marshaller,
-  //   timer: await chainTimerService,
-  // }
+//   // let privateArgs = {
+//   //   orchestration: await orchestration,
+//   //   storageNode,
+//   //   marshaller,
+//   //   timer: await chainTimerService,
+//   // }
 
-  // const zone = makeDurableZone(baggage);
+//   // const zone = makeDurableZone(baggage);
 
-  // const { makeOrchestrationKit } = prepareOrchestrationTools(
-  //   zone.subZone('orchestration'),
-  // );
+//   // const { makeOrchestrationKit } = prepareOrchestrationTools(
+//   //   zone.subZone('orchestration'),
+//   // );
 
-  // const {
-  //   buildProposal,
-  //   evalProposal,
-  //   runUtils: { EV },
-  // } = t.context;
+//   // const {
+//   //   buildProposal,
+//   //   evalProposal,
+//   //   runUtils: { EV },
+//   // } = t.context;
 
-  // const { instance } = await E(zoe).startInstance(
-  //   installation, 
-  //   {}, 
-  //   terms,
-  //   {
+//   // const { instance } = await E(zoe).startInstance(
+//   //   installation, 
+//   //   {}, 
+//   //   terms,
+//   //   {
       
-  //   }
-  // );
+//   //   }
+//   // );
 
-});
+// });

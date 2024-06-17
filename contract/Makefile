@@ -91,6 +91,8 @@ clean:
 # yarn links for local @agoric/orchestrate, @agoric/vow, @agoric/vats
 yl:
 	yarn link @agoric/orchestration ; yarn link @agoric/vow; yarn link @agoric/vats; yarn link @agoric/swingset-liveslots; yarn link @agoric/cosmic-proto; yarn link @agoric/time; yarn link @agoric/store; yarn link @endo/patterns;
+yld:
+	yarn unlink @agoric/orchestration ; yarn unlink @agoric/vow; yarn unlink @agoric/vats; yarn unlink @agoric/swingset-liveslots; yarn unlink @agoric/cosmic-proto; yarn unlink @agoric/time; yarn unlink @agoric/store; yarn unlink @endo/patterns;
 
 # ln -s ../../agoric-sdk/packages/sharing-service node_modules/@agoric/sharing-service;
 ss:
