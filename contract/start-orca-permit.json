@@ -1,0 +1,43 @@
+{
+  "consume": {
+    "agoricNames": true,
+    "brandAuxPublisher": true,
+    "board": true,
+    "chainStorage": true,
+    "startUpgradable": true,
+    "zoe": "makeCoreProposalBehavior",
+    "agoricNamesAdmin": "makeCoreProposalBehavior",
+    "vatAdminSvc": "makeCoreProposalBehavior"
+  },
+  "installation": {
+    "consume": {
+      "orca": true
+    },
+    "produce": {
+      "orca": true
+    }
+  },
+  "issuer": {
+    "consume": {
+      "IST": true
+    },
+    "produce": {}
+  },
+  "brand": {
+    "consume": {
+      "IST": true
+    },
+    "produce": {}
+  },
+  "instance": {
+    "produce": {
+      "orca": true
+    }
+  },
+  "evaluateBundleCap": "makeCoreProposalBehavior",
+  "modules": {
+    "utils": {
+      "runModuleBehaviors": "makeCoreProposalBehavior"
+    }
+  }
+}

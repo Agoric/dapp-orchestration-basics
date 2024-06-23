@@ -3,7 +3,7 @@
 // @ts-check
 import '@endo/init';
 import fsp from 'node:fs/promises';
-import { execFile, execFileSync, execSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { basename } from 'node:path';
 
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
@@ -73,43 +73,17 @@ const main = async (bundleDir = 'bundles') => {
   const { workdir, service } = flags;
 
   /** @type {import('../tools/agd-lib.js').ExecSync} */
-  // const dockerExec = (file, dargs, opts = { encoding: 'utf-8' }) => {
-  //   const execArgs = ['compose', 'exec', '--workdir', workdir, service];
-  //   opts.verbose &&
-  //     console.log('docker compose exec', JSON.stringify([file, ...dargs]));
-  //   return execFileSync('docker', [...execArgs, file, ...dargs], opts);
-  // };
-  const dockerExec = (file, dargs, opts = { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 2000 }) => {
-    console.log("docker exec try 1: ", file);
+  const dockerExec = (file, dargs, opts = { encoding: 'utf-8' }) => {
+    const execArgs = ['compose', 'exec', '--workdir', workdir, service];
     opts.verbose &&
-      console.log('exec', JSON.stringify([file, ...dargs]));
-    console.log("docker exec try 2");
-  
-    const command = `${file} ${dargs.join(' ')}`;
-    console.log("command: ", command);
-    console.log(service);
-  
-    return execSync(command, opts);
-  };
-
-  const dockerExec2 = (file, dargs, opts = { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 2000 }) => {
-    console.log("docker exec try 3: ", file);
-    opts.verbose &&
-      console.log('exec', JSON.stringify([file, ...dargs]));
-    console.log("docker exec try 4");
-  
-    const command = `${file} ${dargs.join(' ')}`;
-    console.log("command: ", command);
-    console.log(service);
-  
-    return execSync(command, opts);
+      console.log('docker compose exec', JSON.stringify([file, ...dargs]));
+    return execFileSync('docker', [...execArgs, file, ...dargs], opts);
   };
 
   const t = mockExecutionContext();
   const tools = makeE2ETools(t, bundleCache, {
     execFile,
-    execFileSync: service === '.' ? execFileSync : dockerExec, // see here
-    execFileSync2: service === "." ? execFileSync : dockerExec2,
+    execFileSync: service === '.' ? execFileSync : dockerExec,
     fetch,
     setTimeout,
     writeFile,

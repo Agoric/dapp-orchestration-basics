@@ -1,10 +1,16 @@
 CHAINID=agoriclocal
-USER1ADDR=$(shell agd keys show user1 -a --keyring-backend="test")
+USER1ADDR=$(shell agd keys show alice -a --keyring-backend="test")
 ACCT_ADDR=$(USER1ADDR)
 BLD=000000ubld
 
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
+
+ADDR=agoric1tk9dzzg3awm5me04xpj0aqvazxtnyh747wxrwn
+PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
+
+PROPOSAL=1
+VOTE_OPTION=yes
 
 .PHONY: list
 # https://stackoverflow.com/a/73159833/7963
@@ -13,7 +19,7 @@ list:
 		awk -v RS= -F: '$$1 ~ /^[^#%]+$$/ { print $$1 }'
 
 balance-q:
-	agd keys show user1 -a --keyring-backend="test"
+	agd keys show alice -a --keyring-backend="test"
 	agd query bank balances $(ACCT_ADDR)
 
 GAS_ADJUSTMENT=1.2
@@ -25,18 +31,18 @@ mint100:
 	make FUNDS=1000$(ATOM) fund-acct
 	cd /usr/src/agoric-sdk && \
 		yarn --silent agops vaults open --wantMinted 100 --giveCollateral 100 >/tmp/want-ist.json && \
-		yarn --silent agops perf satisfaction --executeOffer /tmp/want-ist.json --from user1 --keyring-backend=test
+		yarn --silent agops perf satisfaction --executeOffer /tmp/want-ist.json --from alice --keyring-backend=test
 
 # Keep mint4k around a while for compatibility
 mint4k:
 	make FUNDS=1000$(ATOM) fund-acct
 	cd /usr/src/agoric-sdk && \
 		yarn --silent agops vaults open --wantMinted 4000 --giveCollateral 1000 >/tmp/want4k.json && \
-		yarn --silent agops perf satisfaction --executeOffer /tmp/want4k.json --from user1 --keyring-backend=test
+		yarn --silent agops perf satisfaction --executeOffer /tmp/want4k.json --from alice --keyring-backend=test
 
 FUNDS=321$(BLD)
 fund-acct:
-	agd tx bank send validator $(ACCT_ADDR) $(FUNDS) \
+	agd tx bank send alice $(ACCT_ADDR) $(FUNDS) \
 	  $(SIGN_BROADCAST_OPTS) \
 	  -o json >,tx.json
 	jq '{code: .code, height: .height}' ,tx.json
@@ -49,10 +55,9 @@ gov-voting-q:
 	agd query gov proposals --status=voting_period --output json | \
 		jq -c '.proposals[].proposal_id'
 
-PROPOSAL=1
-VOTE_OPTION=yes
 vote:
-	agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=validator \
+# agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=validator 
+	agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=alice \
 	  $(SIGN_BROADCAST_OPTS) \
 	  -o json >,tx.json
 	jq '{code: .code, height: .height}' ,tx.json
@@ -60,13 +65,33 @@ vote:
 instance-q:
 	agd query vstorage data published.agoricNames.instance -o json
 
-start-contract: start-contract-orca
+start: start-contract-orca
 
+# start-contract-orca:
+# 	yarn node scripts/deploy-contract.js \
+# 		--install src/orca.contract.js \
+# 		--eval src/platform-goals/board-aux.core.js \
+# 		--eval src/orca.proposal.js
 start-contract-orca:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir ./bundles || true;
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir ./scripts || true;
+	make rmfiles; sleep 5;
+	make clean;
+	yarn run build; sleep 5;
+	make build-proposal;
+	make bundle-path-convert;
+	make cpb;
+	make cpfiles; sleep 5;
+	make ship;
+	make install-bundles;
 	yarn node scripts/deploy-contract.js \
 		--install src/orca.contract.js \
-		--eval src/platform-goals/board-aux.core.js \
-		--eval src/orca.proposal.js
+		--eval src/orca.proposal.js;
+	sleep 5;
+	make propose-start
+
+
+
 
 # bundle-X.json.installed show that bundle-X.json was installed
 # see also e2e-tools.js
@@ -97,3 +122,151 @@ yld:
 # ln -s ../../agoric-sdk/packages/sharing-service node_modules/@agoric/sharing-service;
 ss:
 	yarn add https://registry.npmjs.org/@agoric/sharing-service/-/sharing-service-0.2.12-u14.0.tgz
+
+
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys show --address faucet --keyring-backend test	
+
+# HARD CODED
+cpfiles:
+	kubectl cp bundles/deploy-board-aux-permit.json default/agoriclocal-genesis-0:/root/bundles/deploy-board-aux-permit.json
+	kubectl cp bundles/deploy-board-aux.js default/agoriclocal-genesis-0:/root/bundles/deploy-board-aux.js
+	kubectl cp bundles/deploy-orca-permit.json default/agoriclocal-genesis-0:/root/bundles/deploy-orca-permit.json
+	kubectl cp bundles/deploy-orca.js default/agoriclocal-genesis-0:/root/bundles/deploy-orca.js
+	kubectl cp bundles/bundle-orca.js default/agoriclocal-genesis-0:/root/bundles/bundle-orca.js
+	kubectl cp bundles/bundle-list-ship default/agoriclocal-genesis-0:/root/bundles/bundle-list-ship
+
+	kubectl cp scripts/build-proposal.sh default/agoriclocal-genesis-0:/root/scripts/build-proposal.sh
+	kubectl cp scripts/install-bundles.sh default/agoriclocal-genesis-0:/root/scripts/install-bundles.sh
+	kubectl cp scripts/propose-start-contract.sh default/agoriclocal-genesis-0:/root/scripts/propose-start-contract.sh
+	kubectl cp ./src/platform-goals/start-contract.js default/agoriclocal-genesis-0:/root/scripts/start-contract.js
+	kubectl cp scripts/build-contract-deployer.js default/agoriclocal-genesis-0:/root/scripts/build-contract-deployer.js
+	
+
+	kubectl cp ./Makefile default/agoriclocal-genesis-0:/root/Makefile
+rmfiles:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/bundle-orca.json
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-board-aux-permit.json
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-board-aux.js
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-orca-permit.json
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/deploy-orca.js
+
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./scripts/build-proposal.sh
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./scripts/install-bundles.sh
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./scripts/propose-start-contract.sh
+
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/bundle-list-ship
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./Makefile
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/*.json
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./bundles/*.js
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf ./scripts/*.js
+
+
+
+# 1
+fund-provision-pool:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(PROVISION_POOL_ADDR) 1000000000uist -y -b block;
+	sleep 5;
+
+# 2
+fund: fund-provision-pool check-balance
+	make fund-wallet;
+	make check-balance;
+	make provision-smart-wallet;
+check-balance:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd q bank balances $(ADDR)
+fund-wallet:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(ADDR) 10000000000000uist -y -b block
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(ADDR) 10000000000000ubld -y -b block
+
+provision-smart-wallet:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys list
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from ${ADDR} -y -b block
+
+# add address
+add-address:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add alice || true
+
+
+
+
+
+####
+
+
+################ v2
+# bundle-path-convert:
+# 	bash scripts/convert-file-paths.sh
+
+
+build-proposal:
+	bash ./scripts/build-proposal.sh
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- ./scripts/build-proposal.sh
+
+
+ship:
+	agoric run --verbose scripts/build-contract-deployer.js
+ship2:	
+	kubectl exec -it agoriclocal-genesis-0 -c validator -- agoric run --verbose scripts/build-contract-deployer.js
+
+exec:
+	kubectl exec -it agoriclocal-genesis-0 -c validator -- bash
+
+# 1
+install-bundles:
+# ./scripts/install-bundles.sh
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash scripts/install-bundles.sh
+	bash scripts/install-bundles.sh
+
+# copy bundle to container
+cpb: 
+	bash scripts/copy-bundles-to-container.sh
+	
+
+SCRIPT=start-orca.js
+PERMIT=start-orca-permit.json
+# start2: $(SCRIPT) $(PERMIT) install-bundles
+# scripts/propose-start-contract.sh
+propose-start:
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash scripts/propose-start-contract.sh
+	bash scripts/propose-start-contract.sh
+
+
+################
+
+# v2
+# lol just copy everything
+copy-project:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -rf -v ./*
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir -p /root/
+	kubectl cp . default/agoriclocal-genesis-0:/root/
+
+# kubectl cp . default/agoriclocal-genesis-0:/root/ --retries=5 --exclude='node_modules/*'
+# kubectl cp node_modules default/agoriclocal-genesis-0:/root/node_modules --retries=5
+
+# start-contract-orca-v3: copy-project
+start-contract-orca-v3: copy-project
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir -p /root/bundles
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir -p /root/scripts
+# make cpb
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make clean && yarn install"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make clean && yarn run build2"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make build-proposal && make bundle-path-convert"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make build-proposal"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make cpb && make cpfiles"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make install-bundles"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
+	make copy-bn-js
+	echo "COPIED PATCHED BNJS"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --eval src/orca.proposal.js"
+
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make propose-start"
+
+# debug bundle
+bundle-debug:
+	bash scripts/bundle-debug.sh
+
+# patch
+copy-bn-js:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -f -v /root/node_modules/bn.js/lib/bn.js
+	kubectl cp ../node_modules/bn.js/lib/bn.js default/agoriclocal-genesis-0:/root/node_modules/bn.js/lib/bn.js
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"

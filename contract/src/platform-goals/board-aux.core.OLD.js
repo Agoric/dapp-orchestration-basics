@@ -16,8 +16,8 @@ export const BOARD_AUX = 'boardAux';
  * }} powers
  */
 export const makeBoardAuxManager = (zone, marshalData, powers) => {
+// export const makeBoardAuxManager = (marshalData, powers) => {
   const { board, chainStorage } = powers;
-
   const store = zone.mapStore(BOARD_AUX);
   const boardAux = E(chainStorage).makeChildNode(BOARD_AUX);
   console.log("STORE:")
@@ -90,25 +90,30 @@ export const marshalData = harden({
 
 /** @param {BootstrapPowers} powers */
 export const produceBoardAuxManager = async powers => {
-  console.log("TRYING TO EXTRACT ZONE")
-  const { zone } = powers;
-  console.log("DONE TRYING TO EXTRACT ZONE")
-  const { board } = powers.consume;
-  /** @type {import('../types').NonNullChainStorage['consume']} */
-  // @ts-expect-error cast
-  const { chainStorage } = powers.consume;
+  try{
+    console.log("TRYING TO EXTRACT ZONE")
+    const { zone } = powers;
+    console.log("DONE TRYING TO EXTRACT ZONE")
+    const { board } = powers.consume;
+    /** @type {import('../types').NonNullChainStorage['consume']} */
+    // @ts-expect-error cast
+    const { chainStorage } = powers.consume;
 
-  /** @type {BoardAuxPowers['produce']} */
-  // @ts-expect-error cast
-  const produce = powers.produce;
+    /** @type {BoardAuxPowers['produce']} */
+    // @ts-expect-error cast
+    const produce = powers.produce;
 
-  const mgr = makeBoardAuxManager(zone, marshalData, { board, chainStorage });
-  produce.brandAuxPublisher.reset();
-  // TODO: powers.produce.boardAuxTOFU.reset();
-  produce.boardAuxAdmin.reset();
-  produce.brandAuxPublisher.resolve(mgr.brandAuxPublisher);
-  // TODO: powers.produce.boardAuxTOFU.resolve(mgr.boardAuxTOFU);
-  produce.boardAuxAdmin.resolve(mgr.boardAuxAdmin);
+    const mgr = makeBoardAuxManager(zone, marshalData, { board, chainStorage });
+    produce.brandAuxPublisher.reset();
+    // TODO: powers.produce.boardAuxTOFU.reset();
+    produce.boardAuxAdmin.reset();
+    produce.brandAuxPublisher.resolve(mgr.brandAuxPublisher);
+    // TODO: powers.produce.boardAuxTOFU.resolve(mgr.boardAuxTOFU);
+    produce.boardAuxAdmin.resolve(mgr.boardAuxAdmin);
+  }catch(e){
+    console.log(`ERROR IN: produceBoardAuxManager: ${e}`)
+  }
+
 };
 
 export const permit = {

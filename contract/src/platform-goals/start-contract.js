@@ -1,7 +1,7 @@
 /** @file utilities to start typical contracts in core eval scripts. */
 // @ts-check
 
-import { E } from '@endo/far';
+// import { E } from '@endo/far';
 
 const { Fail } = assert;
 
@@ -16,6 +16,7 @@ export const installContract = async (
   { consume: { zoe }, installation: { produce: produceInstallation } },
   { name, bundleID },
 ) => {
+  console.log("installContract: ", bundleID)
   const installation = await E(zoe).installBundleID(bundleID);
   produceInstallation[name].reset();
   produceInstallation[name].resolve(installation);
@@ -31,72 +32,71 @@ export const installContract = async (
  *
  * @param {BootstrapPowers} powers - consume.startUpgradable, installation.consume[name], instance.produce[name]
  * @param {{
- *   name: string;
- *   startArgs?: StartArgs;
- *   issuerNames?: string[];
- * }} opts
- *
- * @typedef {Partial<Parameters<Awaited<BootstrapPowers['consume']['startUpgradable']>>[0]>} StartArgs
- */
+*   name: string;
+*   startArgs?: StartArgs;
+*   issuerNames?: string[];
+* }} opts
+*
+* @typedef {Partial<Parameters<Awaited<BootstrapPowers['consume']['startUpgradable']>>[0]>} StartArgs
+*/
 export const startContract = async (
-  powers,
-  { name, startArgs, issuerNames },
-  privateArgs
+ powers,
+ { name, startArgs, issuerNames },
 ) => {
+ const {
+   consume: { startUpgradable },
+   installation: { consume: consumeInstallation },
+   instance: { produce: produceInstance },
+ } = powers;
 
-  console.log("POWERS")
-  console.log(powers)
-  console.log(privateArgs)
-  const {
-    consume: { startUpgradable },
-    installation: { consume: consumeInstallation },
-    instance: { produce: produceInstance },
-  } = powers;
 
-  const installation = await consumeInstallation[name];
+ console.log("POWERS")
+ console.log(powers)
+ console.log(startArgs)
 
-  console.log(name, 'start args:', startArgs);
-  
-  const started = await E(startUpgradable)({
-    ...startArgs,
-    installation,
-    label: name,
-    privateArgs,
-  });
+ const installation = await consumeInstallation[name];
 
-  const { instance } = started;
-  produceInstance[name].reset();
-  produceInstance[name].resolve(instance);
+ console.log(name, 'start args:', startArgs);
 
-  console.log(name, 'started');
+ const started = await E(startUpgradable)({
+   ...startArgs,
+   installation,
+   label: name,
+ });
+ 
+ const { instance } = started;
+ produceInstance[name].reset();
+ produceInstance[name].resolve(instance);
 
-  if (issuerNames) {
-    /** @type {BootstrapPowers & import('./board-aux.core').BoardAuxPowers} */
-    // @ts-expect-error cast
-    const auxPowers = powers;
+ console.log(name, 'started');
 
-    const { zoe, brandAuxPublisher } = auxPowers.consume;
-    const { produce: produceIssuer } = auxPowers.issuer;
-    const { produce: produceBrand } = auxPowers.brand;
-    const { brands, issuers } = await E(zoe).getTerms(instance);
+ if (issuerNames) {
+   /** @type {BootstrapPowers & import('./board-aux.core').BoardAuxPowers} */
+   // @ts-expect-error cast
+   const auxPowers = powers;
 
-    await Promise.all(
-      issuerNames.map(async issuerName => {
-        const brand = brands[issuerName];
-        const issuer = issuers[issuerName];
-        console.log('CoreEval script: share via agoricNames:', brand);
+   const { zoe, brandAuxPublisher } = auxPowers.consume;
+   const { produce: produceIssuer } = auxPowers.issuer;
+   const { produce: produceBrand } = auxPowers.brand;
+   const { brands, issuers } = await E(zoe).getTerms(instance);
 
-        produceBrand[issuerName].reset();
-        produceIssuer[issuerName].reset();
-        produceBrand[issuerName].resolve(brand);
-        produceIssuer[issuerName].resolve(issuer);
+   await Promise.all(
+     issuerNames.map(async issuerName => {
+       const brand = brands[issuerName];
+       const issuer = issuers[issuerName];
+       console.log('CoreEval script: share via agoricNames:', brand);
 
-        await E(brandAuxPublisher).publishBrandInfo(brand);
-      }),
-    );
-  }
+       produceBrand[issuerName].reset();
+       produceIssuer[issuerName].reset();
+       produceBrand[issuerName].resolve(brand);
+       produceIssuer[issuerName].resolve(issuer);
 
-  return started;
+       await E(brandAuxPublisher).publishBrandInfo(brand);
+     }),
+   );
+ }
+
+ return started;
 };
 
 /**

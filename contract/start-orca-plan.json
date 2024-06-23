@@ -1,0 +1,17 @@
+{
+  "name": "start-orca",
+  "script": "start-orca.js",
+  "permit": "start-orca-permit.json",
+  "bundles": [
+    {
+      "entrypoint": "../src/orca.contract.js",
+      "bundleID": "b1-b4be3a2cc517406aab46f156ee5d82c5a52baf06f201d579f9d1c9063e592519c6effc098b0ece076e5c8a0e6c3fe1627d738bf0a04155838ce35ac805034906",
+      "fileName": "/Users/jovonni/.agoric/cache/b1-b4be3a2cc517406aab46f156ee5d82c5a52baf06f201d579f9d1c9063e592519c6effc098b0ece076e5c8a0e6c3fe1627d738bf0a04155838ce35ac805034906.json"
+    },
+    {
+      "entrypoint": "../src/orca.proposal.js",
+      "bundleID": "b1-e3ed0f4d64f3e3f2514960a4d06e97dcaf4fd5197d2a5297add6605cea462198510587addee130ce15424117f8ebcd58655e1a82f4e8a6e41f925383e7f805a8",
+      "fileName": "/Users/jovonni/.agoric/cache/b1-e3ed0f4d64f3e3f2514960a4d06e97dcaf4fd5197d2a5297add6605cea462198510587addee130ce15424117f8ebcd58655e1a82f4e8a6e41f925383e7f805a8.json"
+    }
+  ]
+}
