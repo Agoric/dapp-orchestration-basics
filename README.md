@@ -37,6 +37,16 @@ make start
 make start-contract-orca-v3
 ```
 
+# 5 
+```
+make proposal-start
+```
+
+# 6 vote for start
+```
+make proposal-start-vote
+```
+
 # debug bundle
 ```
 make bundle-debug
@@ -67,6 +77,8 @@ https://github.com/Agoric/dapp-orchestration-basics/blob/921255ed33bd828843a89d7
 src/orchdev.proposal.js
 */
 ```
+
+5) possible import rejection SES
 
 # note
 Troubleshooting remote calls

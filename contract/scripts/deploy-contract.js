@@ -73,12 +73,7 @@ const main = async (bundleDir = 'bundles') => {
   const { workdir, service } = flags;
 
   /** @type {import('../tools/agd-lib.js').ExecSync} */
-  // const dockerExec = (file, dargs, opts = { encoding: 'utf-8' }) => {
-  //   const execArgs = ['compose', 'exec', '--workdir', workdir, service];
-  //   opts.verbose &&
-  //     console.log('docker compose exec', JSON.stringify([file, ...dargs]));
-  //   return execFileSync('docker', [...execArgs, file, ...dargs], opts);
-  // };
+
   const dockerExec = (file, dargs, opts = { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 2000 }) => {
     console.log("docker exec try 1: ", file);
     opts.verbose &&

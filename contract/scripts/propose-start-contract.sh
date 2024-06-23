@@ -4,10 +4,14 @@ set -xueo pipefail
 # cd /workspace/contract
 
 SCRIPT=start-orca.js
+# SCRIPT=/root/src/platform-goals/start-contract.js
+# SCRIPT=/root/scripts/start-contract-v2.js
+
 PERMIT=start-orca-permit.json
 ls -sh "$SCRIPT" "$PERMIT"
 
 PROPOSAL=$(agd query gov proposals --output json | jq -c '.proposals | length | .+1')
+echo $PROPOSAL
 
 make fund-acct
 

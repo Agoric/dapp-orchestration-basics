@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1tk9dzzg3awm5me04xpj0aqvazxtnyh747wxrwn
+ADDR=agoric12rm5rgqznkhqt96wa0t082wza62p7w9yte0wr5
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -259,7 +259,25 @@ start-contract-orca-v3: copy-project
 	echo "COPIED PATCHED BNJS"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --eval src/orca.proposal.js"
 
+
+PROPOSAL_ID=3
+propose-start-v2: 
+	make make-proposal-start;
+	sleep 3;
+	make proposal-start-vote;
+	make sleep 3;
+	make gov-q;
+
+make-proposal-start:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make propose-start"
+	sleep 3; make gov-q
+
+proposal-start-vote:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=genesis $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer1 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer2 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer3 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer4 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
 
 # debug bundle
 bundle-debug:

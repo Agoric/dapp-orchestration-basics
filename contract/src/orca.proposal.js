@@ -101,6 +101,10 @@ export const startOrcaContract = async (
   console.log(permittedPowers.installation.consume)
   console.log("config")
   console.log(config)
+  console.log("orcaInstallationP")
+  console.log(orcaInstallationP)
+  console.log("produceInstance")
+  console.log(produceInstance)
 
 
   const {

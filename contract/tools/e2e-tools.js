@@ -460,7 +460,7 @@ export const makeE2ETools = (
       const installer = 'faucet';
       const chainId = 'agoriclocal';
 
-      // Copy the bundle JSON file to the container
+      // copy the bundle JSON file to the container
       const containerPath = `/root/bundles/bundle-${name}.json`;
       const cpArgs = [fullPath, `default/agoriclocal-genesis-0:${containerPath}`];
       console.log('cp', cpArgs)
@@ -490,13 +490,13 @@ export const makeE2ETools = (
       ////////
 
 
-      // Install the bundle using the copied JSON file
+      // install the bundle using the copied JSON file
       const execArgs = ['tx', 'swingset', 'install-bundle', `bundle-${name}.json`, '--gas', 'auto', '--from', `${installer}`, '--chain-id', `${chainId}`, '--yes', '--output', 'json'];
       const output = execFileSync('agd', execArgs, { encoding: 'utf-8' });
       const tx = JSON.parse(output);
 
       progress({ id: shortId, installTx: tx.txhash, height: tx.height });
-      const confirm = { installed: true }; // Assuming installation confirmation
+      const confirm = { installed: true };
 
       progress({
         name,
