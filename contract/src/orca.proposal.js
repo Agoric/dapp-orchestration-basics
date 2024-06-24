@@ -7,7 +7,6 @@ import {
 } from './platform-goals/start-contract.js';
 
 import { E } from '@endo/far';
-import { makeTracer } from '@agoric/internal';
 
 
 const { Fail } = assert;
