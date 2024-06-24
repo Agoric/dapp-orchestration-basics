@@ -80,6 +80,23 @@ src/orchdev.proposal.js
 
 5) possible import rejection SES
 
+6) 
+```
+v38: Error#1: privateArgs: (an undefined) - Must be a copyRecord to match a copyRecord pattern: {"marshaller":"[match:remotable]","orchestration":"[match:remotable]","storageNode":"[match:remotable]","timer":"[match:remotable]"}
+```
+ensure privateArgs adheres to the format
+
+7) 
+```
+privateArgs: timer: (an object) - Must be a remotable TimerService, not promise
+```
+ensure to pass the result of the promise, not the promise: `timer: await chainTimerService`
+
+8) 
+```
+
+```
+
 # note
 Troubleshooting remote calls
 ...

@@ -45,6 +45,7 @@ export const installContract = async (
 export const startContract = async (
  powers,
  { name, startArgs, issuerNames },
+ privateArgs
 ) => {
  console.log("startContract...")
  
@@ -58,6 +59,7 @@ export const startContract = async (
  console.log("POWERS")
  console.log(powers)
  console.log(startArgs)
+ console.log(privateArgs)
 
  const installation = await consumeInstallation[name];
 
@@ -67,6 +69,7 @@ export const startContract = async (
    ...startArgs,
    installation,
    label: name,
+   privateArgs
  });
 
  const { instance } = started;

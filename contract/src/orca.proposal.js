@@ -1,10 +1,10 @@
 // @ts-check
-import { makeMarshal } from '@endo/marshal';
+// import { makeMarshal } from '@endo/marshal';
 // import { AmountMath } from '@agoric/ertp/src/amountMath.js';
-// import {
-//   installContract,
-//   startContract,
-// } from './platform-goals/start-contract.js';
+import {
+  installContract,
+  startContract,
+} from './platform-goals/start-contract.js';
 const { entries, fromEntries } = Object;
 
 
@@ -16,7 +16,7 @@ const BOARD_AUX = 'boardAux';
 const contractName = 'orca';
 
 
-const marshalData = makeMarshal(_val => Fail`data only`);
+// const marshalData = makeMarshal(_val => Fail`data only`);
 
 const IST_UNIT = 1_000_000n;
 const CENT = IST_UNIT / 100n;
@@ -42,6 +42,8 @@ export const startOrcaContract = async (
   config,
 ) => {
   console.error('startOrcaContract()...');
+
+
   const {
     consume: {
       agoricNames: agoricNamesP,
@@ -72,7 +74,7 @@ export const startOrcaContract = async (
   console.log('getting ist issuer and brand');
   
 
-  const terms = { };
+  // const terms = { };
   console.log('got terms for contract');
 
   console.log('getting orca installation');
@@ -86,32 +88,46 @@ export const startOrcaContract = async (
   console.log("produceInstance")
   console.log(produceInstance)
 
-  
+  const {
+    // must be supplied by caller or template-replaced
+    bundleID = Fail`no bundleID`,
+  } = config?.options?.[contractName] ?? {};
 
   // agoricNames gets updated each time; the promise space only once XXXXXXX
-  const installation = await orcaInstallationP;
-  console.log("installation")
-  console.log(installation)
-
-  const { instance } = await E(startUpgradable)({
-    installation,
-    issuerKeywordRecord: {},
-    label: 'orca',
-    terms,
+  // const installation = await orcaInstallationP;
+  
+  const installation = await installContract(permittedPowers, {
+    name: contractName,
+    bundleID,
   });
-  console.log("instance")
-  console.log(instance)
-  console.log('CoreEval script: started contract', instance);
-  const {
-    brands: {},
-    issuers: {},
-  } = await E(zoe).getTerms(instance);
 
-  // console.log('CoreEval script: share via agoricNames:', brand);
 
-  produceInstance.reset();
-  produceInstance.resolve(instance);
-  console.log('orca (re)started');
+  //basic terms
+  const terms = {};
+
+  const mainNode = await E(chainStorage).makeChildNode("orca");
+  const storageNode = await E(mainNode).makeChildNode("state");
+  const marshaller = await E(board).getPublishingMarshaller();
+
+  const privateArgs = {
+    storageNode,
+    marshaller,
+    orchestration: await orchestration,
+    timer: await chainTimerService
+  };
+
+  const started = await startContract(permittedPowers, {
+    name: contractName,
+    startArgs: {
+      installation,
+      terms,
+    },
+    issuerNames: [],
+  }, privateArgs);
+
+  console.log(contractName, '(re)started');
+  produceInstance.resolve(started.instance);
+
 
 };
 
