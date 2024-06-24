@@ -115,7 +115,7 @@ const main = async (bundleDir = 'bundles') => {
 
   if (flags.install) {
     const name = stem(flags.install);
-
+    console.log("installing bundle from deploy-contract.js ....")
     await tools.installBundles({ [name]: flags.install }, progress);
   }
 

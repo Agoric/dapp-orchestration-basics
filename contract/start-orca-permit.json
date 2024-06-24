@@ -6,6 +6,8 @@
     "chainStorage": true,
     "startUpgradable": true,
     "zoe": "makeCoreProposalBehavior",
+    "chainTimerService": true,
+    "localchain": true,
     "agoricNamesAdmin": "makeCoreProposalBehavior",
     "vatAdminSvc": "makeCoreProposalBehavior"
   },

@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric12rm5rgqznkhqt96wa0t082wza62p7w9yte0wr5
+ADDR=agoric1r9nrqjjkzm84s868gen25tlp8m60pn6c8ku7fz
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -66,30 +66,6 @@ instance-q:
 	agd query vstorage data published.agoricNames.instance -o json
 
 start: start-contract-orca
-
-# start-contract-orca:
-# 	yarn node scripts/deploy-contract.js \
-# 		--install src/orca.contract.js \
-# 		--eval src/platform-goals/board-aux.core.js \
-# 		--eval src/orca.proposal.js
-start-contract-orca:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir ./bundles || true;
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir ./scripts || true;
-	make rmfiles; sleep 5;
-	make clean;
-	yarn run build; sleep 5;
-	make build-proposal;
-	make bundle-path-convert;
-	make cpb;
-	make cpfiles; sleep 5;
-	make ship;
-	make install-bundles;
-	yarn node scripts/deploy-contract.js \
-		--install src/orca.contract.js \
-		--eval src/orca.proposal.js;
-	sleep 5;
-	make propose-start
-
 
 
 
@@ -248,16 +224,21 @@ start-contract-orca-v3: copy-project
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir -p /root/bundles
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- mkdir -p /root/scripts
 # make cpb
+	yarn build;
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make clean && yarn install"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make clean && yarn run build2"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build"
+
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make build-proposal && make bundle-path-convert"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make build-proposal"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make cpb && make cpfiles"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make install-bundles"
+#maybe dont do this?
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make install-bundles"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	make copy-bn-js
 	echo "COPIED PATCHED BNJS"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --eval src/orca.proposal.js"
+# 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --eval src/orca.proposal.js"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 
 
 PROPOSAL_ID=3
@@ -269,15 +250,11 @@ propose-start-v2:
 	make gov-q;
 
 make-proposal-start:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make propose-start"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "make propose-start";
 	sleep 3; make gov-q
 
 proposal-start-vote:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=genesis $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer1 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer2 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer3 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "agd tx gov vote ${PROPOSAL_ID} $(VOTE_OPTION) --from=relayer4 $(SIGN_BROADCAST_OPTS) -o json >,tx.json ; jq '{code: .code, height: .height}' ,tx.json"
 
 # debug bundle
 bundle-debug:
@@ -287,4 +264,4 @@ bundle-debug:
 copy-bn-js:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -f -v /root/node_modules/bn.js/lib/bn.js
 	kubectl cp ../node_modules/bn.js/lib/bn.js default/agoriclocal-genesis-0:/root/node_modules/bn.js/lib/bn.js
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"

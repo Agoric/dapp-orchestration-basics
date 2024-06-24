@@ -1,10 +1,10 @@
 // @ts-check
 import { makeMarshal } from '@endo/marshal';
-// import { AmountMath } from '@agoric/ertp/src/amountMath.js';
-// import {
-//   installContract,
-//   startContract,
-// } from './platform-goals/start-contract.js';
+import { AmountMath } from '@agoric/ertp/src/amountMath.js';
+import {
+  installContract,
+  startContract,
+} from './platform-goals/start-contract.js';
 const { entries, fromEntries } = Object;
 
 
@@ -33,13 +33,39 @@ export const allValues = async obj => {
   return fromEntries(es);
 };
 
+// /**
+//  * Make a storage node for auxiliary data for a value on the board.
+//  *
+//  * @param {ERef<StorageNode>} chainStorage
+//  * @param {string} boardId
+//  */
+// const makeBoardAuxNode = async (chainStorage, boardId) => {
+//   console.log('creating board aux node');
+//   const boardAux = E(chainStorage).makeChildNode(BOARD_AUX);
+//   console.log('created board aux node');
+//   return E(boardAux).makeChildNode(boardId);
+// };
+
+// const publishBrandInfo = async (chainStorage, board, brand) => {
+//   console.log('publishing brand info');
+//   const [id, displayInfo] = await Promise.all([
+//     E(board).getId(brand),
+//     E(brand).getDisplayInfo(),
+//   ]);
+//   console.log('got brand id and display info');
+//   const node = await makeBoardAuxNode(chainStorage, id);
+//   const aux = marshalData.toCapData(harden({ displayInfo }));
+//   console.log('setting value in board aux node');
+//   await E(node).setValue(JSON.stringify(aux));
+//   console.log('published brand info');
+// };
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {stakeBld: Installation<import('./orca.contract.js').start>}}}} permittedPowers
  */
 export const startOrcaContract = async (
   permittedPowers,
-  config,
+  // config,
 ) => {
   console.error('startOrcaContract()...');
   const {
@@ -68,9 +94,9 @@ export const startOrcaContract = async (
     },
   } = permittedPowers;
 
-
   console.log('getting ist issuer and brand');
-  
+  // const istIssuer = await istIssuerP;
+  // const istBrand = await istBrandP;
 
   const terms = { };
   console.log('got terms for contract');
@@ -79,37 +105,51 @@ export const startOrcaContract = async (
   console.log(permittedPowers)
   console.log(permittedPowers.installation)
   console.log(permittedPowers.installation.consume)
-  console.log("config")
-  console.log(config)
+  // console.log("config")
+  // console.log(config)
   console.log("orcaInstallationP")
   console.log(orcaInstallationP)
   console.log("produceInstance")
   console.log(produceInstance)
 
+  const VSTORAGE_PATH = 'orca-storage';
   
+  // const storageNode = await makeStorageNodeChild(chainStorage, VSTORAGE_PATH);
+  const storageNode = await E(chainStorage).makeChildNode("proposal");
+  console.log("1")
 
-  // agoricNames gets updated each time; the promise space only once XXXXXXX
-  const installation = await orcaInstallationP;
-  console.log("installation")
-  console.log(installation)
+  // NB: committee must only publish what it intended to be public
+  const marshaller = await E(board).getPublishingMarshaller();
+  console.log("2")
+  // const [agoricNames, timerService, timerBrand] = await Promise.all([
+  //   agoricNamesP,
+  //   chainTimerServiceP,
+  //   chainTimerServiceP.then(ts => E(ts).getTimerBrand()),
+  // ]);
+  console.log("3")
+  console.log(agoricNamesP)
+  // console.log(chainTimerServiceP)
 
-  const { instance } = await E(startUpgradable)({
-    installation,
-    issuerKeywordRecord: {},
+    /** @type {StartUpgradableOpts<OrcaSF>} */
+  const startOpts = {
     label: 'orca',
-    terms,
-  });
-  console.log("instance")
-  console.log(instance)
-  console.log('CoreEval script: started contract', instance);
-  const {
-    brands: {},
-    issuers: {},
-  } = await E(zoe).getTerms(instance);
+    installation: orcaInstallationP,
+    issuerKeywordRecord: {},
+    terms: {},
+    privateArgs: {
+      // agoricNames,
+      // localchain: await localchain,
+      timer: await chainTimerService,
+      // timerBrand,
+      storageNode,
+      marshaller,
+      orchestration: await orchestration
+    },
+  };
+  console.log("4")
 
-  // console.log('CoreEval script: share via agoricNames:', brand);
-
-  produceInstance.reset();
+  const { instance } = await E(startUpgradable)(startOpts);
+  console.log("5")
   produceInstance.resolve(instance);
   console.log('orca (re)started');
 

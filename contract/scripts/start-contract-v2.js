@@ -64,7 +64,6 @@ export const startOrca = async ({
     issuerKeywordRecord: harden({}),
     terms: {},
     privateArgs: {
-      // BEFOREPUSh populate agoricNames with 'agoric' info and test in a3p
       agoricNames,
       localchain: await localchain,
       timerService,

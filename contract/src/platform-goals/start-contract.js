@@ -16,8 +16,11 @@ export const installContract = async (
   { consume: { zoe }, installation: { produce: produceInstallation } },
   { name, bundleID },
 ) => {
-  console.log("installContract: ", bundleID)
+  console.log("installContract function: ", bundleID)
+  console.log("installContract zoe: ", zoe)
   const installation = await E(zoe).installBundleID(bundleID);
+  console.log("installContract: after installBundleID")
+  console.log(installation)
   produceInstallation[name].reset();
   produceInstallation[name].resolve(installation);
   console.log(name, '(re-)installed as', bundleID.slice(0, 8));

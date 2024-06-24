@@ -8478,7 +8478,7 @@ __metadata:
     "@endo/marshal": "npm:^1.5.0"
     "@endo/nat": "npm:^4.1.27"
     "@endo/pass-style": "npm:^1.4.0"
-    "@endo/patterns": "npm:^1.2.0"
+    "@endo/patterns": "npm:^1.4.0"
     "@endo/promise-kit": "npm:0.2.56"
     "@endo/ses-ava": "npm:^1.2.2"
     "@jessie.js/eslint-plugin": "npm:^0.4.0"

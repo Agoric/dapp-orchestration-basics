@@ -457,15 +457,17 @@ export const makeE2ETools = (
       const bundleSizeMb = (bundleJSON.length / 1_000_000).toFixed(3);
       progress('installing', name, shortId, bundleSizeMb, 'Mb');
 
-      const installer = 'faucet';
+      const installer = 'alice';
       const chainId = 'agoriclocal';
 
+      //TODO: MAY NOT NEED  
       // copy the bundle JSON file to the container
-      const containerPath = `/root/bundles/bundle-${name}.json`;
-      const cpArgs = [fullPath, `default/agoriclocal-genesis-0:${containerPath}`];
-      console.log('cp', cpArgs)
-      execFileSync2('cp', cpArgs, { stdio: 'inherit' });
-      console.log("after execFileSync")
+      // const containerPath = `/root/bundles/bundle-${name}.json`;
+      // const cpArgs = ["cp", fullPath, `default/agoriclocal-genesis-0:${containerPath}`];
+      // console.log('cp', cpArgs)
+      // // execFileSync2('cp', cpArgs, { stdio: 'inherit' });
+      // execFileSync2('kubectl', cpArgs, { stdio: 'inherit' });
+      // console.log("after execFileSync")
       
       // maybe cause delay
       // const containerPathBoard = `/root/bundles/deploy-board-aux-permit.json`;
@@ -476,22 +478,22 @@ export const makeE2ETools = (
       
 
       // Verify the file is present in the container
-      const verifyArgs = ['-lah', `${containerPath}`];
-      try {
-        console.log(verifyArgs)
-        console.log('exec', verifyArgs, { stdio: 'inherit' })
-        execFileSync('ls', verifyArgs, { stdio: 'inherit' });
-      } catch (err) {
-        console.log(err)
-        throw new Error(`File ${containerPath} not found in container`);
-      }
+      // const verifyArgs = ['-lah', `${containerPath}`];
+      // try {
+      //   console.log(verifyArgs)
+      //   console.log('exec', verifyArgs, { stdio: 'inherit' })
+      //   execFileSync('ls', verifyArgs, { stdio: 'inherit' });
+      // } catch (err) {
+      //   console.log(err)
+      //   throw new Error(`File ${containerPath} not found in container`);
+      // }
 
 
       ////////
 
 
       // install the bundle using the copied JSON file
-      const execArgs = ['tx', 'swingset', 'install-bundle', `bundle-${name}.json`, '--gas', 'auto', '--from', `${installer}`, '--chain-id', `${chainId}`, '--yes', '--output', 'json'];
+      const execArgs = ['tx', 'swingset', 'install-bundle', `@/root/bundles/bundle-${name}.json`, '--gas', 'auto', '--from', `${installer}`, '--chain-id', `${chainId}`, '--yes', '--output', 'json'];
       const output = execFileSync('agd', execArgs, { encoding: 'utf-8' });
       const tx = JSON.parse(output);
 
