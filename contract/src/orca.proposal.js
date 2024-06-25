@@ -47,7 +47,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
       agoricNames: agoricNamesP,
       board,
       chainTimerService,
-      orchestration,
+      orchestration: orchestrationP,
       startUpgradable,
       localchain,
       chainStorage,
@@ -60,29 +60,12 @@ export const startOrcaContract = async (permittedPowers, config) => {
       consume: { IST: istIssuerP },
       produce: {},
     },
-    installation: {
-      consume: { orca: orcaInstallationP },
-    },
     instance: {
       produce: { orca: produceInstance },
     },
   } = permittedPowers;
 
-  trace('getting ist issuer and brand');
-
-  // const terms = { };
-  trace('got terms for contract');
-
-  trace('getting orca installation');
-  trace(permittedPowers);
-  trace(permittedPowers.installation);
-  trace(permittedPowers.installation.consume);
-  trace('config');
-  trace(config);
-  trace('orcaInstallationP');
-  trace(orcaInstallationP);
-  trace('produceInstance');
-  trace(produceInstance);
+  trace('config', config);
 
   const {
     // must be supplied by caller or template-replaced
@@ -97,9 +80,9 @@ export const startOrcaContract = async (permittedPowers, config) => {
     bundleID,
   });
 
-  // basic terms
-  const terms = {};
-
+  trace('awaiting consume.orchestration');
+  const orchestration = await orchestrationP;
+  trace('orchestration', orchestration);
   const mainNode = await E(chainStorage).makeChildNode('orca');
   const storageNode = await E(mainNode).makeChildNode('state');
   const marshaller = await E(board).getPublishingMarshaller();
@@ -117,7 +100,6 @@ export const startOrcaContract = async (permittedPowers, config) => {
       name: contractName,
       startArgs: {
         installation,
-        terms,
       },
       issuerNames: [],
     },
