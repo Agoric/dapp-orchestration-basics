@@ -6,7 +6,9 @@ import {
   installContract,
   startContract,
 } from './platform-goals/start-contract.js';
+import { makeTracer } from './tools/debug.js';
 
+const trace = makeTracer('OrCE');
 const { entries, fromEntries } = Object;
 
 console.warn('start proposal module evaluating');
@@ -66,21 +68,21 @@ export const startOrcaContract = async (permittedPowers, config) => {
     },
   } = permittedPowers;
 
-  console.log('getting ist issuer and brand');
+  trace('getting ist issuer and brand');
 
   // const terms = { };
-  console.log('got terms for contract');
+  trace('got terms for contract');
 
-  console.log('getting orca installation');
-  console.log(permittedPowers);
-  console.log(permittedPowers.installation);
-  console.log(permittedPowers.installation.consume);
-  console.log('config');
-  console.log(config);
-  console.log('orcaInstallationP');
-  console.log(orcaInstallationP);
-  console.log('produceInstance');
-  console.log(produceInstance);
+  trace('getting orca installation');
+  trace(permittedPowers);
+  trace(permittedPowers.installation);
+  trace(permittedPowers.installation.consume);
+  trace('config');
+  trace(config);
+  trace('orcaInstallationP');
+  trace(orcaInstallationP);
+  trace('produceInstance');
+  trace(produceInstance);
 
   const {
     // must be supplied by caller or template-replaced
@@ -122,7 +124,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
     privateArgs,
   );
 
-  console.log(contractName, '(re)started');
+  trace(contractName, '(re)started');
   produceInstance.resolve(started.instance);
 };
 
@@ -151,9 +153,9 @@ const orcaManifest = {
 harden(orcaManifest);
 
 export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
-  console.log('getting manifest for orca');
-  console.log('installKeys');
-  console.log(installKeys);
+  trace('getting manifest for orca');
+  trace('installKeys');
+  trace(installKeys);
   return harden({
     manifest: orcaManifest,
     installations: {
