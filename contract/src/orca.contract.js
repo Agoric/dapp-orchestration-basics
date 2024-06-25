@@ -45,13 +45,13 @@ export const terms = harden({});
  * @param {Baggage} baggage
  */
 export const start = async (zcf, privateArgs, baggage) => {
-  console.log('CONTRACT START FUNCTION...');
+  trace('CONTRACT START FUNCTION...');
   const { orchestration, marshaller, storageNode, timer } = privateArgs;
-  console.log('CONTRACT START FUNCTION 2...');
+  trace('CONTRACT START FUNCTION 2...');
   const zone = makeDurableZone(baggage);
-  console.log('CONTRACT START FUNCTION 3...');
+  trace('CONTRACT START FUNCTION 3...');
   const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-  console.log('CONTRACT START FUNCTION 4...abc');
+  trace('CONTRACT START FUNCTION 4...abc');
   // TODO: fix Possible HTML comment rejected?
   // const makeStakingAccountKit = prepareCosmosOrchestrationAccountKit(
   //     baggage,
@@ -67,7 +67,7 @@ export const start = async (zcf, privateArgs, baggage) => {
   //     zcf,
   //   );
 
-  console.log('CONTRACT START FUNCTION 5...');
+  trace('CONTRACT START FUNCTION 5...');
   const publicFacet = zone.exo(
     'Orca Public Facet',
     M.interface('StakeAtomI', {
