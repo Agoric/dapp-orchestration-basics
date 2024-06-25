@@ -20,7 +20,7 @@ import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
 //   return incarnation.fakeVomKit.cm.provideBaggage();
 // };
 
-/** @typedef {typeof import('../src/orca.contract.js/index.js').start} AssetContractFn */
+/** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
 const myRequire = createRequire(import.meta.url);
 const contractPath = myRequire.resolve(`../src/orca.contract.js`);
@@ -40,7 +40,7 @@ const test = anyTest;
 const makeTestContext = async _t => {
   const { zoeService: zoe, feeMintAccess } = makeZoeKitForTest();
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
-  const bundle = await bundleCache.load(contractPath, 'assetContract');
+  const bundle = await bundleCache.load(contractPath, 'orca');
   return { zoe, bundle, bundleCache, feeMintAccess };
 };
 
