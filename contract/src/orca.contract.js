@@ -9,10 +9,12 @@ import {
 
 import { makeTracer, StorageNodeShape } from '@agoric/internal';
 import { makeDurableZone } from '@agoric/zone/durable.js';
+// import { heapVowE as E, prepareVowTools } from '@agoric/vow/vat.js';
 
 
 // import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
-import { prepareCosmosOrchestrationAccountKit } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
+// import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
+// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
 
   
 const trace = makeTracer('OrchDev1');
@@ -60,22 +62,35 @@ export const start = async (zcf , privateArgs, baggage) => {
     const zone = makeDurableZone(baggage);
     console.log("CONTRACT START FUNCTION 3...")
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-    console.log("CONTRACT START FUNCTION 4...xyz")
-    const makeStakingAccountKit = prepareCosmosOrchestrationAccountKit(
-        baggage,
-        makeRecorderKit,
-        zcf,
-    );
+    console.log("CONTRACT START FUNCTION 4...abc")
+    // TODO: fix Possible HTML comment rejected?
+    // const makeStakingAccountKit = prepareCosmosOrchestrationAccountKit(
+    //     baggage,
+    //     makeRecorderKit,
+    //     zcf,
+    // );
+
+    // const vowTools = prepareVowTools(zone.subZone('vows'));
+    // const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
+    //     zone,
+    //     makeRecorderKit,
+    //     vowTools,
+    //     zcf,
+    //   );
+
+
+
     console.log("CONTRACT START FUNCTION 5...")
     const publicFacet = zone.exo(
         'Orca Public Facet', 
         M.interface('StakeAtomI', {
-            makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
-            makeAcountInvitationMaker: M.call().returns(M.promise()),
+            // makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
+            // makeAcountInvitationMaker: M.call().returns(M.promise()),
         }),
         {
-        
-    });
+            
+        },
+    );
 
     return harden({publicFacet});
 }

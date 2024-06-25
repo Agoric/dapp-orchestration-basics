@@ -93,13 +93,15 @@ privateArgs: timer: (an object) - Must be a remotable TimerService, not promise
 ensure to pass the result of the promise, not the promise: `timer: await chainTimerService`
 
 8) 
+ensure to install
 ```
-
+yarn add typescript --dev
+npm install -g rollup
 ```
 
 # note
 Troubleshooting remote calls
-...
+
 If an ordinary synchronous call (obj.method()) fails because the method doesn't exist, the obj may be remote, in which case E(obj).method() might work.
 
 

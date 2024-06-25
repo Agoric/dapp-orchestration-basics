@@ -14,7 +14,7 @@
     "start2": "make clean start2",
     "build": "yarn build:deployer",
     "build2": "yarn build:deployer2",
-    "build:deployer": "node --preserve-symlinks ./node_modules/.bin/rollup -c rollup.config.mjs",
+    "build:deployer": "rollup -c rollup.config.mjs",
     "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
     "test": "ava --verbose",
     "lint": "eslint '**/*.js'",
@@ -32,7 +32,7 @@
     "@agoric/internal": "^0.3.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/network": "^0.1.1-upgrade-16-dev-8879538.0",
     "@agoric/notifier": "^0.6.3-upgrade-16-fi-dev-8879538.0",
-    "@agoric/orchestration": "^0.1.1-upgrade-16-fi-dev-8879538.0",
+    "@agoric/orchestration": "^0.1.1-upgrade-16-dev-d45b478.0",
     "@agoric/sharing-service": "^0.2.12-u14.0",
     "@agoric/smart-wallet": "^0.5.4-upgrade-16-fi-dev-8879538.0",
     "@agoric/store": "0.9.3-upgrade-16-fi-dev-8879538.0",
@@ -80,7 +80,7 @@
     "rollup": "^4.18.0",
     "ses": "1.5.0",
     "type-coverage": "^2.26.3",
-    "typescript": "~5.2.2",
+    "typescript": "^5.5.2",
     "typescript-eslint": "^7.13.0"
   },
   "dependencies": {
@@ -94,7 +94,7 @@
     "@agoric/internal": "^0.3.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/network": "^0.1.1-upgrade-16-dev-8879538.0",
     "@agoric/notifier": "^0.6.3-upgrade-16-fi-dev-8879538.0",
-    "@agoric/orchestration": "^0.1.1-upgrade-16-fi-dev-8879538.0",
+    "@agoric/orchestration": "^0.1.1-upgrade-16-dev-d45b478.0",
     "@agoric/sharing-service": "^0.2.12-u14.0",
     "@agoric/smart-wallet": "^0.5.4-upgrade-16-fi-dev-8879538.0",
     "@agoric/store": "0.9.3-upgrade-16-fi-dev-8879538.0",
@@ -169,5 +169,8 @@
     "*.js",
     "*.ts",
     "src"
-  ]
+  ],
+  "resolutions": {
+    "@agoric/orchestration": "0.1.1-upgrade-16-dev-d45b478.0"
+  }
 }
