@@ -563,7 +563,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/vow@npm:0.1.1-upgrade-16-fi-dev-8879538.0":
+"@agoric/vow@npm:0.1.1-upgrade-16-fi-dev-8879538.0+8879538, @agoric/vow@npm:^0.1.1-upgrade-16-fi-dev-8879538.0":
   version: 0.1.1-upgrade-16-fi-dev-8879538.0
   resolution: "@agoric/vow@npm:0.1.1-upgrade-16-fi-dev-8879538.0"
   dependencies:

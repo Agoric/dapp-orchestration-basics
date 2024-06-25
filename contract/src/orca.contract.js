@@ -9,15 +9,10 @@ import {
 
 import { makeTracer, StorageNodeShape } from '@agoric/internal';
 import { makeDurableZone } from '@agoric/zone/durable.js';
-import { heapVowE as E, prepareVowTools } from '@agoric/vow/vat.js';
+// import { provideOrchestration } from './utils/util.js';
+import { prepareVowTools } from '@agoric/vow';
 
-// import { heapVowE as E, prepareVowTools } from '@agoric/vow/vat.js';
-
-
-// import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
-// import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
-// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
-import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
+import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
 
   
 const trace = makeTracer('OrchDev1');
@@ -46,26 +41,38 @@ export const terms = harden({
 });
 
 
+
 /**
- *
- * @param {ZCF<StakeAtomTerms>} zcf
+ * @param {ZCF} zcf
  * @param {{
-*  orchestration: OrchestrationService;
-*  storageNode: StorageNode;
-*  marshaller: Marshaller;
-*  timer: TimerService;
+*   agoricNames: Remote<NameHub>;
+*   localchain: Remote<LocalChain>;
+*   orchestrationService: Remote<OrchestrationService>;
+*   storageNode: Remote<StorageNode>;
+*   timerService: Remote<TimerService>;
+*   marshaller: Marshaller;
 * }} privateArgs
 * @param {Baggage} baggage
 */
 export const start = async (zcf , privateArgs, baggage) => {
 
-    console.log("CONTRACT START FUNCTION...")
-    const { orchestration, marshaller, storageNode, timer } = privateArgs;
+    console.log("CONTRACT START FUNCTION... 123 sanity check 1")
+    // const { orchestration, marshaller, storageNode, timer } = privateArgs;
+
+    const {
+        agoricNames,
+        localchain,
+        orchestrationService,
+        storageNode,
+        timerService,
+        marshaller,
+      } = privateArgs;
+
     console.log("CONTRACT START FUNCTION 2...")
     const zone = makeDurableZone(baggage);
     console.log("CONTRACT START FUNCTION 3...")
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-    console.log("CONTRACT START FUNCTION 4...xyz1")
+    console.log("CONTRACT START FUNCTION 4...zyx2")
 
     const vowTools = prepareVowTools(zone.subZone('vows'));
 
@@ -78,15 +85,7 @@ export const start = async (zcf , privateArgs, baggage) => {
       );
     console.log("makeCosmosOrchestrationAccount")
     console.log(makeCosmosOrchestrationAccount)
-    // const vowTools = prepareVowTools(zone.subZone('vows'));
-    // const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
-    //     zone,
-    //     makeRecorderKit,
-    //     vowTools,
-    //     zcf,
-    //   );
-
-
+    
 
     console.log("CONTRACT START FUNCTION 5...")
     const publicFacet = zone.exo(

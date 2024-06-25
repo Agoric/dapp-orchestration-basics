@@ -23,7 +23,6 @@
     "@agoric/notifier": "0.6.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/cosmic-proto": "0.4.1-upgrade-16-fi-dev-8879538.0",
     "@agoric/network": "0.1.1-upgrade-16-dev-8879538.0",
-    "@agoric/vow": "0.1.1-upgrade-16-fi-dev-8879538.0",
     "@agoric/zone": "0.2.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/zoe": "0.26.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/eslint-config": "0.4.1-upgrade-16-fi-dev-8879538.0",
