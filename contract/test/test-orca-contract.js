@@ -11,29 +11,22 @@ import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
 import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
 // import { prepareOrchestrationTools } from '@agoric/orchestration'
 
-
 // import { reincarnate } from '@agoric/swingset-liveslots/tools/setup-vat-data.js';
 
 // /** @type {ReturnType<typeof reincarnate>} */
 // let incarnation;
 
-
 // export const getBaggage = () => {
 //   return incarnation.fakeVomKit.cm.provideBaggage();
 // };
 
-
-
 /** @typedef {typeof import('../src/orca.contract.js/index.js').start} AssetContractFn */
 
 const myRequire = createRequire(import.meta.url);
-const contractPath = myRequire.resolve(
-  `../src/orca.contract.js`,
-);
+const contractPath = myRequire.resolve(`../src/orca.contract.js`);
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
 const test = anyTest;
-
 
 /**
  * Tests assume access to the zoe service and that contracts are bundled.
@@ -64,8 +57,8 @@ test('Install the contract', async t => {
 //   const { zoe, bundle } = t.context;
 //   const installation = E(zoe).install(bundle);
 
-//   const terms = { 
-    
+//   const terms = {
+
 //   };
 
 //   // let privateArgs = {
@@ -88,11 +81,11 @@ test('Install the contract', async t => {
 //   // } = t.context;
 
 //   // const { instance } = await E(zoe).startInstance(
-//   //   installation, 
-//   //   {}, 
+//   //   installation,
+//   //   {},
 //   //   terms,
 //   //   {
-      
+
 //   //   }
 //   // );
 
