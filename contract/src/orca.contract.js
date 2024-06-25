@@ -6,15 +6,16 @@ import {
   provideAll,
 } from '@agoric/zoe/src/contractSupport/index.js';
 
-import { makeTracer, StorageNodeShape } from '@agoric/internal';
 import { makeDurableZone } from '@agoric/zone/durable.js';
 // import { heapVowE as E, prepareVowTools } from '@agoric/vow/vat.js';
 
 // import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
 // import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
 // import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
+import { makeTracer } from './tools/debug.js';
 
 const trace = makeTracer('OrchDev1');
+export const StorageNodeShape = M.remotable('StorageNode');
 
 /**
  * @import { Baggage } from '@agoric/vat-data';
