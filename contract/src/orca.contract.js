@@ -11,8 +11,8 @@ import { makeTracer, StorageNodeShape } from '@agoric/internal';
 import { makeDurableZone } from '@agoric/zone/durable.js';
 
 
-import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
-
+// import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
+import { prepareCosmosOrchestrationAccountKit } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
 
   
 const trace = makeTracer('OrchDev1');
@@ -60,8 +60,8 @@ export const start = async (zcf , privateArgs, baggage) => {
     const zone = makeDurableZone(baggage);
     console.log("CONTRACT START FUNCTION 3...")
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-    console.log("CONTRACT START FUNCTION 4...")
-    const makeStakingAccountKit = prepareStakingAccountKit(
+    console.log("CONTRACT START FUNCTION 4...xyz")
+    const makeStakingAccountKit = prepareCosmosOrchestrationAccountKit(
         baggage,
         makeRecorderKit,
         zcf,
