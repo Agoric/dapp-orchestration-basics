@@ -1,6 +1,7 @@
 // @ts-check
 // import { makeMarshal } from '@endo/marshal';
 // import { AmountMath } from '@agoric/ertp/src/amountMath.js';
+import { E } from '@endo/far';
 import {
   installContract,
   startContract,
