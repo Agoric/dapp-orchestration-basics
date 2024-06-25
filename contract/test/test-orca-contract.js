@@ -4,7 +4,7 @@
 import { test as anyTest } from './prepare-test-env-ava.js';
 
 import { createRequire } from 'module';
-import { E } from '@endo/far';
+import { E, Far } from '@endo/far';
 // import { makeCopyBag } from '@endo/patterns';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
@@ -49,45 +49,27 @@ test.before(async t => (t.context = await makeTestContext(t)));
 test('Install the contract', async t => {
   const { zoe, bundle } = t.context;
   const installation = await E(zoe).install(bundle);
-  t.log(installation);
+  t.log('installed:', installation);
   t.is(typeof installation, 'object');
 });
 
-// test('Start Orca contract and test joining', async t => {
+test('Start Orca contract', async t => {
+  const { zoe, bundle } = t.context;
+  const installation = E(zoe).install(bundle);
 
-//   const { zoe, bundle } = t.context;
-//   const installation = E(zoe).install(bundle);
+  const privateArgs = harden({
+    orchestration: Far('DummyOrchestration'),
+    storageNode: Far('DummyStorageNode'),
+    marshaller: Far('DummyMarshaller'),
+    timer: Far('DummyTimer'),
+  });
 
-//   const terms = {
-
-//   };
-
-//   // let privateArgs = {
-//   //   orchestration: await orchestration,
-//   //   storageNode,
-//   //   marshaller,
-//   //   timer: await chainTimerService,
-//   // }
-
-//   // const zone = makeDurableZone(baggage);
-
-//   // const { makeOrchestrationKit } = prepareOrchestrationTools(
-//   //   zone.subZone('orchestration'),
-//   // );
-
-//   // const {
-//   //   buildProposal,
-//   //   evalProposal,
-//   //   runUtils: { EV },
-//   // } = t.context;
-
-//   // const { instance } = await E(zoe).startInstance(
-//   //   installation,
-//   //   {},
-//   //   terms,
-//   //   {
-
-//   //   }
-//   // );
-
-// });
+  const { instance } = await E(zoe).startInstance(
+    installation,
+    {},
+    {},
+    privateArgs,
+  );
+  t.log('started:', instance);
+  t.truthy(instance);
+});
