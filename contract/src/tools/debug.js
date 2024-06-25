@@ -28,7 +28,7 @@ export const makeTracer = (name, enable = true) => {
     }
     default: {
       const debugTick = (optLog, ...args) => {
-        if (optLog.log) {
+        if (typeof optLog.log === 'function') {
           optLog.log(key, (debugCount += 1), ...args);
         } else {
           console.info(key, (debugCount += 1), optLog, ...args);
