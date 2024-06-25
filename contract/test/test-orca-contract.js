@@ -26,6 +26,7 @@ const myRequire = createRequire(import.meta.url);
 const contractPath = myRequire.resolve(`../src/orca.contract.js`);
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
+// @ts-expect-error - XXX what's going on here??
 const test = anyTest;
 
 /**
