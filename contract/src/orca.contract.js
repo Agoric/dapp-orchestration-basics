@@ -1,6 +1,5 @@
 // @ts-check
 import { M } from '@endo/patterns';
-import '@agoric/zoe/exported.js';
 import {
   defineERecorderKit,
   prepareRecorderKitMakers,
