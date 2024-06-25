@@ -1,7 +1,7 @@
 /** @file utilities to start typical contracts in core eval scripts. */
 // @ts-check
 
-// import { E } from '@endo/far';
+import { E } from '@endo/far';
 
 const { Fail } = assert;
 
