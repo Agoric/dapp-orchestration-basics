@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@agoric/eslint-config": "^0.4.1-upgrade-16-fi-dev-8879538.0",
+    "@agoric/vats": "^0.15.2-dev-3aa5d66.0",
     "@endo/bundle-source": "3.2.3",
     "@endo/eslint-plugin": "^0.5.2",
     "@endo/far": "1.1.2",
