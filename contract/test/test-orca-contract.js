@@ -5,10 +5,10 @@ import { test as anyTest } from './prepare-test-env-ava.js';
 
 import { createRequire } from 'module';
 import { E } from '@endo/far';
-import { makeCopyBag } from '@endo/patterns';
+// import { makeCopyBag } from '@endo/patterns';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
-import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
+// import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
 // import { prepareOrchestrationTools } from '@agoric/orchestration'
 
 // import { reincarnate } from '@agoric/swingset-liveslots/tools/setup-vat-data.js';
