@@ -292,28 +292,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/orchestration@npm:0.1.1-upgrade-16-dev-d45b478.0":
-  version: 0.1.1-upgrade-16-dev-d45b478.0
-  resolution: "@agoric/orchestration@npm:0.1.1-upgrade-16-dev-d45b478.0"
+"@agoric/orchestration@npm:^0.1.1-upgrade-16-dev-d45b478.0":
+  version: 0.1.1-upgrade-16-fi-dev-8879538.0
+  resolution: "@agoric/orchestration@npm:0.1.1-upgrade-16-fi-dev-8879538.0"
   dependencies:
-    "@agoric/assert": "npm:0.6.1-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/cosmic-proto": "npm:0.4.1-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/ertp": "npm:0.16.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/internal": "npm:0.3.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/network": "npm:0.1.1-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/notifier": "npm:0.6.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/store": "npm:0.9.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/time": "npm:0.3.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/vat-data": "npm:0.5.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/vats": "npm:0.15.2-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/vow": "npm:0.1.1-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/zoe": "npm:0.26.3-upgrade-16-dev-d45b478.0+d45b478"
-    "@agoric/zone": "npm:0.2.3-upgrade-16-dev-d45b478.0+d45b478"
+    "@agoric/assert": "npm:0.6.1-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/cosmic-proto": "npm:0.4.1-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/ertp": "npm:0.16.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/internal": "npm:0.3.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/network": "npm:0.1.1-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/notifier": "npm:0.6.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/store": "npm:0.9.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/time": "npm:0.3.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/vat-data": "npm:0.5.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/vats": "npm:0.15.2-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/vow": "npm:0.1.1-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/zoe": "npm:0.26.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/zone": "npm:0.2.3-upgrade-16-fi-dev-8879538.0+8879538"
     "@endo/base64": "npm:^1.0.5"
     "@endo/far": "npm:^1.1.2"
     "@endo/marshal": "npm:^1.5.0"
     "@endo/patterns": "npm:^1.4.0"
-  checksum: 10c0/683a9ce41ea34d31afdc12a69af4269f77a5218d41368e4cf627227776a1aa8acd782ac3707db238c0ee1ceaa405de9508adb3e21aea48335831750a4d64ad77
+  checksum: 10c0/2811a3860e1576fc6f6cbf951b5a666508871ac7d5020de646a97165dcb660449d37ad4c57fe52a2bbc597e5c5edbdb84ac02d2ffeaa013e40062ab74bdd2b65
   languageName: node
   linkType: hard
 

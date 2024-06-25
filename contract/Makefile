@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1r6f4jgk345f5w0vykttm3nxaa4dw7k3hwsvlym
+ADDR=agoric1hs0zcga5u6assmf2ey0s8q0c4t7ywc2fr84mac
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -199,6 +199,7 @@ copy-bn-js:
 
 
 dev-working:
+	make clean;
 	yarn run build:deployer
 	make copy-project  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn install"
