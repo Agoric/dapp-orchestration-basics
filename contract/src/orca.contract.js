@@ -1,10 +1,6 @@
 // @ts-check
 import { M } from '@endo/patterns';
-import {
-  defineERecorderKit,
-  prepareRecorderKitMakers,
-  provideAll,
-} from '@agoric/zoe/src/contractSupport/index.js';
+import { prepareRecorderKitMakers } from '@agoric/zoe/src/contractSupport/recorder.js';
 
 import { makeDurableZone } from '@agoric/zone/durable.js';
 // import { heapVowE as E, prepareVowTools } from '@agoric/vow/vat.js';
