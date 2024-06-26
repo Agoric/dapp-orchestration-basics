@@ -8,8 +8,8 @@ import { makeTracer } from './tools/debug.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
 // import { provideOrchestration } from './utils/util.js';
 
-// import { prepareVowTools } from '@agoric/vow';
-// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
+import { prepareVowTools } from '@agoric/vow';
+import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
 // import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
 // import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
 // import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
@@ -74,18 +74,18 @@ export const start = async (zcf , privateArgs, baggage) => {
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
     trace("CONTRACT START FUNCTION 4...abc-dev1")
 
-    // const vowTools = prepareVowTools(zone.subZone('vows'));
+    const vowTools = prepareVowTools(zone.subZone('vows'));
 
     // TODO: fix Possible HTML comment rejected?
-    // const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
-    //     zone,
-    //     makeRecorderKit,
-    //     vowTools,
-    //     zcf,
-    //   );
-    // trace("makeCosmosOrchestrationAccount")
-    // trace(makeCosmosOrchestrationAccount)
-    
+    const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
+        zone,
+        makeRecorderKit,
+        // vowTools,
+        zcf,
+      );
+    trace("makeCosmosOrchestrationAccount")
+    trace(makeCosmosOrchestrationAccount)
+    trace(Object.keys(makeCosmosOrchestrationAccount))
 
     trace("CONTRACT START FUNCTION 5...")
     const publicFacet = zone.exo(
