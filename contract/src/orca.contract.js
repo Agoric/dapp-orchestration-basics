@@ -72,7 +72,7 @@ export const start = async (zcf , privateArgs, baggage) => {
     const zone = makeDurableZone(baggage);
     console.log("CONTRACT START FUNCTION 3...")
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-    console.log("CONTRACT START FUNCTION 4...zyx2")
+    console.log("CONTRACT START FUNCTION 4...abc-dev1")
 
     const vowTools = prepareVowTools(zone.subZone('vows'));
 
