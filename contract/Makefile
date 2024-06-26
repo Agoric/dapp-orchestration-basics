@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1y8d6qjj8cqcwe529mpcdccsp4pfpnh0vqufgwm
+ADDR=agoric1zsnn827qum2mtjxpyedgdfwwwn8sh0sp6m27dw
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -203,6 +203,8 @@ copy-bn-js:
 patch: 
 	patch ../node_modules/bn.js/lib/bn.js < ../patches/bn.js+5.2.1.patch
 
+cleanc:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v ./*"
 dev-working:
 	make clean
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v /root/*"

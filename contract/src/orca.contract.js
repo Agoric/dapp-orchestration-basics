@@ -74,18 +74,18 @@ export const start = async (zcf , privateArgs, baggage) => {
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
     trace("CONTRACT START FUNCTION 4...abc-dev1")
 
+    // TODO: fix Possible HTML comment rejected?
     const vowTools = prepareVowTools(zone.subZone('vows'));
 
     // TODO: fix Possible HTML comment rejected?
     const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
         zone,
         makeRecorderKit,
-        // vowTools,
+        vowTools,
         zcf,
       );
-    trace("makeCosmosOrchestrationAccount")
-    trace(makeCosmosOrchestrationAccount)
-    trace(Object.keys(makeCosmosOrchestrationAccount))
+    console.log("makeCosmosOrchestrationAccount")
+    console.log(makeCosmosOrchestrationAccount)
 
     trace("CONTRACT START FUNCTION 5...")
     const publicFacet = zone.exo(
