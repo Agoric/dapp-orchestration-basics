@@ -1,21 +1,21 @@
 // @ts-check
 import { M } from '@endo/patterns';
-import '@agoric/zoe/exported.js';
-import {
-    defineERecorderKit,
-    prepareRecorderKitMakers,
-    provideAll
-} from '@agoric/zoe/src/contractSupport/index.js';
+import { prepareRecorderKitMakers } from '@agoric/zoe/src/contractSupport/recorder.js';
 
-import { makeTracer, StorageNodeShape } from '@agoric/internal';
+// import { makeTracer, StorageNodeShape } from '@agoric/internal';
+import { makeTracer } from './tools/debug.js';
+
 import { makeDurableZone } from '@agoric/zone/durable.js';
 // import { provideOrchestration } from './utils/util.js';
-import { prepareVowTools } from '@agoric/vow';
 
-import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
-
+// import { prepareVowTools } from '@agoric/vow';
+// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
+// import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
+// import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
+// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
   
 const trace = makeTracer('OrchDev1');
+export const StorageNodeShape = M.remotable('StorageNode');
 
 /**
  * @import { Baggage } from '@agoric/vat-data';
@@ -56,7 +56,7 @@ export const terms = harden({
 */
 export const start = async (zcf , privateArgs, baggage) => {
 
-    console.log("CONTRACT START FUNCTION... 123 sanity check 1")
+    trace("CONTRACT START FUNCTION... 123 sanity check 1")
     // const { orchestration, marshaller, storageNode, timer } = privateArgs;
 
     const {
@@ -68,26 +68,26 @@ export const start = async (zcf , privateArgs, baggage) => {
         marshaller,
       } = privateArgs;
 
-    console.log("CONTRACT START FUNCTION 2...")
+    trace("CONTRACT START FUNCTION 2...")
     const zone = makeDurableZone(baggage);
-    console.log("CONTRACT START FUNCTION 3...")
+    trace("CONTRACT START FUNCTION 3...")
     const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-    console.log("CONTRACT START FUNCTION 4...abc-dev1")
+    trace("CONTRACT START FUNCTION 4...abc-dev1")
 
-    const vowTools = prepareVowTools(zone.subZone('vows'));
+    // const vowTools = prepareVowTools(zone.subZone('vows'));
 
     // TODO: fix Possible HTML comment rejected?
-    const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
-        zone,
-        makeRecorderKit,
-        vowTools,
-        zcf,
-      );
-    console.log("makeCosmosOrchestrationAccount")
-    console.log(makeCosmosOrchestrationAccount)
+    // const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
+    //     zone,
+    //     makeRecorderKit,
+    //     vowTools,
+    //     zcf,
+    //   );
+    // trace("makeCosmosOrchestrationAccount")
+    // trace(makeCosmosOrchestrationAccount)
     
 
-    console.log("CONTRACT START FUNCTION 5...")
+    trace("CONTRACT START FUNCTION 5...")
     const publicFacet = zone.exo(
         'Orca Public Facet', 
         M.interface('StakeAtomI', {

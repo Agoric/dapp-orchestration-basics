@@ -1,12 +1,16 @@
 // @ts-check
 // import { makeMarshal } from '@endo/marshal';
 // import { AmountMath } from '@agoric/ertp/src/amountMath.js';
+//change for tests?
+import { E } from '@endo/far';
 import {
   installContract,
   startContract,
 } from './platform-goals/start-contract.js';
-const { entries, fromEntries } = Object;
+import { makeTracer } from './tools/debug.js';
 
+const trace = makeTracer('OrCE');
+const { entries, fromEntries } = Object;
 
 console.warn('start proposal module evaluating');
 
@@ -14,7 +18,6 @@ const { Fail } = assert;
 
 const BOARD_AUX = 'boardAux';
 const contractName = 'orca';
-
 
 // const marshalData = makeMarshal(_val => Fail`data only`);
 
@@ -33,60 +36,37 @@ export const allValues = async obj => {
   return fromEntries(es);
 };
 
-
 /**
  * @param {BootstrapPowers & {installation: {consume: {stakeBld: Installation<import('./orca.contract.js').start>}}}} permittedPowers
+ * @param config
  */
-export const startOrcaContract = async (
-  permittedPowers,
-  config,
-) => {
+export const startOrcaContract = async (permittedPowers, config) => {
   console.error('startOrcaContract()...');
-
 
   const {
     consume: {
       agoricNames: agoricNamesP,
       board,
       chainTimerService,
-      orchestration,
+      orchestration: orchestrationP,
       startUpgradable,
       localchain,
       chainStorage,
     },
     brand: {
       consume: { IST: istBrandP },
-      produce: { },
+      produce: {},
     },
     issuer: {
       consume: { IST: istIssuerP },
-      produce: { },
-    },
-    installation: {
-      consume: { orca: orcaInstallationP },
+      produce: {},
     },
     instance: {
       produce: { orca: produceInstance },
     },
   } = permittedPowers;
 
-
-  console.log('getting ist issuer and brand');
-  
-
-  // const terms = { };
-  console.log('got terms for contract');
-
-  console.log('getting orca installation');
-  console.log(permittedPowers)
-  console.log(permittedPowers.installation)
-  console.log(permittedPowers.installation.consume)
-  console.log("config")
-  console.log(config)
-  console.log("orcaInstallationP")
-  console.log(orcaInstallationP)
-  console.log("produceInstance")
-  console.log(produceInstance)
+  trace('config', config);
 
   const {
     // must be supplied by caller or template-replaced
@@ -95,40 +75,40 @@ export const startOrcaContract = async (
 
   // agoricNames gets updated each time; the promise space only once XXXXXXX
   // const installation = await orcaInstallationP;
-  
+
   const installation = await installContract(permittedPowers, {
     name: contractName,
     bundleID,
   });
 
-
-  //basic terms
-  const terms = {};
-
-  const mainNode = await E(chainStorage).makeChildNode("orca");
-  const storageNode = await E(mainNode).makeChildNode("state");
+  trace('awaiting consume.orchestration');
+  const orchestration = await orchestrationP;
+  trace('orchestration', orchestration);
+  const mainNode = await E(chainStorage).makeChildNode('orca');
+  const storageNode = await E(mainNode).makeChildNode('state');
   const marshaller = await E(board).getPublishingMarshaller();
 
   const privateArgs = {
     storageNode,
     marshaller,
     orchestration: await orchestration,
-    timer: await chainTimerService
+    timer: await chainTimerService,
   };
 
-  const started = await startContract(permittedPowers, {
-    name: contractName,
-    startArgs: {
-      installation,
-      terms,
+  const started = await startContract(
+    permittedPowers,
+    {
+      name: contractName,
+      startArgs: {
+        installation,
+      },
+      issuerNames: [],
     },
-    issuerNames: [],
-  }, privateArgs);
+    privateArgs,
+  );
 
-  console.log(contractName, '(re)started');
+  trace(contractName, '(re)started');
   produceInstance.resolve(started.instance);
-
-
 };
 
 /** @type { import("@agoric/vats/src/core/lib-boot").BootstrapManifest } */
@@ -148,17 +128,17 @@ const orcaManifest = {
       consume: { orca: true },
       produce: { orca: true },
     },
-    issuer: { consume: { IST: true }, produce: { } },
-    brand: { consume: { IST: true }, produce: { } },
+    issuer: { consume: { IST: true }, produce: {} },
+    brand: { consume: { IST: true }, produce: {} },
     instance: { produce: { orca: true } },
   },
 };
 harden(orcaManifest);
 
 export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
-  console.log('getting manifest for orca');
-  console.log("installKeys")
-  console.log(installKeys)
+  trace('getting manifest for orca');
+  trace('installKeys');
+  trace(installKeys);
   return harden({
     manifest: orcaManifest,
     installations: {
@@ -183,8 +163,8 @@ export const permit = harden({
     consume: { orca: true },
     produce: { orca: true },
   },
-  issuer: { consume: { IST: true }, produce: { } },
-  brand: { consume: { IST: true }, produce: { } },
+  issuer: { consume: { IST: true }, produce: {} },
+  brand: { consume: { IST: true }, produce: {} },
   instance: { produce: { orca: true } },
 });
 

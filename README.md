@@ -99,6 +99,13 @@ yarn add typescript --dev
 npm install -g rollup
 ```
 
+9)
+```
+yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0
+yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0
+npm install rollup
+```
+
 # note
 Troubleshooting remote calls
 

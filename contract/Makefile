@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1n88g7n56yxcf047ntqpg3pnlcdfedpxrcfex2c
+ADDR=agoric1y8d6qjj8cqcwe529mpcdccsp4pfpnh0vqufgwm
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -90,9 +90,12 @@ clean:
 	@rm -rf bundles/
 
 
+
+########################################
+########################################
 ################ Dapp dev
-
-
+########################################
+########################################
 
 # HARD CODED
 cpfiles:
@@ -195,8 +198,10 @@ bundle-debug:
 copy-bn-js:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -f -v /root/node_modules/bn.js/lib/bn.js
 	kubectl cp ../node_modules/bn.js/lib/bn.js default/agoriclocal-genesis-0:/root/node_modules/bn.js/lib/bn.js
+	cp ./PATCH-bn.js ../node_modules/bn.js/lib/bn.js
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"
-
+patch: 
+	patch ../node_modules/bn.js/lib/bn.js < ../patches/bn.js+5.2.1.patch
 
 dev-working:
 	make clean
@@ -210,3 +215,6 @@ dev-working:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 # todo: figure out why this sequence # is always off by 1 forcing a retry
+
+test-orca:
+	yarn test ./test/test-orca-contract.js
