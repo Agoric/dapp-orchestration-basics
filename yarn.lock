@@ -61,6 +61,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@agoric/async-flow@npm:^0.1.1-upgrade-16-fi-dev-8879538.0":
+  version: 0.1.1-upgrade-16-fi-dev-8879538.0
+  resolution: "@agoric/async-flow@npm:0.1.1-upgrade-16-fi-dev-8879538.0"
+  dependencies:
+    "@agoric/base-zone": "npm:0.1.1-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/store": "npm:0.9.3-upgrade-16-fi-dev-8879538.0+8879538"
+    "@agoric/vow": "npm:0.1.1-upgrade-16-fi-dev-8879538.0+8879538"
+    "@endo/common": "npm:^1.2.2"
+    "@endo/errors": "npm:^1.2.2"
+    "@endo/eventual-send": "npm:^1.2.2"
+    "@endo/marshal": "npm:^1.5.0"
+    "@endo/pass-style": "npm:^1.4.0"
+    "@endo/patterns": "npm:^1.4.0"
+    "@endo/promise-kit": "npm:^1.1.2"
+  checksum: 10c0/a283a79a5bc7a39735236b0b119a7c50cbc12990ba1c60eb502b6a305556d16adc446d23d50aa0dcde17e3a9e1265ec776c2d5f5e1c7e199ce6b59127fdca9d4
+  languageName: node
+  linkType: hard
+
 "@agoric/babel-generator@npm:^7.17.4, @agoric/babel-generator@npm:^7.17.6":
   version: 7.17.6
   resolution: "@agoric/babel-generator@npm:7.17.6"
@@ -432,7 +450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/internal@npm:0.3.3-upgrade-16-fi-dev-8879538.0+8879538":
+"@agoric/internal@npm:0.3.3-upgrade-16-fi-dev-8879538.0+8879538, @agoric/internal@npm:^0.3.3-upgrade-16-fi-dev-8879538.0":
   version: 0.3.3-upgrade-16-fi-dev-8879538.0
   resolution: "@agoric/internal@npm:0.3.3-upgrade-16-fi-dev-8879538.0"
   dependencies:
@@ -1167,7 +1185,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/time@npm:0.3.3-upgrade-16-fi-dev-8879538.0+8879538":
+"@agoric/time@npm:0.3.3-upgrade-16-fi-dev-8879538.0+8879538, @agoric/time@npm:^0.3.3-upgrade-16-fi-dev-8879538.0":
   version: 0.3.3-upgrade-16-fi-dev-8879538.0
   resolution: "@agoric/time@npm:0.3.3-upgrade-16-fi-dev-8879538.0"
   dependencies:
@@ -1564,7 +1582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/zoe@npm:0.26.3-upgrade-16-fi-dev-8879538.0+8879538, @agoric/zoe@npm:^0.26.3-dev-3aa5d66.0":
+"@agoric/zoe@npm:0.26.3-upgrade-16-fi-dev-8879538.0+8879538, @agoric/zoe@npm:^0.26.3-upgrade-16-fi-dev-8879538.0":
   version: 0.26.3-upgrade-16-fi-dev-8879538.0
   resolution: "@agoric/zoe@npm:0.26.3-upgrade-16-fi-dev-8879538.0"
   dependencies:
@@ -1643,7 +1661,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/zone@npm:0.2.3-upgrade-16-fi-dev-8879538.0+8879538, @agoric/zone@npm:^0.2.3-dev-3aa5d66.0":
+"@agoric/zone@npm:0.2.3-upgrade-16-fi-dev-8879538.0+8879538, @agoric/zone@npm:^0.2.3-upgrade-16-fi-dev-8879538.0":
   version: 0.2.3-upgrade-16-fi-dev-8879538.0
   resolution: "@agoric/zone@npm:0.2.3-upgrade-16-fi-dev-8879538.0"
   dependencies:
@@ -11201,16 +11219,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dapp-agoric-orca-contract@workspace:contract"
   dependencies:
+    "@agoric/async-flow": "npm:^0.1.1-upgrade-16-fi-dev-8879538.0"
     "@agoric/eslint-config": "npm:^0.4.1-upgrade-16-fi-dev-8879538.0"
     "@agoric/inter-protocol": "npm:^0.16.2-upgrade-16-fi-dev-8879538.0"
+    "@agoric/internal": "npm:^0.3.3-upgrade-16-fi-dev-8879538.0"
     "@agoric/orchestration": "npm:^0.1.1-upgrade-16-dev-d45b478.0"
+    "@agoric/time": "npm:^0.3.3-upgrade-16-fi-dev-8879538.0"
     "@agoric/vats": "npm:^0.15.2-dev-3aa5d66.0"
     "@agoric/vow": "npm:^0.1.1-upgrade-16-fi-dev-8879538.0"
-    "@agoric/zoe": "npm:^0.26.3-dev-3aa5d66.0"
-    "@agoric/zone": "npm:^0.2.3-dev-3aa5d66.0"
+    "@agoric/zoe": "npm:^0.26.3-upgrade-16-fi-dev-8879538.0"
+    "@agoric/zone": "npm:^0.2.3-upgrade-16-fi-dev-8879538.0"
     "@endo/bundle-source": "npm:3.2.3"
     "@endo/eslint-plugin": "npm:^0.5.2"
     "@endo/far": "npm:1.1.2"
+    "@endo/marshal": "npm:^1.5.0"
     "@endo/patterns": "npm:^1.4.0"
     "@endo/ses-ava": "npm:^1.2.2"
     "@jessie.js/eslint-plugin": "npm:^0.4.0"

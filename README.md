@@ -52,7 +52,7 @@ make proposal-start-vote
 make bundle-debug
 ```
 
-# Issues
+# Issues & their Solutions
 1) SyntaxError#2: Unexpected token b in JSON at position 0
 confusing bundle ids for bundles, need to prepend with "@"
 
@@ -160,6 +160,28 @@ head node_modules/@agoric/orchestration/package.json
 ```
 
 double check the package.json `version`, to ensure resolution isn't overrriding a package on `yarn install` etc.
+
+13)
+```
+xsnap: v52: Error: methodGuard: guard:methodGuard: (an object) - Must match one of [{"argGuards":"[match:arrayOf]","callKind":"sync","optionalArgGuards":"[match:or]","restArgGuard":"[match:or]","returnGuard":"[match:or]"},{"argGuards":"[match:arrayOf]","callKind":"async","optionalArgGuards":"[match:or]","restArgGuard":"[match:or]","returnGuard":"[Seen]"}]
+
+```
+
+Ensure 
+```javascript
+makeAcountInvitationMaker: M.call().returns(M.promise()),
+```
+updated syntax:
+```javascript
+makeAccountInvitationMaker: M.callWhen().returns(InvitationShape)
+```
+
+14) 
+```
+Cannot find file for internal module "./vat.js"
+```
+
+the version of `@agoric/vow` should be kept updated to `@dev` for now to keep up.
 
 # tests from parent directory
 ```

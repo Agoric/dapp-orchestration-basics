@@ -1,106 +1,179 @@
-// @ts-check
-import { M } from '@endo/patterns';
-import { prepareRecorderKitMakers } from '@agoric/zoe/src/contractSupport/recorder.js';
-
-// import { makeTracer, StorageNodeShape } from '@agoric/internal';
-import { makeTracer } from './tools/debug.js';
-
-import { makeDurableZone } from '@agoric/zone/durable.js';
-// import { provideOrchestration } from './utils/util.js';
-
+import { makeTracer, StorageNodeShape } from '@agoric/internal';
+import { TimerServiceShape } from '@agoric/time';
 import { prepareVowTools } from '@agoric/vow';
+// import { heapVowE as E } from '@agoric/vow/vat.js';
+
+import {
+  prepareRecorderKitMakers,
+  provideAll,
+} from '@agoric/zoe/src/contractSupport';
+import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
+import { makeDurableZone } from '@agoric/zone/durable.js';
+import { M } from '@endo/patterns';
 import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
-// import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
-// import { prepareCosmosOrchestrationAccountKit, prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
-// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
-  
+
+
 const trace = makeTracer('OrchDev1');
-export const StorageNodeShape = M.remotable('StorageNode');
+// export const StorageNodeShape = M.remotable('StorageNode');
 
 /**
- * @import { Baggage } from '@agoric/vat-data';
- * @import { IBCConnectionID } from '@agoric/vats';
- * @import { TimerService } from '@agoric/time';
- * @import { ICQConnection, OrchestrationService } from '../types.js';
+ * @import {Baggage} from '@agoric/vat-data';
+ * @import {IBCConnectionID} from '@agoric/vats';
+ * @import {TimerService} from '@agoric/time';
+ * @import {ICQConnection, OrchestrationService} from '../types.js';
  */
 
+/** @type {ContractMeta<typeof start>} */
 export const meta = harden({
-    privateArgsShape: {
-      orchestration: M.remotable('orchestration'),
-      storageNode: StorageNodeShape,
-      marshaller: M.remotable('Marshaller'),
-      timer: M.remotable('TimerService'),
-    },
+  customTermsShape: {
+    chainId: M.string(),
+    hostConnectionId: M.string(),
+    controllerConnectionId: M.string(),
+    bondDenom: M.string(),
+    icqEnabled: M.boolean(),
+  },
+  privateArgsShape: {
+    orchestration: M.remotable('orchestration'),
+    storageNode: StorageNodeShape,
+    marshaller: M.remotable('marshaller'),
+    timer: TimerServiceShape,
+  },
 });
-
 export const privateArgsShape = meta.privateArgsShape;
 
-
-export const terms = harden({
-    
-});
-
-
+/**
+ * @typedef {{
+ *   chainId: string;
+ *   hostConnectionId: IBCConnectionID;
+ *   controllerConnectionId: IBCConnectionID;
+ *   bondDenom: string;
+ *   icqEnabled: boolean;
+ * }} StakeIcaTerms
+ */
 
 /**
- * @param {ZCF} zcf
+ * @param {ZCF<StakeIcaTerms>} zcf
  * @param {{
-*   agoricNames: Remote<NameHub>;
-*   localchain: Remote<LocalChain>;
-*   orchestrationService: Remote<OrchestrationService>;
-*   storageNode: Remote<StorageNode>;
-*   timerService: Remote<TimerService>;
-*   marshaller: Marshaller;
-* }} privateArgs
-* @param {Baggage} baggage
-*/
-export const start = async (zcf , privateArgs, baggage) => {
+ *   orchestration: OrchestrationService;
+ *   storageNode: StorageNode;
+ *   marshaller: Marshaller;
+ *   timer: TimerService;
+ * }} privateArgs
+ * @param {Baggage} baggage
+ */
+export const start = async (zcf, privateArgs, baggage) => {
+  const {
+    chainId,
+    hostConnectionId,
+    controllerConnectionId,
+    bondDenom,
+    icqEnabled,
+  } = zcf.getTerms();
 
-    trace("CONTRACT START FUNCTION... 123 sanity check 1")
-    // const { orchestration, marshaller, storageNode, timer } = privateArgs;
 
-    const {
-        agoricNames,
-        localchain,
-        orchestrationService,
-        storageNode,
-        timerService,
-        marshaller,
-      } = privateArgs;
+  const { orchestration, marshaller, storageNode, timer } = privateArgs;
 
-    trace("CONTRACT START FUNCTION 2...")
-    const zone = makeDurableZone(baggage);
-    trace("CONTRACT START FUNCTION 3...")
-    const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-    trace("CONTRACT START FUNCTION 4...abc-dev1")
 
-    // TODO: fix Possible HTML comment rejected?
-    const vowTools = prepareVowTools(zone.subZone('vows'));
 
-    // TODO: fix Possible HTML comment rejected?
-    const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
-        zone,
-        makeRecorderKit,
-        vowTools,
-        zcf,
-      );
-    console.log("makeCosmosOrchestrationAccount")
-    console.log(makeCosmosOrchestrationAccount)
+  const zone = makeDurableZone(baggage);
 
-    trace("CONTRACT START FUNCTION 5...")
-    const publicFacet = zone.exo(
-        'Orca Public Facet', 
-        M.interface('StakeAtomI', {
-            // makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
-            // makeAcountInvitationMaker: M.call().returns(M.promise()),
-        }),
-        {
-            
-        },
+
+
+  const { accountsStorageNode } = await provideAll(baggage, {
+    accountsStorageNode: () => E(storageNode).makeChildNode('accounts'),
+  });
+
+
+
+  const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
+
+
+
+  const vowTools = prepareVowTools(zone.subZone('vows'));
+
+
+
+  const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
+    zone,
+    makeRecorderKit,
+    vowTools,
+    zcf,
+  );
+
+
+
+  async function makeAccountKit() {
+
+
+    const account = await E(orchestration).makeAccount(
+      chainId,
+      hostConnectionId,
+      controllerConnectionId,
     );
 
-    return harden({publicFacet});
-}
 
-// harden(start)
-/** @typedef {typeof start} OrcaSF */
+    // TODO permissionless queries https://github.com/Agoric/agoric-sdk/issues/9326
+    const icqConnection = icqEnabled
+      ? await E(orchestration).provideICQConnection(controllerConnectionId)
+      : undefined;
+
+
+
+    const accountAddress = await E(account).getAddress();
+    trace('account address', accountAddress);
+
+
+    const accountNode = await E(accountsStorageNode).makeChildNode(
+      accountAddress.address,
+    );
+
+
+    const holder = makeCosmosOrchestrationAccount(accountAddress, bondDenom, {
+      account,
+      storageNode: accountNode,
+      icqConnection,
+      timer,
+    });
+    return holder;
+  }
+
+  const publicFacet = zone.exo(
+
+
+    'StakeAtom',
+
+    M.interface('StakeAtomI', {
+      makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
+      makeAccountInvitationMaker: M.callWhen().returns(InvitationShape),
+    }),
+    {
+
+
+      async makeAccount() {
+        trace('makeAccount');
+        return makeAccountKit();
+      },
+
+
+      makeAccountInvitationMaker() {
+        trace('makeCreateAccountInvitation');
+        return zcf.makeInvitation(
+          async seat => {
+            seat.exit();
+            const holder = await makeAccountKit();
+            return holder.asContinuingOffer();
+          },
+          'wantStakingAccount',
+          undefined,
+          undefined,
+        );
+      },
+
+      
+    },
+  );
+
+  return { publicFacet };
+};
+
+/** @typedef {typeof start} StakeIcaSF */

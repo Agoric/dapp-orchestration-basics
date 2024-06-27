@@ -5,6 +5,8 @@ import { Notifications } from './Notifications';
 import { NotificationContext } from '../context/NotificationContext';
 import Swap from './swap/Swap';
 import Pay from './pay/Pay';
+import { OsmoSwap } from './osmoswap/OsmoSwap';
+
 
 // notification related types
 const dynamicToastChildStatuses = [
@@ -54,7 +56,7 @@ const Tabs = () => {
             handleTabClick={handleTabClick}
           >
             {/* <Mint /> */}
-            
+            <OsmoSwap />
           </TabWrapper>
           <TabWrapper
             tab="IBC Send"

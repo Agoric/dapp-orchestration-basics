@@ -8,6 +8,10 @@ import {
   startContract,
 } from './platform-goals/start-contract.js';
 import { makeTracer } from './tools/debug.js';
+// TODO want to do this eventually
+// import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
+// import { makeChainHub } from '../exos/chain-hub.js';
+
 
 const trace = makeTracer('OrCE');
 const { entries, fromEntries } = Object;
@@ -88,12 +92,20 @@ export const startOrcaContract = async (permittedPowers, config) => {
   const storageNode = await E(mainNode).makeChildNode('state');
   const marshaller = await E(board).getPublishingMarshaller();
 
+  // const chainHub = makeChainHub(await agoricNames);
+
+  // const [_, cosmoshub, connectionInfo] = await E.when(
+  //   chainHub.getChainsAndConnection('agoric', 'cosmoshub'),
+  // );
+
   const privateArgs = {
     storageNode,
     marshaller,
     orchestration: await orchestration,
     timer: await chainTimerService,
   };
+
+
 
   const started = await startContract(
     permittedPowers,

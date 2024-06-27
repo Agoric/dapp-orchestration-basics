@@ -216,6 +216,8 @@ dev-working:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@0.1.1-upgrade-16-dev-d45b478.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
 	make copy-bn-js  
 ###	actually deploy
