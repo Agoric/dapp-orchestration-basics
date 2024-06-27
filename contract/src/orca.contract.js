@@ -1,7 +1,9 @@
-import { makeTracer, StorageNodeShape } from '@agoric/internal';
+// import { makeTracer, StorageNodeShape } from '@agoric/internal';
+// import { makeTracer } from '@agoric/internal';
+// StorageNodeShape
 import { TimerServiceShape } from '@agoric/time';
 import { prepareVowTools } from '@agoric/vow';
-// import { heapVowE as E } from '@agoric/vow/vat.js';
+import { heapVowE as E } from '@agoric/vow/vat.js';
 
 import {
   prepareRecorderKitMakers,
@@ -14,7 +16,7 @@ import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exo
 
 
 const trace = makeTracer('OrchDev1');
-// export const StorageNodeShape = M.remotable('StorageNode');
+export const StorageNodeShape = M.remotable('StorageNode');
 
 /**
  * @import {Baggage} from '@agoric/vat-data';
@@ -25,13 +27,7 @@ const trace = makeTracer('OrchDev1');
 
 /** @type {ContractMeta<typeof start>} */
 export const meta = harden({
-  customTermsShape: {
-    chainId: M.string(),
-    hostConnectionId: M.string(),
-    controllerConnectionId: M.string(),
-    bondDenom: M.string(),
-    icqEnabled: M.boolean(),
-  },
+
   privateArgsShape: {
     orchestration: M.remotable('orchestration'),
     storageNode: StorageNodeShape,
@@ -62,14 +58,14 @@ export const privateArgsShape = meta.privateArgsShape;
  * @param {Baggage} baggage
  */
 export const start = async (zcf, privateArgs, baggage) => {
-  const {
-    chainId,
-    hostConnectionId,
-    controllerConnectionId,
-    bondDenom,
-    icqEnabled,
-  } = zcf.getTerms();
 
+  const chainId = 'cosmoshub-4';
+  const hostConnectionId = 'connection-1';
+  const controllerConnectionId =  'connection-2';
+  const bondDenom =  'uatom';
+  const icqEnabled =  true;
+
+  console.log("inside start")
 
   const { orchestration, marshaller, storageNode, timer } = privateArgs;
 
@@ -151,7 +147,10 @@ export const start = async (zcf, privateArgs, baggage) => {
 
       async makeAccount() {
         trace('makeAccount');
-        return makeAccountKit();
+        const { holder } = await makeLocalAccountKit();
+        console.log("holder address")
+        console.log(holder.accountAddress)
+        return holder;
       },
 
 
@@ -176,4 +175,4 @@ export const start = async (zcf, privateArgs, baggage) => {
   return { publicFacet };
 };
 
-/** @typedef {typeof start} StakeIcaSF */
+/** @typedef {typeof start} OrcaSF */

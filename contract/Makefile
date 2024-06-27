@@ -199,6 +199,10 @@ copy-bn-js:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -f -v /root/node_modules/bn.js/lib/bn.js
 	cp ./PATCH-bn.js ../node_modules/bn.js/lib/bn.js
 	kubectl cp ../node_modules/bn.js/lib/bn.js default/agoriclocal-genesis-0:/root/node_modules/bn.js/lib/bn.js
+
+copy-vow-js:
+	cp ./PATCH-vat.js ../node_modules/@agoric/vow/vat.js
+	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/vow/vat.js
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"
 patch: 
 	patch ../node_modules/bn.js/lib/bn.js < ../xxpatches/bn.js+5.2.1.patch
@@ -220,6 +224,7 @@ dev-working:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
 	make copy-bn-js  
+	make copy-vow-js
 ###	actually deploy
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"

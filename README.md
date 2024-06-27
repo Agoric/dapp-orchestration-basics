@@ -183,6 +183,29 @@ Cannot find file for internal module "./vat.js"
 
 the version of `@agoric/vow` should be kept updated to `@dev` for now to keep up.
 
+15)
+```
+ReferenceError#1: accountsStorageNode: get E: undefined variable
+```
+
+Make sure `privateArgs` adheres to the correct shape expected or else any subsequent call to something like this will fail:
+
+```javascript
+E(storageNode).makeChildNode('accounts'),
+```
+
+```javascript
+export const meta = harden({
+  privateArgsShape: {
+    orchestration: M.remotable('orchestration'),
+    storageNode: StorageNodeShape,
+    marshaller: M.remotable('marshaller'),
+    timer: TimerServiceShape,
+  },
+});
+export const privateArgsShape = meta.privateArgsShape;
+```
+
 # tests from parent directory
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
