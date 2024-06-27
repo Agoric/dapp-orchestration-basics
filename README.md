@@ -79,6 +79,14 @@ src/orchdev.proposal.js
 ```
 
 5) possible import rejection SES
+check for `bn.js` containing `while (j-- > 0) {`
+
+we can check for this from outside the container:
+```
+kubectl exec -it agoriclocal-genesis-0 -- cat ./node_modules/bn.js/lib/bn.js | grep "j\-\-"
+```
+
+If the file is there, we can do `make copy-bn-js `
 
 6) 
 ```
@@ -104,6 +112,69 @@ npm install -g rollup
 yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0
 yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0
 npm install rollup
+```
+
+10)
+```
+AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert(refs.runnerChain)
+```
+
+11)
+```
+  AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: The expression evaluated to a falsy value:
+```
+`"@endo/patterns": "^1.4.0"` throws this error when used in devdependencies, when running tests, just remove
+
+Note: also remove all resolutions from root package.json, especially if you see this:
+```
+Uncaught exception in test/test-deploy-tools.js
+
+  RangeError: Expected "[undefined]" is same as "Interface"
+
+  ✘ test/test-deploy-tools.js exited with a non-zero exit code: 1
+
+  Uncaught exception in test/test-orca-contract.js
+
+  RangeError: Expected "[undefined]" is same as "Interface"
+
+  Uncaught exception in test/test-bundle-source.js
+
+  RangeError: Expected "[undefined]" is same as "Interface"
+
+  ✘ No tests found in test/test-build-proposal.js
+  ✘ test/test-orca-contract.js exited with a non-zero exit code: 1
+  ✘ test/test-bundle-source.js exited with a non-zero exit code: 1
+  ─
+```
+
+12) 
+```
+v43: Error#1: Cannot find file for internal module "./src/exos/cosmosOrchestrationAccount.js" (with candidates "./src/exos/cosmosOrchestrationAccount.js", "./src/exos/cosmosOrchestrationAccount.js.js", "./src/exos/cosmosOrchestrationAccount.js.json", "
+```
+
+inspect the container, and look at the module in question:
+```
+head node_modules/@agoric/orchestration/package.json
+```
+
+double check the package.json `version`, to ensure resolution isn't overrriding a package on `yarn install` etc.
+
+# tests from parent directory
+```
+yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
+```
+
+# deploy from directory 
+```
+yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca contract:deploy
+```
+
+# e2e environment using `multichain-testing`
+using starship
+```
+make teardown ; make stop; make stop-forward; make clean; make; make port-forward
 ```
 
 # note

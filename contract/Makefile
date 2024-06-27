@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1zsnn827qum2mtjxpyedgdfwwwn8sh0sp6m27dw
+ADDR=agoric125kma7cmf6s0ukttx2asryhx9xcn6pgque2w09
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -197,14 +197,16 @@ bundle-debug:
 # patch
 copy-bn-js:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- rm -f -v /root/node_modules/bn.js/lib/bn.js
-	kubectl cp ../node_modules/bn.js/lib/bn.js default/agoriclocal-genesis-0:/root/node_modules/bn.js/lib/bn.js
 	cp ./PATCH-bn.js ../node_modules/bn.js/lib/bn.js
+	kubectl cp ../node_modules/bn.js/lib/bn.js default/agoriclocal-genesis-0:/root/node_modules/bn.js/lib/bn.js
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"
 patch: 
-	patch ../node_modules/bn.js/lib/bn.js < ../patches/bn.js+5.2.1.patch
+	patch ../node_modules/bn.js/lib/bn.js < ../xxpatches/bn.js+5.2.1.patch
 
 cleanc:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v ./*"
+
+# todo remove clean install steps after debugging
 dev-working:
 	make clean
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v /root/*"
@@ -212,8 +214,12 @@ dev-working:
 	make copy-project  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn install"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@0.1.1-upgrade-16-dev-d45b478.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
 	make copy-bn-js  
+###	actually deploy
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 # todo: figure out why this sequence # is always off by 1 forcing a retry

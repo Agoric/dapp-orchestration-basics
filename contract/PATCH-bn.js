@@ -2632,8 +2632,6 @@
       for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
       if (i > 0) {
         x.iushrn(i);
-        // @TODO PATCH
-        // while (i-- > 0) {
         while ([i--][0] > 0) {
           if (A.isOdd() || B.isOdd()) {
             A.iadd(yp);
@@ -2648,8 +2646,6 @@
       for (var j = 0, jm = 1; (y.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
       if (j > 0) {
         y.iushrn(j);
-        // @TODO PATCH
-        // while (j-- > 0) {
         while ([j--][0] > 0) {
           if (C.isOdd() || D.isOdd()) {
             C.iadd(yp);
@@ -2704,8 +2700,6 @@
       for (var i = 0, im = 1; (a.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
       if (i > 0) {
         a.iushrn(i);
-        // @TODO PATCH
-        // while (i-- > 0) {
         while ([i--][0] > 0) {
           if (x1.isOdd()) {
             x1.iadd(delta);
@@ -2718,8 +2712,6 @@
       for (var j = 0, jm = 1; (b.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
       if (j > 0) {
         b.iushrn(j);
-        // @TODO PATCH
-        // while (j-- > 0) {
         while ([j--][0] > 0) {
           if (x2.isOdd()) {
             x2.iadd(delta);
