@@ -166,9 +166,19 @@ double check the package.json `version`, to ensure resolution isn't overrriding 
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
 ```
 
+without clean:
+```
+yarn workspace dapp-agoric-orca-contract deploy
+```
+
 # deploy from directory 
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca contract:deploy
+```
+
+without clean:
+```
+yarn workspace dapp-agoric-orca-contract deploy
 ```
 
 # e2e environment using `multichain-testing`
