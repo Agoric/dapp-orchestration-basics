@@ -20,7 +20,7 @@ ramp swift rich agree then brown blur dentist come replace describe thumb confir
 ```
 make add-address
 ```
-paste address in makefile for ADDR
+paste address in makefile for `ADDR`
 
 # 3 
 ```

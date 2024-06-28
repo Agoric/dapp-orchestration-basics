@@ -103,6 +103,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
     marshaller,
     orchestration: await orchestration,
     timer: await chainTimerService,
+    localchain: await localchain
   };
 
 
