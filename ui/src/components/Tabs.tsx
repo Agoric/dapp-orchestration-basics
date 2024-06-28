@@ -5,7 +5,7 @@ import { Notifications } from './Notifications';
 import { NotificationContext } from '../context/NotificationContext';
 import Swap from './swap/Swap';
 import Pay from './pay/Pay';
-import { OsmoSwap } from './osmoswap/OsmoSwap';
+import { MakeAccount } from './MakeAccount/MakeAccount';
 
 
 // notification related types
@@ -56,7 +56,7 @@ const Tabs = () => {
             handleTabClick={handleTabClick}
           >
             {/* <Mint /> */}
-            <OsmoSwap />
+            <MakeAccount />
           </TabWrapper>
           <TabWrapper
             tab="IBC Send"

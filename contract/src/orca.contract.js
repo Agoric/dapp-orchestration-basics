@@ -187,7 +187,7 @@ export const start = async (zcf, privateArgs, baggage) => {
       async makeAccount() {
         trace('makeAccount');
         const { holder } = await makeLocalAccountKit();
-        trace('holder address', holder.accountAddress);
+        trace('holder address');
         trace('holder', holder);
         return holder;
       },

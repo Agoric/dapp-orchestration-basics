@@ -31,7 +31,7 @@ const makeOffer = (
       {
         source: 'contract',
         instance,
-        publicInvitationMaker: 'makeAccount',
+        publicInvitationMaker: 'makeAccountInvitationMaker',
       },
       { give, want },
       undefined,
@@ -51,7 +51,7 @@ const makeOffer = (
   };
 
 // TODO: this can be for making an account
-const OsmoSwap = () => {
+const MakeAccount = () => {
 const { walletConnection } = useAgoric();
 const { addNotification } = useContext(NotificationContext);
 
@@ -95,4 +95,4 @@ const { addNotification } = useContext(NotificationContext);
   );
 };
 
-export { OsmoSwap };
+export { MakeAccount };
