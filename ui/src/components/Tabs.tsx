@@ -23,7 +23,7 @@ type DynamicToastChild = {
 
 const Tabs = () => {
   // tab state related functions
-  const [activeTab, setActiveTab] = useState('Osmosis Swap');
+  const [activeTab, setActiveTab] = useState('Make Account');
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -51,7 +51,7 @@ const Tabs = () => {
           className="daisyui-tabs-boxed daisyui-tabs daisyui-tabs-lg"
         >
           <TabWrapper
-            tab="Osmosis Swap"
+            tab="Make Account"
             activeTab={activeTab}
             handleTabClick={handleTabClick}
           >
