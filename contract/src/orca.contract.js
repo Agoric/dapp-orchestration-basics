@@ -67,12 +67,12 @@ export const start = async (zcf, privateArgs, baggage) => {
 
   // todo: define in terms for the contract
   const chainId = 'cosmoshub-4';
-  const hostConnectionId = 'connection-1';
-  const controllerConnectionId = 'connection-2';
+  const hostConnectionId = 'connection-0';
+  const controllerConnectionId = 'connection-1';
   const bondDenom = 'uatom';
-  const icqEnabled = true;
+  const icqEnabled = false;
 
-  trace('inside start function');
+  trace('inside start function: v1');
   trace("privateArgs", privateArgs);
 
   // destructure privateArgs to extract necessary services

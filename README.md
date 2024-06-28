@@ -1,6 +1,6 @@
 # Simple Agoric ORChAstration Template
 
-<img src="./images/orca.png" width="100%" />
+<img src="./images/orca2.png" width="100%" />
 
 ## Overview
 
