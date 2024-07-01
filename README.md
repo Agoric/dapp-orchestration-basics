@@ -329,6 +329,14 @@ const publicFacet = zone.exo(
 
 ```
 
+```
+2024-07-01T19:16:10.669Z SwingSet: vat: v104: Warning for now: vow expected, not promise Promise [Promise] {} (Error#1)
+2024-07-01T19:16:10.739Z SwingSet: xsnap: v104: Error#2: value for vow is not durable: slot 0 of { body: '#{"#tag":"Vow","payload":{"vowV0":"$0.Alleged: VowInternalsKit vowV0"}}', slots: [ 'o+40' ] }
+2024-07-01T19:16:10.739Z SwingSet: xsnap: v104: Error: value for (a string) is not durable: slot 0 of (an object)
+```
+
+Make sure the offer handlers are in the top-level scope, so they don't inherit any "side effects"
+
 # tests from root directory
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
