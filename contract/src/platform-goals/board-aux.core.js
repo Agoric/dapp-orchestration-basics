@@ -1,5 +1,5 @@
 // @ts-check
-import { E, Far } from '@endo/far';
+// import { E, Far } from '@endo/far';
 
 const { Fail } = assert;
 
@@ -17,9 +17,11 @@ export const BOARD_AUX = 'boardAux';
  */
 export const makeBoardAuxManager = (zone, marshalData, powers) => {
   const { board, chainStorage } = powers;
+
   const store = zone.mapStore(BOARD_AUX);
   const boardAux = E(chainStorage).makeChildNode(BOARD_AUX);
-
+  console.log("STORE:")
+  console.log(store)
   const formatValue = value => {
     const aux = marshalData.toCapData(value);
     // max length?
@@ -88,7 +90,9 @@ export const marshalData = harden({
 
 /** @param {BootstrapPowers} powers */
 export const produceBoardAuxManager = async powers => {
+  console.log("TRYING TO EXTRACT ZONE")
   const { zone } = powers;
+  console.log("DONE TRYING TO EXTRACT ZONE")
   const { board } = powers.consume;
   /** @type {import('../types').NonNullChainStorage['consume']} */
   // @ts-expect-error cast

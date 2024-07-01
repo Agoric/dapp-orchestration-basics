@@ -16,7 +16,11 @@ export const installContract = async (
   { consume: { zoe }, installation: { produce: produceInstallation } },
   { name, bundleID },
 ) => {
+  console.log('installContract function: ', bundleID);
+  console.log('installContract zoe: ', zoe);
   const installation = await E(zoe).installBundleID(bundleID);
+  console.log('installContract: after installBundleID');
+  console.log(installation);
   produceInstallation[name].reset();
   produceInstallation[name].resolve(installation);
   console.log(name, '(re-)installed as', bundleID.slice(0, 8));
@@ -36,27 +40,31 @@ export const installContract = async (
  *   issuerNames?: string[];
  * }} opts
  *
+ * @param privateArgs
  * @typedef {Partial<Parameters<Awaited<BootstrapPowers['consume']['startUpgradable']>>[0]>} StartArgs
  */
 export const startContract = async (
   powers,
   { name, startArgs, issuerNames },
-  privateArgs
+  privateArgs,
 ) => {
+  console.log('startContract... v0.0.55');
 
-  console.log("POWERS")
-  console.log(powers)
-  console.log(privateArgs)
   const {
     consume: { startUpgradable },
     installation: { consume: consumeInstallation },
     instance: { produce: produceInstance },
   } = powers;
 
+  console.log('POWERS');
+  console.log(powers);
+  console.log(startArgs);
+  console.log(privateArgs);
+
   const installation = await consumeInstallation[name];
 
   console.log(name, 'start args:', startArgs);
-  
+
   const started = await E(startUpgradable)({
     ...startArgs,
     installation,
@@ -129,8 +137,3 @@ export const sanitizePathSegment = name => {
   assertPathSegment(candidate);
   return candidate;
 };
-
-
-
-
-

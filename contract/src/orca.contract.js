@@ -1,111 +1,216 @@
-// @ts-check
+// import { makeTracer, StorageNodeShape } from '@agoric/internal';
+import { Far, E } from '@endo/far';
+import { makeTracer } from '@agoric/internal';
+import { TimerServiceShape } from '@agoric/time';
+import { prepareVowTools } from '@agoric/vow';
+// import { heapVowE as E } from '@agoric/vow/vat.js';
+// import { heapVowE } from '@agoric/vow/vat.js';
 
-// import { Far, E } from '@endo/far';
-// import { V as E } from '@agoric/vow/vat.js';
-// import V from '@agoric/vow/src/E.js';
-// import { V as _E } from "../../../../agoric-sdk/packages/vow/vat.js"
+import { deeplyFulfilled } from '@endo/marshal';
 
-
-// import { M, getCopyBagEntries, makeCopyBag } from '@endo/patterns';
-import { M } from '@endo/patterns';
-import { makeCopyBag, getCopyBagEntries } from '@agoric/store'
-import { AssetKind } from '@agoric/ertp/src/amountMath.js';
-import '@agoric/zoe/exported.js';
-import { AmountShape, AmountMath, PaymentShape } from '@agoric/ertp';
-import { atomicRearrange } from '@agoric/zoe/src/contractSupport/atomicTransfer.js';
-import { makeMyAddressNameAdminKit } from '@agoric/vats/src/core/utils';
-// import { makeOnewayPriceAuthorityKit } from '@agoric/zoe/src/contractSupport';
 import {
-    defineERecorderKit,
-    prepareRecorderKitMakers,
-    provideAll
-} from '@agoric/zoe/src/contractSupport/index.js';
-import { handleParamGovernance } from '@agoric/governance/src/contractHelper.js';
-import { ParamTypes } from '@agoric/governance/src/constants.js';
-
-import { makeTracer, StorageNodeShape } from '@agoric/internal';
+  prepareRecorderKitMakers,
+  provideAll,
+} from '@agoric/zoe/src/contractSupport';
+import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
+import { M, mustMatch } from '@endo/patterns';
+// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
+// import { prepareLocalChainAccountKit } from '@agoric/orchestration/src/exos/local-chain-account-kit.js';
 
-// ISSUE IMPORTING THIS, which promted yarn link: 
-/*
-    [!] (plugin configureBundleID) TypeError: Failed to load module "./src/orchdev.contract.js" in package "file:///Users/jovonni/Documents/projects/experiments/orca/contract/" (1 underlying failures: Cannot find external module "@agoric/orchestration/src/exos/stakingAccountKit.js" in package file:///Users/jovonni/Documents/projects/experiments/orca/contract/
-src/orchdev.proposal.js
-*/
-import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
+import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-account-kit.js';
+// import { makeChainHub } from '@agoric/orchestration/src/utils/chain-hub.js';
 
-  
+///// sendanywhere:
+import { withdrawFromSeat } from '@agoric/zoe/src/contractSupport/zoeHelpers.js';
+import { AmountShape } from '@agoric/ertp';
+import { CosmosChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
+import { provideOrchestration } from './utils/start-helper.js';
 
-
-// import { Fail } from '@agoric/assert';
-const { Fail } = assert;
-
-import { makeOrchestrationFacade } from './facade.js';
-import { orcUtils } from './orc.js';
-
+// create a tracer for logging with the label 'OrchDev1'
 const trace = makeTracer('OrchDev1');
+export const StorageNodeShape = M.remotable('StorageNode');
 
 /**
- * @import { Baggage } from '@agoric/vat-data';
- * @import { IBCConnectionID } from '@agoric/vats';
- * @import { TimerService } from '@agoric/time';
- * @import { ICQConnection, OrchestrationService } from '../types.js';
+ * @import {Baggage} from '@agoric/vat-data';
+ * @import {IBCConnectionID} from '@agoric/vats';
+ * @import {TimerService} from '@agoric/time';
+ * @import {ICQConnection, OrchestrationService, IcaAccount, CosmosValidatorAddress, Orchestrator} from '../types.js';
+ * @import {LocalChain} from '@agoric/vats/src/localchain.js';
+ * @import {NameHub} from '@agoric/vats';
+ * @import {Remote} from '@agoric/internal';
  */
 
+/**
+ * @import {Orchestrator, IcaAccount, CosmosValidatorAddress} from './types.js'
+ * @import {TimerService} from '@agoric/time';
+ * @import {Baggage} from '@agoric/vat-data';
+ * @import {LocalChain} from '@agoric/vats/src/localchain.js';
+ * @import {NameHub} from '@agoric/vats';
+ * @import {Remote} from '@agoric/internal';
+ * @import {OrchestrationService} from '../service.js';
+ */
+
+/** @type {ContractMeta<typeof start>} */
 export const meta = harden({
-    privateArgsShape: {
-      orchestration: M.remotable('orchestration'),
-      storageNode: StorageNodeShape,
-      marshaller: M.remotable('Marshaller'),
-      timer: M.remotable('TimerService'),
-    },
+  // define the shapes of the private arguments for the contract
+  privateArgsShape: {
+    agoricNames: M.remotable('agoricNames'),
+    orchestration: M.remotable('orchestration'),
+    storageNode: StorageNodeShape,
+    marshaller: M.remotable('marshaller'),
+    timer: TimerServiceShape,
+    localchain: M.remotable('localchain'),
+  },
 });
 
+// export the privateArgsShape for use elsewhere
 export const privateArgsShape = meta.privateArgsShape;
 
-
-export const terms = harden({
-    
-});
-
+/**
+ * @typedef {{
+ *   chainId: string;
+ *   hostConnectionId: IBCConnectionID;
+ *   controllerConnectionId: IBCConnectionID;
+ *   bondDenom: string;
+ *   icqEnabled: boolean;
+ * }} OrcaTerms
+ */
 
 /**
- *
- * @param {ZCF<StakeAtomTerms>} zcf
- * @param {{
-*  orchestration: OrchestrationService;
-*  storageNode: StorageNode;
-*  marshaller: Marshaller;
-*  timer: TimerService;
-* }} privateArgs
-* @param {Baggage} baggage
-*/
-export const start = async (zcf , privateArgs, baggage) => {
+ * handler function for creating and managing accounts
+ * @param {Orchestrator} orch
+ * @param {object} ctx
+ * @param {ZCF} ctx.zcf
+ * @param {ZCFSeat} seat
+ * @param {object} offerArgs
+ */
+const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
+  const { give } = seat.getProposal();
+  trace("version 0.1.15");
+  trace("give");
+  trace(give);
+  trace("inside createAccounts");
+  trace("orch");
+  trace(orch);
+  trace("seat");
+  trace(seat);
+  // trace("offerArgs")
+  // trace(offerArgs) // conversion throw because undefined for now
+  trace("zcf");
+  trace(zcf);
 
-    console.log("===== CONTRACT STARTING :) ======")
-    const { hostConnectionId, controllerConnectionId, bondDenom } = zcf.getTerms();
-    const { orchestration, marshaller, storageNode, timer } = privateArgs;
+  try {
+    // const chain = await E(orch).getChain('osmosis'); //host code vs guest
+    const chain = await orch.getChain('osmosis');
+    trace("chain");
+    trace(chain);
 
-    const zone = makeDurableZone(baggage);
+    // const info = await E(chain).getChainInfo();
+    const info = await chain.getChainInfo();
+    trace('info', info);
 
-    const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
+    // const localChain = await E(orch).getChain('agoric');
+    // trace("localChain");
+    // trace(localChain);
 
-    const makeStakingAccountKit = prepareStakingAccountKit(
-        baggage,
-        makeRecorderKit,
-        zcf,
-    );
+    // const [chainAccount, localAccount] = await Promise.all([
+    //   E(chain).makeAccount(),
+    //   E(localChain).makeAccount(),
+    // ]);
 
-    const publicFacet = zone.exo(
-        'Orca Public Facet', 
-        M.interface('StakeAtomI', {
-            makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
-            makeAcountInvitationMaker: M.call().returns(M.promise()),
-        }),
-        {
-        
-    });
+    // const chainAddress = await E(chainAccount).getAddress();
+    // trace("chainAddress");
+    // trace(chainAddress);
 
-    return harden({publicFacet});
-}
+    // const localAddress = await E(localAccount).getAddress();
+    // trace("localAddress");
+    // trace(localAddress);
+    //M.remoteable
+  } catch (error) {
+    console.error('Error in createAccounts:', error);
+  }
+};
 
-harden(start)
+export const start = async (zcf, privateArgs, baggage) => {
+  // const zone = makeDurableZone(baggage);
+  trace('inside start function: v1.0.59');
+  trace("privateArgs", privateArgs);
+
+  // destructure privateArgs to extract necessary services
+  const { orchestration, marshaller, storageNode, timer, localchain, agoricNames } = privateArgs;
+  trace('orchestration: ', orchestration);
+  trace('marshaller: ', marshaller);
+  trace('storageNode: ', storageNode);
+  trace('timer: ', timer);
+  trace('localchain: ', localchain);
+  trace('agoricNames: ', agoricNames);
+
+  // provide all necessary nodes, creating them if they don't exist
+  const { accountsStorageNode } = await provideAll(baggage, {
+    accountsStorageNode: () => E(storageNode).makeChildNode('accounts'),
+  });
+  trace('accountsStorageNode', accountsStorageNode);
+
+  // prepare recorder kit makers for recording state changes
+  // const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
+  // trace('makeRecorderKit', makeRecorderKit);
+
+  // const { chainHub, orchestrate, zone } = provideOrchestration(
+  const { orchestrate, chainHub, vowTools, zone } = provideOrchestration(
+  // const { chainHub, orchestrate, vowTools } = provideOrchestration(
+    zcf,
+    baggage,
+    {
+      agoricNames,
+      orchestrationService: orchestration,
+      storageNode,
+      timerService: timer,
+      localchain,
+    },
+    marshaller
+  );
+
+  console.log("Got an orchestrate object 0.52.109");
+  console.log(orchestrate);
+
+  // const chains = await chainHub.getChainsAndConnection()
+  // console.log("chains from chainhub")
+  // console.log(chains)
+
+  const createAccounts = orchestrate(
+    'LSTTia',
+    { zcf },
+    createAccountsFn,
+  );
+
+  const ConnectionInfoShape = M.record(); // TODO
+
+  const publicFacet = zone.exo(
+    'OrcaFacet',
+    M.interface('OrcaFacet', {
+      makeAccountInvitation: M.call().returns(M.promise()), //returns remotable, M.promise() // telling exo machibery to 
+    }),
+    {
+      async makeAccountInvitation() {
+        const invitation = await zcf.makeInvitation(
+          createAccounts,
+          'Create accounts',
+          undefined,
+          harden({
+            give: {},
+            want: {},
+            exit: M.any(),
+          }),
+        );
+        // return Promise.resolve(invitation);
+        return invitation;
+        // return M.promise()
+      },
+    },
+  );
+
+  return harden({ publicFacet });
+};
+
+/** @typedef {typeof start} OrcaSF */
