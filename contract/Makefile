@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric15uetlsk8yu03dyxxpq53hmrsc99xnz7hf26rfh
+ADDR=agoric18ahqx6gekgyc032pyncdy39xf3afcgutxmj5xq
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -153,6 +153,9 @@ provision-smart-wallet:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys list
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from ${ADDR} -y -b block
 
+fund-dev:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000ubld -y
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000uist -y
 # add address
 add-address:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add alice || true
@@ -203,6 +206,8 @@ copy-bn-js:
 copy-vow-js:
 	cp ./PATCH-vat.js ../node_modules/@agoric/vow/vat.js
 	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/vow/vat.js
+	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/orchestration/node_modules/@agoric/vow/vat.js
+	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/async-flow/node_modules/@agoric/vow/vat.js
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"
 patch: 
 	patch ../node_modules/bn.js/lib/bn.js < ../xxpatches/bn.js+5.2.1.patch
@@ -210,18 +215,35 @@ patch:
 cleanc:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v ./*"
 
+build:
+	yarn build:deployer
+buildc:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
+deployc:
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
+deploy:
+	yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js
+test-orca:
+	yarn test ./test/test-orca-contract.js
+
+
 # todo remove clean install steps after debugging
-dev-working:
+e2e:
 	make clean
+	make cleanc
+	yarn cache clean
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn cache clean"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v /root/*"
 	yarn run build:deployer
 	make copy-project  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn install"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@0.1.1-upgrade-16-dev-d45b478.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-6bc363b.0"
+# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-6bc363b.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-6bc363b.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
 	make copy-bn-js  
 	make copy-vow-js
@@ -230,6 +252,3 @@ dev-working:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 # todo: figure out why this sequence # is always off by 1 forcing a retry
-
-test-orca:
-	yarn test ./test/test-orca-contract.js

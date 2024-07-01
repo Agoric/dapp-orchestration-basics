@@ -87,6 +87,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
 
   trace('awaiting consume.orchestration');
   const orchestration = await orchestrationP;
+  const agoricNames = await agoricNamesP;
   trace('orchestration', orchestration);
   const mainNode = await E(chainStorage).makeChildNode('orca');
   const storageNode = await E(mainNode).makeChildNode('state');
@@ -103,7 +104,8 @@ export const startOrcaContract = async (permittedPowers, config) => {
     marshaller,
     orchestration: await orchestration,
     timer: await chainTimerService,
-    localchain: await localchain
+    localchain: await localchain,
+    agoricNames: await agoricNames,
   };
 
 

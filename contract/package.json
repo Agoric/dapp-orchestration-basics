@@ -20,12 +20,16 @@
     "test": "ava --verbose",
     "lint": "eslint '**/*.js'",
     "lint:types": "tsc -p jsconfig.json",
-    "lint:fix": "eslint --fix '**/*.js'"
+    "lint:fix": "eslint --fix '**/*.js'",
+    "e2e": "make e2e",
+    "execc": "make exec",
+    "fund:dev": "make fund-dev",
+    "deployc": "make deployc"
   },
   "devDependencies": {
     "@agoric/eslint-config": "^0.4.1-upgrade-16-fi-dev-8879538.0",
     "@agoric/inter-protocol": "^0.16.2-upgrade-16-fi-dev-8879538.0",
-    "@agoric/orchestration": "^0.1.1-upgrade-16-dev-d45b478.0",
+    "@agoric/orchestration": "0.1.1-dev-6bc363b.0",
     "@agoric/vats": "^0.15.2-dev-3aa5d66.0",
     "@endo/bundle-source": "3.2.3",
     "@endo/eslint-plugin": "^0.5.2",
@@ -54,8 +58,9 @@
   },
   "dependencies": {
     "@agoric/async-flow": "^0.1.1-upgrade-16-fi-dev-8879538.0",
+    "@agoric/ertp": "0.16.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/internal": "^0.3.3-upgrade-16-fi-dev-8879538.0",
-    "@agoric/orchestration": "^0.1.1-upgrade-16-dev-d45b478.0",
+    "@agoric/orchestration": "^0.1.1-dev-6bc363b.0",
     "@agoric/time": "^0.3.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/vats": "0.15.2-upgrade-16-fi-dev-8879538.0",
     "@agoric/vow": "dev",
@@ -125,7 +130,7 @@
     "@agoric/internal": "^0.3.3-upgrade-16-fi-dev-8879538.0",
     "@agoric/network": "^0.1.1-upgrade-16-dev-8879538.0",
     "@agoric/notifier": "^0.6.3-upgrade-16-fi-dev-8879538.0",
-    "@agoric/orchestration": "^0.1.1-upgrade-16-dev-d45b478.0",
+    "@agoric/orchestration": "0.1.1-dev-6bc363b.0",
     "@agoric/sharing-service": "^0.2.12-u14.0",
     "@agoric/smart-wallet": "^0.5.4-upgrade-16-fi-dev-8879538.0",
     "@agoric/store": "0.9.3-upgrade-16-fi-dev-8879538.0",

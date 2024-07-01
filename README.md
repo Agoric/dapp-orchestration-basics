@@ -206,7 +206,98 @@ export const meta = harden({
 export const privateArgsShape = meta.privateArgsShape;
 ```
 
-# tests from parent directory
+16) 
+```
+Error#1: redefinition of durable kind " Durable Publish Kit "
+```
+
+```javascript
+const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
+```
+it throwing this error. `provideOrchestration` also calls `prepareRecorderKitMakers`. Also ensure the `remotePowers` has the following keys:
+```javascript
+orchestrationService: remotePowers.orchestration,
+timerService: remotePowers.timer,
+```
+
+Because `makeOrchestrationFacade` expects the following remotePowers structure:
+```javascript
+/**
+ *
+ * @param {{
+ *   zone: Zone;
+ *   timerService: Remote<TimerService> | null;
+ *   zcf: ZCF;
+ *   storageNode: Remote<StorageNode>;
+ *   orchestrationService: Remote<OrchestrationService> | null;
+ *   localchain: Remote<LocalChain>;
+ * }} powers
+```
+
+17)
+```
+TypeError: orchestrate: no function
+```
+
+If i log `asyncFlowTools`:
+```
+asyncFlowTools
+2024-06-30T02:33:01.781Z SwingSet: vat: v38: { prepareAsyncFlowKit: [Function: prepareAsyncFlowKit], asyncFlow: [Function: asyncFlow], adminAsyncFlow: Object [Alleged: AdminAsyncFlow] {}, allWokenP: Promise [Promise] {} }
+```
+
+```
+{
+  "name": "@agoric/async-flow",
+  "version": "0.1.1-upgrade-16-fi-dev-8879538.0+8879538",
+```
+
+this is the `orchestrate` function in `@agoric/orchestration@0.1.1-upgrade-16-fi-dev-8879538.0+8879538`
+```javascript
+orchestrate(durableName, ctx, fn) {
+    /** @type {Orchestrator} */
+    const orc = {
+    async getChain(name) {
+        if (name === 'agoric') {
+        return makeLocalChainFacade(localchain);
+        }
+        return makeRemoteChainFacade(name);
+    },
+    makeLocalAccount() {
+        return E(localchain).makeAccount();
+    },
+    getBrandInfo: anyVal,
+    asAmount: anyVal,
+    };
+    return async (...args) => fn(orc, ctx, ...args);
+},
+```
+
+Here is the same `orchestrate` function in `@agoric/orchestration@00.1.1-dev-6bc363b.0+6bc363b`:
+
+```javascript
+orchestrate(durableName, hostCtx, guestFn) {
+    const subZone = zone.subZone(durableName);
+    const hostOrc = makeOrchestrator();
+    const [wrappedOrc, wrappedCtx] = prepareEndowment(subZone, 'endowments', [
+    hostOrc,
+    hostCtx,
+    ]);
+    const hostFn = asyncFlow(subZone, 'asyncFlow', guestFn);
+    const orcFn = (...args) =>
+    // TODO remove the `when` after fixing the return type
+    // to `Vow<HostReturn>`
+    when(hostFn(wrappedOrc, wrappedCtx, ...args));
+    return harden(orcFn);
+},
+```
+
+Hypothesis: `prepareEndowment` doesn't exist, so version issue
+
+
+18)
+If you see `x.js` can't be resolved from an `@agoric/...` npm package, there may be a version mismatch where that version isn't exporting said file. Should be fixed with more stable versions eventually. 
+
+# tests from root directory
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
 ```
@@ -216,7 +307,7 @@ without clean:
 yarn workspace dapp-agoric-orca-contract deploy
 ```
 
-# deploy from directory 
+# deploy from root directory 
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca contract:deploy
 ```
@@ -224,6 +315,11 @@ yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -
 without clean:
 ```
 yarn workspace dapp-agoric-orca-contract deploy
+```
+
+# e2e build/deploy
+```
+yarn workspace dapp-agoric-orca-contract deployc
 ```
 
 # e2e environment using `multichain-testing`

@@ -31,7 +31,7 @@ const makeOffer = (
       {
         source: 'contract',
         instance,
-        publicInvitationMaker: 'makeAccountInvitationMaker',
+        publicInvitationMaker: 'makeAccountInvitation',
       },
       { give, want },
       undefined,

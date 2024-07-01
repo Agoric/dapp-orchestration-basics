@@ -1,8 +1,10 @@
 // import { makeTracer, StorageNodeShape } from '@agoric/internal';
+import { Far } from '@endo/far';
 import { makeTracer } from '@agoric/internal';
 import { TimerServiceShape } from '@agoric/time';
 import { prepareVowTools } from '@agoric/vow';
 import { heapVowE as E } from '@agoric/vow/vat.js';
+import { deeplyFulfilled } from '@endo/marshal';
 
 import {
   prepareRecorderKitMakers,
@@ -10,11 +12,21 @@ import {
 } from '@agoric/zoe/src/contractSupport';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
-import { M } from '@endo/patterns';
-import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
-import { prepareLocalChainAccountKit } from '@agoric/orchestration/src/exos/local-chain-account-kit.js';
+import { M, mustMatch } from '@endo/patterns';
+// import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmos-orchestration-account.js';
+// import { prepareLocalChainAccountKit } from '@agoric/orchestration/src/exos/local-chain-account-kit.js';
 
-import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
+import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-account-kit.js';
+// import { makeChainHub } from '@agoric/orchestration/src/utils/chain-hub.js';
+
+
+
+///// sendanywhere:
+import { withdrawFromSeat } from '@agoric/zoe/src/contractSupport/zoeHelpers.js';
+import { AmountShape } from '@agoric/ertp';
+import { CosmosChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
+import { provideOrchestration } from './utils/start-helper.js';
+
 
 // create a tracer for logging with the label 'OrchDev1'
 const trace = makeTracer('OrchDev1');
@@ -24,13 +36,27 @@ export const StorageNodeShape = M.remotable('StorageNode');
  * @import {Baggage} from '@agoric/vat-data';
  * @import {IBCConnectionID} from '@agoric/vats';
  * @import {TimerService} from '@agoric/time';
- * @import {ICQConnection, OrchestrationService} from '../types.js';
+ * @import {ICQConnection, OrchestrationService, IcaAccount, CosmosValidatorAddress, Orchestrator} from '../types.js';
+ * @import {LocalChain} from '@agoric/vats/src/localchain.js';
+ * @import {NameHub} from '@agoric/vats';
+ * @import {Remote} from '@agoric/internal';
+ */
+
+/**
+ * @import {Orchestrator, IcaAccount, CosmosValidatorAddress} from './types.js'
+ * @import {TimerService} from '@agoric/time';
+ * @import {Baggage} from '@agoric/vat-data';
+ * @import {LocalChain} from '@agoric/vats/src/localchain.js';
+ * @import {NameHub} from '@agoric/vats';
+ * @import {Remote} from '@agoric/internal';
+ * @import {OrchestrationService} from '../service.js';
  */
 
 /** @type {ContractMeta<typeof start>} */
 export const meta = harden({
   // define the shapes of the private arguments for the contract
   privateArgsShape: {
+    agoricNames: M.remotable('agoricNames'),
     orchestration: M.remotable('orchestration'),
     storageNode: StorageNodeShape,
     marshaller: M.remotable('marshaller'),
@@ -55,6 +81,7 @@ export const privateArgsShape = meta.privateArgsShape;
 /**
  * @param {ZCF<OrcaTerms>} zcf
  * @param {{
+ *   agoricNames: Remote<NameHub>;
  *   orchestration: OrchestrationService;
  *   storageNode: StorageNode;
  *   marshaller: Marshaller;
@@ -65,27 +92,17 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 export const start = async (zcf, privateArgs, baggage) => {
 
-  // todo: define in terms for the contract
-  const chainId = 'cosmoshub-4';
-  const hostConnectionId = 'connection-0';
-  const controllerConnectionId = 'connection-1';
-  const bondDenom = 'uatom';
-  const icqEnabled = false;
-
-  trace('inside start function: v1');
+  trace('inside start function: v1.0.47');
   trace("privateArgs", privateArgs);
 
   // destructure privateArgs to extract necessary services
-  const { orchestration, marshaller, storageNode, timer, localchain } = privateArgs;
-  trace('orchestration', orchestration);
-  trace('marshaller', marshaller);
-  trace('storageNode', storageNode);
-  trace('timer', timer);
-  trace('localchain', localchain);
-
-  // create a durable zone for storing contract state
-  const zone = makeDurableZone(baggage);
-  trace('zone', zone);
+  const { orchestration, marshaller, storageNode, timer, localchain, agoricNames } = privateArgs;
+  trace('orchestration: ', orchestration);
+  trace('marshaller: ', marshaller);
+  trace('storageNode: ', storageNode);
+  trace('timer: ', timer);
+  trace('localchain: ', localchain);
+  trace('agoricNames: ', agoricNames);
 
   // provide all necessary nodes, creating them if they don't exist
   const { accountsStorageNode } = await provideAll(baggage, {
@@ -94,126 +111,135 @@ export const start = async (zcf, privateArgs, baggage) => {
   trace('accountsStorageNode', accountsStorageNode);
 
   // prepare recorder kit makers for recording state changes
-  const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
-  trace('makeRecorderKit', makeRecorderKit);
+  // const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
+  // trace('makeRecorderKit', makeRecorderKit);
 
-  // prepare vow tools for promise handling
-  const vowTools = prepareVowTools(zone.subZone('vows'));
-  trace('vowTools', vowTools);
-
-  const makeLocalOrchestrationAccountKit = prepareLocalChainAccountKit(
-    zone,
-    makeRecorderKit,
+  // const { chainHub, orchestrate, zone } = provideOrchestration(
+  // const { orchestrate, chainHub, vowTools, zone } = provideOrchestration(
+  const { chainHub, orchestrate, vowTools, zone } = provideOrchestration(
     zcf,
-    privateArgs.timerService,
-    vowTools,
-    makeChainHub(privateArgs.agoricNames),
-  );
-
-  // prepare the function to create cosmos orchestration accounts
-  const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
-    zone,
-    makeRecorderKit,
-    vowTools,
-    zcf,
-  );
-  trace('makeCosmosOrchestrationAccount', makeCosmosOrchestrationAccount);
-
-  async function makeLocalAccountKit() {
-    trace('making local account kit');
-    const account = await E(localchain).makeAccount();
-    trace('local account', account);
-    const address = await E(account).getAddress();
-    trace('local account address', address);
-    return makeLocalOrchestrationAccountKit({
-      account,
-      address: harden({
-        address,
-        addressEncoding: 'bech32',
-        chainId: 'local',
-      }),
-      storageNode: privateArgs.storageNode,
-    });
-  }
-
-  // function to create an account kit
-  async function makeAccountKit() {
-    trace('making account kit');
-
-    // create an account using the orchestration service
-    const account = await E(orchestration).makeAccount(
-      chainId,
-      hostConnectionId,
-      controllerConnectionId,
-    );
-    trace('account', account);
-
-    // conditionally provide ICQ connection based on icqEnabled flag
-    const icqConnection = icqEnabled
-      ? await E(orchestration).provideICQConnection(controllerConnectionId)
-      : undefined;
-    trace('icqConnection', icqConnection);
-
-    // get the address of the created account
-    const accountAddress = await E(account).getAddress();
-    trace('account address', accountAddress);
-
-    // create a storage node for the account using its address
-    const accountNode = await E(accountsStorageNode).makeChildNode(
-      accountAddress.address,
-    );
-    trace('account node', accountNode);
-
-    // create a holder for the account with orchestration tools
-    const holder = makeCosmosOrchestrationAccount(accountAddress, bondDenom, {
-      account,
-      storageNode: accountNode,
-      icqConnection,
-      timer,
-    });
-    trace('holder', holder);
-    return holder;
-  }
-
-  // create the public facet of the contract
-  const publicFacet = zone.exo(
-    'OrcaFacet',
-    M.interface('OrcaI', {
-      makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
-      makeAccountInvitationMaker: M.callWhen().returns(InvitationShape),
-    }),
+    baggage,
     {
-      // method to create an account and return its holder
-      async makeAccount() {
-        trace('makeAccount');
-        const { holder } = await makeLocalAccountKit();
-        trace('holder address');
-        trace('holder', holder);
-        return holder;
-      },
+      agoricNames,
+      orchestrationService: orchestration,
+      storageNode,
+      timerService: timer,
+      localchain,
+    },
+    marshaller,
+  );
 
-      // method to create an invitation maker for creating accounts
-      makeAccountInvitationMaker() {
-        trace('makeCreateAccountInvitation');
-        return zcf.makeInvitation(
-          // offer handler
-          async seat => {
-            seat.exit();
-            const holder = await makeAccountKit();
-            trace('holder', holder);
-            return holder.asContinuingOffer();
-          },
-          // description
-          'wantStakingAccount',
-          undefined, // custom details
-          undefined, // proposal shape
-        );
-      },
+  console.log("Got an orchestrate object 0.52.91")
+  console.log(orchestrate)
+  
+
+  // const chains = await chainHub.getChainsAndConnection()
+  // console.log("chains from chainhub")
+  // console.log(chains)
+
+  /**
+   * handler function for creating and managing accounts
+   * @param {Orchestrator} orch
+   * @param {object} ctx
+   * @param {ZCF} ctx.zcf
+   * @param {ZCFSeat} seat
+   * @param {object} offerArgs
+   */
+  // const createAccounts = async (orch, { zcf }, seat, offerArgs) => {
+  /** @type {OfferHandler} */
+  const createAccounts = orchestrate(
+    'LSTTia',
+    { zcf },
+    // eslint-disable-next-line no-shadow -- this `zcf` is enclosed in a membrane
+    // async (/** @type {Orchestrator} */ orch, { zcf }, _seat, _offerArgs) => {
+    async (/** @type {Orchestrator} */ orch, { zcf }, seat, offerArgs) => {
+      // TODO:
+      // mustMatch(offerArgs, harden({ chainName: M.scalar(), destAddr: M.string() }));
+      const { give } = seat.getProposal();
+      trace("version 0.1.4")
+      trace("give")
+      trace(give)
+      trace("inside createAccounts")
+      trace("orch")
+      trace(orch)
+      trace("seat")
+      trace(seat)
+      // trace("offerArgs")
+      // trace(offerArgs) // conversion throw because undefined for now
+      trace("zcf")
+      trace(zcf)
+      
+      // const chain = await orch.getChain('osmosis');
+      // const chain = await E(orch).getChain('osmosis');
+      try {
+        const chain = await E(orch).getChain('osmosis');
+        trace("chain");
+        trace(chain);
+  
+        const info = await E(chain).getChainInfo();
+        trace('info', info);
+  
+        const localChain = await E(orch).getChain('agoric');
+        trace("localChain");
+        trace(localChain);
+  
+        const [chainAccount, localAccount] = await Promise.all([
+          E(chain).makeAccount(),
+          E(localChain).makeAccount(),
+        ]);
+  
+        const chainAddress = await E(chainAccount).getAddress();
+        trace("chainAddress");
+        trace(chainAddress);
+  
+        const localAddress = await E(localAccount).getAddress();
+        trace("localAddress");
+        trace(localAddress);
+        
+      } catch (error) {
+        console.error('Error in createAccounts:', error);
+      }
+      // const payments = await withdrawFromSeat(zcf, seat, give);
+      // console.log("paymentss")
+      // console.log(payments)
+
+      // await deeplyFulfilled(
+      //   objectMap(payments, payment =>
+      //     localAccount.deposit(payment),
+      //   ),
+      // );
+
+      // seat.exit();
+
+      // await localAccount
+      // .transferSteps(give.Stable, transferMsg)
+      // .then(_txResult =>
+      //   chainAccount.delegate(offerArgs.validator, offerArgs.staked),
+      // )
+      // .catch(e => console.error(e));
     },
   );
 
-  // return the public facet of the contract
-  return { publicFacet };
+  // const accountHandler = orchestrate('OrcaAccountHandler', { zcf }, createAccounts);
+
+  const makeAccountInvitation = () =>
+    zcf.makeInvitation(
+      createAccounts,
+      'Create and manage accounts',
+      undefined,
+      harden({
+        give: {},
+        want: {}, // XXX ChainAccount Ownable?
+        exit: M.any(),
+      }),
+    );
+    
+
+  const publicFacet = Far('OrcaFacet', {
+    makeAccountInvitation,
+  });
+
+  return harden({ publicFacet });
 };
 
 /** @typedef {typeof start} OrcaSF */

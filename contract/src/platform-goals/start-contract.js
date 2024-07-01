@@ -48,7 +48,7 @@ export const startContract = async (
   { name, startArgs, issuerNames },
   privateArgs,
 ) => {
-  console.log('startContract...');
+  console.log('startContract... v0.0.55');
 
   const {
     consume: { startUpgradable },

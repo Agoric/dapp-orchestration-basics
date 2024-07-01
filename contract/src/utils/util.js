@@ -2,12 +2,28 @@ import { prepareAsyncFlowTools } from '@agoric/async-flow';
 import { prepareVowTools } from '@agoric/vow';
 import { prepareRecorderKitMakers } from '@agoric/zoe/src/contractSupport/recorder.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
-import { prepareLocalOrchestrationAccountKit } from '../exos/local-orchestration-account.js';
-import { makeOrchestrationFacade } from '../facade.js';
-import { makeChainHub } from '../exos/chain-hub.js';
-import { prepareRemoteChainFacade } from '../exos/remote-chain-facade.js';
-import { prepareCosmosOrchestrationAccount } from '../exos/cosmos-orchestration-account.js';
-import { prepareLocalChainFacade } from '../exos/local-chain-facade.js';
+
+// import { prepareLocalOrchestrationAccountKit } from '../exos/local-orchestration-account.js';
+import { prepareLocalOrchestrationAccountKit } from '@agoric/orchestration/src/exos/local-orchestration-account.js';
+
+import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-account-kit.js';
+
+// import { makeOrchestrationFacade } from '../facade.js';
+import { makeOrchestrationFacade } from '@agoric/orchestration/src/facade.js';
+
+
+// import { makeChainHub } from '../exos/chain-hub.js';
+import { makeChainHub } from '@agoric/orchestration/src/exos/chain-hub.js';
+
+// import { prepareRemoteChainFacade } from '../exos/remote-chain-facade.js';
+import { prepareRemoteChainFacade } from '@agoric/orchestration/src/exos/remote-chain-facade.js';
+
+// import { prepareCosmosOrchestrationAccount } from '../exos/cosmos-orchestration-account.js';
+import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/exos/cosmos-orchestration-account.js';
+
+// import { prepareLocalChainFacade } from '../exos/local-chain-facade.js';
+import { prepareLocalChainFacade } from '@agoric/orchestration/src/exos/local-chain-facade.js';
+
 
 /**
  * @import {PromiseKit} from '@endo/promise-kit'
@@ -52,6 +68,7 @@ export const provideOrchestration = (
 
   const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
   const makeLocalOrchestrationAccountKit = prepareLocalOrchestrationAccountKit(
+  // const makeOrchestrationAccountKit = prepareChainAccountKit(
     zone,
     makeRecorderKit,
     zcf,
@@ -82,6 +99,7 @@ export const provideOrchestration = (
 
   const makeLocalChainFacade = prepareLocalChainFacade(zone, {
     makeLocalOrchestrationAccountKit,
+    // makeOrchestrationAccountKit,
     localchain: remotePowers.localchain,
     // FIXME what path?
     storageNode: remotePowers.storageNode,
@@ -95,6 +113,7 @@ export const provideOrchestration = (
     zone,
     chainHub,
     makeLocalOrchestrationAccountKit,
+    // makeOrchestrationAccountKit,
     makeRecorderKit,
     makeCosmosOrchestrationAccount,
     makeLocalChainFacade,

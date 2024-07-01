@@ -35,7 +35,7 @@
     "patch-package": "^8.0.0"
   },
   "devDependencies": {
-    "@agoric/orchestration": "0.1.1-upgrade-16-dev-d45b478.0",
+    "@agoric/orchestration": "0.1.1-dev-6bc363b.0",
     "@agoric/vow": "dev",
     "typescript": "^5.5.2"
   }
