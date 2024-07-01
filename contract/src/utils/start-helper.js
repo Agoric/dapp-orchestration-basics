@@ -55,7 +55,7 @@ export const provideOrchestration = (
   zcf,
   baggage,
   remotePowers,
-  marshaller,
+  marshaller
 ) => {
   const zone = makeDurableZone(baggage);
 

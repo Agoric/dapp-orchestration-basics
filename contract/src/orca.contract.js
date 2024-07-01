@@ -1,9 +1,11 @@
 // import { makeTracer, StorageNodeShape } from '@agoric/internal';
-import { Far } from '@endo/far';
+import { Far, E } from '@endo/far';
 import { makeTracer } from '@agoric/internal';
 import { TimerServiceShape } from '@agoric/time';
 import { prepareVowTools } from '@agoric/vow';
-import { heapVowE as E } from '@agoric/vow/vat.js';
+// import { heapVowE as E } from '@agoric/vow/vat.js';
+// import { heapVowE } from '@agoric/vow/vat.js';
+
 import { deeplyFulfilled } from '@endo/marshal';
 
 import {
@@ -19,14 +21,11 @@ import { M, mustMatch } from '@endo/patterns';
 import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-account-kit.js';
 // import { makeChainHub } from '@agoric/orchestration/src/utils/chain-hub.js';
 
-
-
 ///// sendanywhere:
 import { withdrawFromSeat } from '@agoric/zoe/src/contractSupport/zoeHelpers.js';
 import { AmountShape } from '@agoric/ertp';
 import { CosmosChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
 import { provideOrchestration } from './utils/start-helper.js';
-
 
 // create a tracer for logging with the label 'OrchDev1'
 const trace = makeTracer('OrchDev1');
@@ -79,20 +78,63 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 
 /**
- * @param {ZCF<OrcaTerms>} zcf
- * @param {{
- *   agoricNames: Remote<NameHub>;
- *   orchestration: OrchestrationService;
- *   storageNode: StorageNode;
- *   marshaller: Marshaller;
- *   timer: TimerService;
- *   localchain: Remote<LocalChain>;
- * }} privateArgs
- * @param {Baggage} baggage
+ * handler function for creating and managing accounts
+ * @param {Orchestrator} orch
+ * @param {object} ctx
+ * @param {ZCF} ctx.zcf
+ * @param {ZCFSeat} seat
+ * @param {object} offerArgs
  */
-export const start = async (zcf, privateArgs, baggage) => {
+const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
+  const { give } = seat.getProposal();
+  trace("version 0.1.15");
+  trace("give");
+  trace(give);
+  trace("inside createAccounts");
+  trace("orch");
+  trace(orch);
+  trace("seat");
+  trace(seat);
+  // trace("offerArgs")
+  // trace(offerArgs) // conversion throw because undefined for now
+  trace("zcf");
+  trace(zcf);
 
-  trace('inside start function: v1.0.47');
+  try {
+    // const chain = await E(orch).getChain('osmosis'); //host code vs guest
+    const chain = await orch.getChain('osmosis');
+    trace("chain");
+    trace(chain);
+
+    // const info = await E(chain).getChainInfo();
+    const info = await chain.getChainInfo();
+    trace('info', info);
+
+    // const localChain = await E(orch).getChain('agoric');
+    // trace("localChain");
+    // trace(localChain);
+
+    // const [chainAccount, localAccount] = await Promise.all([
+    //   E(chain).makeAccount(),
+    //   E(localChain).makeAccount(),
+    // ]);
+
+    // const chainAddress = await E(chainAccount).getAddress();
+    // trace("chainAddress");
+    // trace(chainAddress);
+
+    // const localAddress = await E(localAccount).getAddress();
+    // trace("localAddress");
+    // trace(localAddress);
+    //M.remoteable
+  } catch (error) {
+    console.error('Error in createAccounts:', error);
+  }
+};
+
+export const start = async (zcf, privateArgs, baggage) => {
+  // const zone = makeDurableZone(baggage);
+  trace('inside start function: v1.0.59');
   trace("privateArgs", privateArgs);
 
   // destructure privateArgs to extract necessary services
@@ -115,8 +157,8 @@ export const start = async (zcf, privateArgs, baggage) => {
   // trace('makeRecorderKit', makeRecorderKit);
 
   // const { chainHub, orchestrate, zone } = provideOrchestration(
-  // const { orchestrate, chainHub, vowTools, zone } = provideOrchestration(
-  const { chainHub, orchestrate, vowTools, zone } = provideOrchestration(
+  const { orchestrate, chainHub, vowTools, zone } = provideOrchestration(
+  // const { chainHub, orchestrate, vowTools } = provideOrchestration(
     zcf,
     baggage,
     {
@@ -126,118 +168,47 @@ export const start = async (zcf, privateArgs, baggage) => {
       timerService: timer,
       localchain,
     },
-    marshaller,
+    marshaller
   );
 
-  console.log("Got an orchestrate object 0.52.91")
-  console.log(orchestrate)
-  
+  console.log("Got an orchestrate object 0.52.109");
+  console.log(orchestrate);
 
   // const chains = await chainHub.getChainsAndConnection()
   // console.log("chains from chainhub")
   // console.log(chains)
 
-  /**
-   * handler function for creating and managing accounts
-   * @param {Orchestrator} orch
-   * @param {object} ctx
-   * @param {ZCF} ctx.zcf
-   * @param {ZCFSeat} seat
-   * @param {object} offerArgs
-   */
-  // const createAccounts = async (orch, { zcf }, seat, offerArgs) => {
-  /** @type {OfferHandler} */
   const createAccounts = orchestrate(
     'LSTTia',
     { zcf },
-    // eslint-disable-next-line no-shadow -- this `zcf` is enclosed in a membrane
-    // async (/** @type {Orchestrator} */ orch, { zcf }, _seat, _offerArgs) => {
-    async (/** @type {Orchestrator} */ orch, { zcf }, seat, offerArgs) => {
-      // TODO:
-      // mustMatch(offerArgs, harden({ chainName: M.scalar(), destAddr: M.string() }));
-      const { give } = seat.getProposal();
-      trace("version 0.1.4")
-      trace("give")
-      trace(give)
-      trace("inside createAccounts")
-      trace("orch")
-      trace(orch)
-      trace("seat")
-      trace(seat)
-      // trace("offerArgs")
-      // trace(offerArgs) // conversion throw because undefined for now
-      trace("zcf")
-      trace(zcf)
-      
-      // const chain = await orch.getChain('osmosis');
-      // const chain = await E(orch).getChain('osmosis');
-      try {
-        const chain = await E(orch).getChain('osmosis');
-        trace("chain");
-        trace(chain);
-  
-        const info = await E(chain).getChainInfo();
-        trace('info', info);
-  
-        const localChain = await E(orch).getChain('agoric');
-        trace("localChain");
-        trace(localChain);
-  
-        const [chainAccount, localAccount] = await Promise.all([
-          E(chain).makeAccount(),
-          E(localChain).makeAccount(),
-        ]);
-  
-        const chainAddress = await E(chainAccount).getAddress();
-        trace("chainAddress");
-        trace(chainAddress);
-  
-        const localAddress = await E(localAccount).getAddress();
-        trace("localAddress");
-        trace(localAddress);
-        
-      } catch (error) {
-        console.error('Error in createAccounts:', error);
-      }
-      // const payments = await withdrawFromSeat(zcf, seat, give);
-      // console.log("paymentss")
-      // console.log(payments)
-
-      // await deeplyFulfilled(
-      //   objectMap(payments, payment =>
-      //     localAccount.deposit(payment),
-      //   ),
-      // );
-
-      // seat.exit();
-
-      // await localAccount
-      // .transferSteps(give.Stable, transferMsg)
-      // .then(_txResult =>
-      //   chainAccount.delegate(offerArgs.validator, offerArgs.staked),
-      // )
-      // .catch(e => console.error(e));
-    },
+    createAccountsFn,
   );
 
-  // const accountHandler = orchestrate('OrcaAccountHandler', { zcf }, createAccounts);
+  const ConnectionInfoShape = M.record(); // TODO
 
-  const makeAccountInvitation = () =>
-    zcf.makeInvitation(
-      createAccounts,
-      'Create and manage accounts',
-      undefined,
-      harden({
-        give: {},
-        want: {}, // XXX ChainAccount Ownable?
-        exit: M.any(),
-      }),
-    );
-    
-
-  const publicFacet = Far('OrcaFacet', {
-    makeAccountInvitation,
-  });
+  const publicFacet = zone.exo(
+    'OrcaFacet',
+    M.interface('OrcaFacet', {
+      makeAccountInvitation: M.call().returns(M.promise()), //returns remotable, M.promise() // telling exo machibery to 
+    }),
+    {
+      async makeAccountInvitation() {
+        const invitation = await zcf.makeInvitation(
+          createAccounts,
+          'Create accounts',
+          undefined,
+          harden({
+            give: {},
+            want: {},
+            exit: M.any(),
+          }),
+        );
+        // return Promise.resolve(invitation);
+        return invitation;
+        // return M.promise()
+      },
+    },
+  );
 
   return harden({ publicFacet });
 };

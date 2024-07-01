@@ -297,6 +297,38 @@ Hypothesis: `prepareEndowment` doesn't exist, so version issue
 18)
 If you see `x.js` can't be resolved from an `@agoric/...` npm package, there may be a version mismatch where that version isn't exporting said file. Should be fixed with more stable versions eventually. 
 
+19)
+```
+Error#1: In "makeAccountInvitation" method of (OrcaFacet): result: (an object) - Must be a remotable Invitation, not promise
+```
+
+ensure your public facet returns the result of a promise, not the promise:
+
+```javascript
+const publicFacet = zone.exo(
+  'OrcaFacet',
+  M.interface('OrcaFacet', {
+    makeAccountInvitation: M.call().returns(M.promise()),
+  }),
+  {
+    async makeAccountInvitation() { // make sure NOT to use async here
+      const invitation = await zcf.makeInvitation(
+        createAccounts,
+        'Create accounts',
+        undefined,
+        harden({
+          give: {},
+          want: {},
+          exit: M.any(),
+        }),
+      );
+      return invitation;
+    },
+  },
+);
+
+```
+
 # tests from root directory
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
