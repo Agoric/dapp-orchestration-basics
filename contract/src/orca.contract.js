@@ -178,7 +178,7 @@ export const start = async (zcf, privateArgs, baggage) => {
     marshaller,
   );
 
-  console.log('Got an orchestrate object 0.52.109');
+  console.log('Got an orchestrate object version 0.52.110');
   console.log(orchestrate);
 
   // const chains = await chainHub.getChainsAndConnection()
