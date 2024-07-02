@@ -59,7 +59,8 @@ export const provideOrchestration = (
 ) => {
   const zone = makeDurableZone(baggage);
 
-  const chainHub = makeChainHub(remotePowers.agoricNames);
+  console.log('provideOrchestration calls makeChainHub with', zone);
+  const chainHub = makeChainHub(remotePowers.agoricNames, zone);
 
   const vowTools = prepareVowTools(zone.subZone('vows'));
   console.log("marshaller")
