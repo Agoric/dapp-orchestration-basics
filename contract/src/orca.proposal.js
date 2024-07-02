@@ -1,7 +1,7 @@
 // @ts-check
 // import { makeMarshal } from '@endo/marshal';
 // import { AmountMath } from '@agoric/ertp/src/amountMath.js';
-//change for tests?
+// change for tests?
 import { E } from '@endo/far';
 import {
   installContract,
@@ -12,11 +12,10 @@ import { makeTracer } from './tools/debug.js';
 // import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
 // import { makeChainHub } from '../exos/chain-hub.js';
 
-
 const trace = makeTracer('OrCE');
 const { entries, fromEntries } = Object;
 
-console.warn('start proposal module evaluating');
+trace('start proposal module evaluating');
 
 const { Fail } = assert;
 
@@ -45,7 +44,7 @@ export const allValues = async obj => {
  * @param config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
-  console.error('startOrcaContract()...');
+  trace('startOrcaContract()...');
 
   const {
     consume: {
@@ -53,17 +52,8 @@ export const startOrcaContract = async (permittedPowers, config) => {
       board,
       chainTimerService,
       orchestration: orchestrationP,
-      startUpgradable,
       localchain,
       chainStorage,
-    },
-    brand: {
-      consume: { IST: istBrandP },
-      produce: {},
-    },
-    issuer: {
-      consume: { IST: istIssuerP },
-      produce: {},
     },
     instance: {
       produce: { orca: produceInstance },
@@ -85,44 +75,36 @@ export const startOrcaContract = async (permittedPowers, config) => {
     bundleID,
   });
 
-  trace('awaiting consume.orchestration');
-  const orchestration = await orchestrationP;
+  const logp = label => async p => {
+    trace(label, '...');
+    const r = await p;
+    trace(label, r);
+    return r;
+  };
+
+  const orchestration = await logp('orchestration')(orchestrationP);
   const agoricNames = await agoricNamesP;
-  trace('orchestration', orchestration);
   const mainNode = await E(chainStorage).makeChildNode('orca');
   const storageNode = await E(mainNode).makeChildNode('state');
   const marshaller = await E(board).getPublishingMarshaller();
-
-  // const chainHub = makeChainHub(await agoricNames);
-
-  // const [_, cosmoshub, connectionInfo] = await E.when(
-  //   chainHub.getChainsAndConnection('agoric', 'cosmoshub'),
-  // );
 
   const privateArgs = {
     storageNode,
     marshaller,
     orchestration: await orchestration,
     timer: await chainTimerService,
-    localchain: await localchain,
+    localchain: await logp('localchain')(localchain),
     agoricNames: await agoricNames,
   };
 
-
-
   const started = await startContract(
     permittedPowers,
-    {
-      name: contractName,
-      startArgs: {
-        installation,
-      },
-      issuerNames: [],
-    },
+    { name: contractName, startArgs: { installation } },
     privateArgs,
   );
 
-  trace(contractName, '(re)started');
+  trace(contractName, '(re)started WITH RESET');
+  produceInstance.reset();
   produceInstance.resolve(started.instance);
 };
 
