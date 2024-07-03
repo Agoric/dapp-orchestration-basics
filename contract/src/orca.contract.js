@@ -21,7 +21,7 @@ import { M, mustMatch } from '@endo/patterns';
 import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-account-kit.js';
 // import { makeChainHub } from '@agoric/orchestration/src/utils/chain-hub.js';
 
-///// sendanywhere:
+/// // sendanywhere:
 import { withdrawFromSeat } from '@agoric/zoe/src/contractSupport/zoeHelpers.js';
 import { AmountShape } from '@agoric/ertp';
 import { CosmosChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
@@ -87,23 +87,23 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   const { give } = seat.getProposal();
-  trace("version 0.1.15");
-  trace("give");
+  trace('version 0.1.15');
+  trace('give');
   trace(give);
-  trace("inside createAccounts");
-  trace("orch");
+  trace('inside createAccounts');
+  trace('orch');
   trace(orch);
-  trace("seat");
+  trace('seat');
   trace(seat);
   // trace("offerArgs")
   // trace(offerArgs) // conversion throw because undefined for now
-  trace("zcf");
+  trace('zcf');
   trace(zcf);
 
   try {
     // const chain = await E(orch).getChain('osmosis'); //host code vs guest
     const chain = await orch.getChain('osmosis');
-    trace("chain");
+    trace('chain');
     trace(chain);
 
     // const info = await E(chain).getChainInfo();
@@ -126,7 +126,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
     // const localAddress = await E(localAccount).getAddress();
     // trace("localAddress");
     // trace(localAddress);
-    //M.remoteable
+    // M.remoteable
   } catch (error) {
     console.error('Error in createAccounts:', error);
   }
@@ -135,10 +135,17 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
   trace('inside start function: v1.0.59');
-  trace("privateArgs", privateArgs);
+  trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
-  const { orchestration, marshaller, storageNode, timer, localchain, agoricNames } = privateArgs;
+  const {
+    orchestration,
+    marshaller,
+    storageNode,
+    timer,
+    localchain,
+    agoricNames,
+  } = privateArgs;
   trace('orchestration: ', orchestration);
   trace('marshaller: ', marshaller);
   trace('storageNode: ', storageNode);
@@ -158,7 +165,7 @@ export const start = async (zcf, privateArgs, baggage) => {
 
   // const { chainHub, orchestrate, zone } = provideOrchestration(
   const { orchestrate, chainHub, vowTools, zone } = provideOrchestration(
-  // const { chainHub, orchestrate, vowTools } = provideOrchestration(
+    // const { chainHub, orchestrate, vowTools } = provideOrchestration(
     zcf,
     baggage,
     {
@@ -168,28 +175,24 @@ export const start = async (zcf, privateArgs, baggage) => {
       timerService: timer,
       localchain,
     },
-    marshaller
+    marshaller,
   );
 
-  console.log("Got an orchestrate object 0.52.109");
+  console.log('Got an orchestrate object version 0.52.110');
   console.log(orchestrate);
 
   // const chains = await chainHub.getChainsAndConnection()
   // console.log("chains from chainhub")
   // console.log(chains)
 
-  const createAccounts = orchestrate(
-    'LSTTia',
-    { zcf },
-    createAccountsFn,
-  );
+  const createAccounts = orchestrate('LSTTia', { zcf }, createAccountsFn);
 
   const ConnectionInfoShape = M.record(); // TODO
 
   const publicFacet = zone.exo(
     'OrcaFacet',
     M.interface('OrcaFacet', {
-      makeAccountInvitation: M.call().returns(M.promise()), //returns remotable, M.promise() // telling exo machibery to 
+      makeAccountInvitation: M.call().returns(M.promise()), // returns remotable, M.promise() // telling exo machibery to
     }),
     {
       async makeAccountInvitation() {

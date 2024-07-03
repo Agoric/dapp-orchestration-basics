@@ -5,9 +5,7 @@ import { makeDurableZone } from '@agoric/zone/durable.js';
 // import { prepareLocalChainAccountKit } from '@agoric/orchestration/src/exos/local-chain-account-kit.js';
 // import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-account-kit.js';
 
-
 import { makeOrchestrationFacade } from '@agoric/orchestration/src/facade.js';
-
 
 // import { makeChainHub } from '@agoric/orchestration/src/exos/chain-hub.js';
 import { makeChainHub } from '@agoric/orchestration/src/exos/chain-hub.js';
@@ -19,8 +17,6 @@ import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exo
 import { prepareLocalOrchestrationAccountKit } from '@agoric/orchestration/src/exos/local-orchestration-account.js';
 
 // import { prepareCosmosOrchestrationAccount } from '@agoric/orchestration/src/exos/cosmosOrchestrationAccount.js';
-
-
 
 /**
  * @import {PromiseKit} from '@endo/promise-kit'
@@ -55,25 +51,26 @@ export const provideOrchestration = (
   zcf,
   baggage,
   remotePowers,
-  marshaller
+  marshaller,
 ) => {
   const zone = makeDurableZone(baggage);
 
-  const chainHub = makeChainHub(remotePowers.agoricNames);
+  console.log('provideOrchestration calls makeChainHub with', zone);
+  const chainHub = makeChainHub(remotePowers.agoricNames, zone);
 
   const vowTools = prepareVowTools(zone.subZone('vows'));
-  console.log("marshaller")
-  console.log(marshaller)
-  console.log("vowTools")
-  console.log(vowTools)
-  console.log("remotePowers")
-  console.log(remotePowers)
+  console.log('marshaller');
+  console.log(marshaller);
+  console.log('vowTools');
+  console.log(vowTools);
+  console.log('remotePowers');
+  console.log(remotePowers);
 
   const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
   // const { makeRecorderKit } = prepareRecorderKitMakers(baggage, remotePowers.marshaller);
-  
-  console.log("makeRecorderKit")
-  console.log(makeRecorderKit)
+
+  console.log('makeRecorderKit');
+  console.log(makeRecorderKit);
 
   const makeLocalOrchestrationAccountKit = prepareLocalOrchestrationAccountKit(
     zone,
@@ -84,15 +81,15 @@ export const provideOrchestration = (
     chainHub,
   );
 
-  console.log("makeLocalOrchestrationAccountKit")
-  console.log(makeLocalOrchestrationAccountKit)
+  console.log('makeLocalOrchestrationAccountKit');
+  console.log(makeLocalOrchestrationAccountKit);
 
   const asyncFlowTools = prepareAsyncFlowTools(zone.subZone('asyncFlow'), {
     vowTools,
   });
 
-  console.log("asyncFlowTools")
-  console.log(asyncFlowTools)
+  console.log('asyncFlowTools');
+  console.log(asyncFlowTools);
 
   const makeCosmosOrchestrationAccount = prepareCosmosOrchestrationAccount(
     // FIXME what zone?
@@ -102,8 +99,8 @@ export const provideOrchestration = (
     zcf,
   );
 
-  console.log("makeCosmosOrchestrationAccount")
-  console.log(makeCosmosOrchestrationAccount)
+  console.log('makeCosmosOrchestrationAccount');
+  console.log(makeCosmosOrchestrationAccount);
 
   const makeRemoteChainFacade = prepareRemoteChainFacade(zone, {
     makeCosmosOrchestrationAccount,
@@ -114,8 +111,8 @@ export const provideOrchestration = (
     vowTools,
   });
 
-  console.log("makeRemoteChainFacade")
-  console.log(makeRemoteChainFacade)
+  console.log('makeRemoteChainFacade');
+  console.log(makeRemoteChainFacade);
 
   const makeLocalChainFacade = prepareLocalChainFacade(zone, {
     makeLocalOrchestrationAccountKit,
@@ -128,11 +125,11 @@ export const provideOrchestration = (
     vowTools,
   });
 
-  console.log("makeLocalChainFacade")
-  console.log(makeLocalChainFacade)
+  console.log('makeLocalChainFacade');
+  console.log(makeLocalChainFacade);
 
-  console.log("...remotePowers fix 90")
-  console.log({...remotePowers})
+  console.log('...remotePowers fix 90');
+  console.log({ ...remotePowers });
 
   const facade = makeOrchestrationFacade({
     zcf,
@@ -148,14 +145,14 @@ export const provideOrchestration = (
     ...remotePowers,
   });
 
-  console.log("facade dev3")
-  console.log(facade)
-  console.log("chainHub dev3")
-  console.log(chainHub)
-  console.log("zone dev3")
-  console.log(zone)
+  console.log('facade dev3');
+  console.log(facade);
+  console.log('chainHub dev3');
+  console.log(chainHub);
+  console.log('zone dev3');
+  console.log(zone);
 
   // return { ...facade, chainHub, zone };
-  return { ...facade, chainHub, vowTools, zone }; //TODO return makeRecorderKit?
+  return { ...facade, chainHub, vowTools, zone }; // TODO return makeRecorderKit?
 };
 harden(provideOrchestration);
