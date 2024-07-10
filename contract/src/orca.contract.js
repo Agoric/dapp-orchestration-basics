@@ -25,7 +25,7 @@ import { prepareChainAccountKit } from '@agoric/orchestration/src/exos/chain-acc
 import { withdrawFromSeat } from '@agoric/zoe/src/contractSupport/zoeHelpers.js';
 import { AmountShape } from '@agoric/ertp';
 import { CosmosChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
-import { provideOrchestration } from './utils/start-helper.js';
+import { provideOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
 
 // create a tracer for logging with the label 'OrchDev1'
 const trace = makeTracer('OrchDev1');
