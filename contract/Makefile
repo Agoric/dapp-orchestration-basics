@@ -254,8 +254,10 @@ e2e:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-023e19f.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-6bc363b.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
+
 	make copy-bn-js  
-	make copy-vow-js
+# make copy-vow-js
+
 ###	actually deploy
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"

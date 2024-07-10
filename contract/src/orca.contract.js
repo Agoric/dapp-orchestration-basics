@@ -134,7 +134,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.61');
+  trace('inside start function: v1.0.63');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services

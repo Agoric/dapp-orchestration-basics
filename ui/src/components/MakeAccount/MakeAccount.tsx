@@ -13,6 +13,7 @@ const makeOffer = (
     giveValue: bigint,
   ) => {
     const { instances, brands } = useContractStore.getState();
+    console.log(instances)
     const instance = instances?.['orca'];
     if (!instance) throw Error('no contract instance');
     console.log(brands)
