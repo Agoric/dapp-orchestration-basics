@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric18ahqx6gekgyc032pyncdy39xf3afcgutxmj5xq
+ADDR=agoric1z050y76qcmt72maqqtw7w6cu8nkxxxvpxc2w39
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -206,8 +206,12 @@ copy-bn-js:
 copy-vow-js:
 	cp ./PATCH-vat.js ../node_modules/@agoric/vow/vat.js
 	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/vow/vat.js
-	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/orchestration/node_modules/@agoric/vow/vat.js
-	kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/async-flow/node_modules/@agoric/vow/vat.js
+
+# debug
+# kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/orchestration/node_modules/@agoric/vow/vat.js
+# kubectl cp ../node_modules/@agoric/vow/vat.js default/agoriclocal-genesis-0:/root/node_modules/@agoric/async-flow/node_modules/@agoric/vow/vat.js
+
+
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- cat /root/node_modules/bn.js/lib/bn.js | grep "PATCH"
 patch: 
 	patch ../node_modules/bn.js/lib/bn.js < ../xxpatches/bn.js+5.2.1.patch
@@ -240,9 +244,14 @@ e2e:
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@0.1.1-upgrade-16-dev-d45b478.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-6bc363b.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-023e19f.0"
+	
+# install orch
+# kubectl cp ../node_modules/@agoric/orchestration default/agoriclocal-genesis-0:/root/node_modules/@agoric/orchestration
+
+
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-6bc363b.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-023e19f.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-6bc363b.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
 	make copy-bn-js  

@@ -87,7 +87,7 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.15');
+  trace('version 0.1.17');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -134,7 +134,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.59');
+  trace('inside start function: v1.0.61');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
@@ -178,7 +178,7 @@ export const start = async (zcf, privateArgs, baggage) => {
     marshaller,
   );
 
-  console.log('Got an orchestrate object version 0.52.110');
+  console.log('Got an orchestrate object version 0.52.111');
   console.log(orchestrate);
 
   // const chains = await chainHub.getChainsAndConnection()

@@ -368,6 +368,11 @@ using starship
 make teardown ; make stop; make stop-forward; make clean; make; make port-forward
 ```
 
+# e2e workspaces
+```
+yarn workspace dapp-agoric-orca-contract build; yarn workspace dapp-agoric-orca-contract e2e
+```
+
 # note
 Troubleshooting remote calls
 
