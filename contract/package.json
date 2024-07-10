@@ -4,6 +4,7 @@
   "private": true,
   "description": "Agoric Orchestration Contract",
   "type": "module",
+  "packageManager": "yarn@4.3.1",
   "scripts": {
     "start:docker": "docker compose up -d",
     "docker:logs": "docker compose logs --tail 200 -f",

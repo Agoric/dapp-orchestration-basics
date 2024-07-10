@@ -9,6 +9,7 @@
     "ui"
   ],
   "resolutions-note": "work-around for https://github.com/Agoric/agoric-sdk/issues/8621",
+  "packageManager": "yarn@4.3.1",
   "scripts": {
     "postinstall": "patch-package",
     "start:docker": "cd contract && docker compose up -d",
