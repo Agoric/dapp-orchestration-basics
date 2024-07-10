@@ -11,7 +11,7 @@ import { deeplyFulfilled } from '@endo/marshal';
 import {
   prepareRecorderKitMakers,
   provideAll,
-} from '@agoric/zoe/src/contractSupport';
+} from '@agoric/zoe/src/contractSupport/index.js';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
 import { M, mustMatch } from '@endo/patterns';
