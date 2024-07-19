@@ -39,6 +39,13 @@ export const allValues = async obj => {
   return fromEntries(es);
 };
 
+
+async function setupChains(chainHub) {
+  await chainHub.registerChain('agoric', agoricChainDetails);
+  await chainHub.registerChain('osmosis', osmosisChainDetails);
+  // Add other chains as needed
+}
+
 /**
  * @param {BootstrapPowers & {installation: {consume: {stakeBld: Installation<import('./orca.contract.js').start>}}}} permittedPowers
  * @param config

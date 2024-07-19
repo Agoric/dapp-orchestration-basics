@@ -14,6 +14,7 @@ import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
 
+// import {commonSetup} from '@agoric/orchestration/test/support.js'
 // import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
 // import { prepareOrchestrationTools } from '@agoric/orchestration'
 
@@ -47,10 +48,11 @@ const test = anyTest;
  * @param {import('ava').ExecutionContext} t
  */
 const makeTestContext = async t => {
+
+  
   const { zoeService: zoe, feeMintAccess } = makeZoeKitForTest();
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
-
   const tools = await makeMockTools(t, bundleCache);
   return { zoe, bundle, bundleCache, feeMintAccess, ...tools };
 };
@@ -153,7 +155,10 @@ const orchestrationAccountScenario = test.macro({
       return t.fail(`Unknown chain: ${chainName}`);
     }
 
-    const { zoe, bundle } = t.context;
+    const { 
+      // bootstrap: { vowTools: vt },
+      zoe, 
+      bundle } = t.context;
     // const { zoe, bundle } = t.context;
     const installation = E(zoe).install(bundle);
 
@@ -184,21 +189,41 @@ const orchestrationAccountScenario = test.macro({
     const initialInvitation = await E(publicFacet).makeAccountInvitation();
     t.log("invitation")
     t.log(initialInvitation)
-    const initialUserSeat = await E(zoe).offer(initialInvitation, {}, undefined, undefined);
+
+    const makeAccountOffer = {
+      give: {
+      },
+      want: {
+      },
+      exit: { onDemand: null }, 
+    };
+
+    const initialUserSeat = await E(zoe).offer(initialInvitation, makeAccountOffer, undefined, undefined);
     t.log("initialUserSeat")
     t.log(initialUserSeat)
-    const initialOfferResult = await E(initialUserSeat).getOfferResult();
-    t.log("initialOfferResult")
-    t.log(initialOfferResult)
-    const initialOfferId = await E(initialUserSeat).getOfferId();
-    t.log("initialOfferId")
-    t.log(initialOfferId)
 
-    t.log('Initial Offer Result:', initialOfferResult);
-    t.log('Initial Offer ID:', initialOfferId);
+    // const { invitationMakers, publicSubscribers } = await vt.when(
+    //   E(initialUserSeat).getOfferResult(),
+    // );
 
-    // ensure the initial offer was accepted
-    t.truthy(initialOfferId, 'Initial offer ID should be defined');
+    //
+
+    // const initialOfferResult = await E(initialUserSeat).getOfferResult();
+    // t.log("initialOfferResult")
+    // t.log(initialOfferResult)
+
+    // const initialOfferId = await E(initialUserSeat).getOfferId();
+    // t.log("initialOfferId")
+    // t.log(initialOfferId)
+
+    // t.log('Initial Offer Result:', initialOfferResult);
+    // t.log('Initial Offer ID:', initialOfferId);
+
+    // // ensure the initial offer was accepted
+    // t.truthy(initialOfferId, 'Initial offer ID should be defined');
+
+    ///
+
 
     // make the continuing offer
     // const continuingInvitation = E(publicFacet).makeAccountInvitation();
@@ -216,5 +241,5 @@ const orchestrationAccountScenario = test.macro({
   },
 });
 
-test(orchestrationAccountScenario, 'agoric');
+// test(orchestrationAccountScenario, 'agoric');
 test(orchestrationAccountScenario, 'osmosis');

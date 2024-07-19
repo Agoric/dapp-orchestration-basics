@@ -58,6 +58,15 @@ export const provideOrchestration = (
   console.log('provideOrchestration calls makeChainHub with', zone);
   const chainHub = makeChainHub(remotePowers.agoricNames, zone);
 
+  // // register the agoric chain, debug
+  // const agoricChainDetails = {
+  //   chainId: 'agoriclocal',
+  //   denom: 'ubld',
+  //   expectedAddressPrefix: 'agoric',
+  //   // Add other necessary details here
+  // };
+  // chainHub.registerChain('agoric', agoricChainDetails);
+
   const vowTools = prepareVowTools(zone.subZone('vows'));
   console.log('marshaller');
   console.log(marshaller);
