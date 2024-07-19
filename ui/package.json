@@ -21,7 +21,7 @@
     "chain-registry": "^1.28.1",
     "cosmos-kit": "^2.9.0",
     "daisyui": "^4.7.2",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-daisyui": "^5.0.0",
     "react-dom": "^18.2.0",
     "ses": "^1.2.0"

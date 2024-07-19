@@ -56,7 +56,8 @@ export const meta = harden({
   // define the shapes of the private arguments for the contract
   privateArgsShape: {
     agoricNames: M.remotable('agoricNames'),
-    orchestration: M.remotable('orchestration'),
+    // orchestration: M.remotable('orchestration'),
+    cosmosInterchainService: M.remotable('cosmosInterchainService'),
     storageNode: StorageNodeShape,
     marshaller: M.remotable('marshaller'),
     timer: TimerServiceShape,
@@ -87,7 +88,7 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.17');
+  trace('version 0.1.26');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -99,7 +100,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   // trace(offerArgs) // conversion throw because undefined for now
   trace('zcf');
   trace(zcf);
-
+  seat.exit();
   try {
     // const chain = await E(orch).getChain('osmosis'); //host code vs guest
     const chain = await orch.getChain('osmosis');
@@ -110,23 +111,34 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
     const info = await chain.getChainInfo();
     trace('info', info);
 
-    // const localChain = await E(orch).getChain('agoric');
+    // const localChain = orch.getChain('agoric');
     // trace("localChain");
     // trace(localChain);
 
     // const [chainAccount, localAccount] = await Promise.all([
-    //   E(chain).makeAccount(),
-    //   E(localChain).makeAccount(),
+    //   chain.makeAccount(),
+    //   localChain.makeAccount(),
     // ]);
 
-    // const chainAddress = await E(chainAccount).getAddress();
+    const chainAccount = await chain.makeAccount();
+    console.log("chainAccount")
+    console.log(chainAccount)
+    return chainAccount.asContinuingOffer();
+
+    // const localAccount = await localChain.makeAccount();
+    // console.log("localAccount")
+    // console.log(localAccount)
+
+    // const chainAddress = await chainAccount.getAddress(); // maybe not use e
     // trace("chainAddress");
     // trace(chainAddress);
 
-    // const localAddress = await E(localAccount).getAddress();
+    // const localAddress = await localAccount.getAddress();
     // trace("localAddress");
     // trace(localAddress);
+
     // M.remoteable
+    
   } catch (error) {
     console.error('Error in createAccounts:', error);
   }
@@ -134,12 +146,12 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.63');
+  trace('inside start function: v1.0.75');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
   const {
-    orchestration,
+    cosmosInterchainService: orchestration,
     marshaller,
     storageNode,
     timer,
@@ -154,10 +166,10 @@ export const start = async (zcf, privateArgs, baggage) => {
   trace('agoricNames: ', agoricNames);
 
   // provide all necessary nodes, creating them if they don't exist
-  const { accountsStorageNode } = await provideAll(baggage, {
-    accountsStorageNode: () => E(storageNode).makeChildNode('accounts'),
-  });
-  trace('accountsStorageNode', accountsStorageNode);
+  // const { accountsStorageNode } = await provideAll(baggage, {
+  //   accountsStorageNode: () => E(storageNode).makeChildNode('accounts'),
+  // });
+  // trace('accountsStorageNode', accountsStorageNode);
 
   // prepare recorder kit makers for recording state changes
   // const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
@@ -178,7 +190,7 @@ export const start = async (zcf, privateArgs, baggage) => {
     marshaller,
   );
 
-  console.log('Got an orchestrate object version 0.52.111');
+  console.log('Got an orchestrate object version 0.52.117');
   console.log(orchestrate);
 
   // const chains = await chainHub.getChainsAndConnection()
@@ -192,7 +204,8 @@ export const start = async (zcf, privateArgs, baggage) => {
   const publicFacet = zone.exo(
     'OrcaFacet',
     M.interface('OrcaFacet', {
-      makeAccountInvitation: M.call().returns(M.promise()), // returns remotable, M.promise() // telling exo machibery to
+      // makeAccountInvitation: M.call().returns(M.promise()), // returns remotable, M.promise() // telling exo machibery to
+      makeAccountInvitation: M.callWhen().returns(InvitationShape)
     }),
     {
       async makeAccountInvitation() {

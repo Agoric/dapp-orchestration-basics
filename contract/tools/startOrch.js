@@ -7,10 +7,13 @@ const trace = makeTracer('startOrch');
 
 /** @param {BootstrapPowers} powers */
 export const startOrchCoreEval = async ({
-  produce: { orchestration, localchain },
+  produce: { cosmosInterchainService, localchain, chainTimerService, chainStorage, agoricNames },
 }) => {
   trace('startOrchCoreEval');
-  orchestration.resolve(Far('DummyOrchestration'));
+  cosmosInterchainService.resolve(Far('DummyOrchestration'));
   localchain.resolve(Far('DummyLocalchain'));
+  chainTimerService.resolve(Far('DummyTimer'));
+  chainStorage.resolve(Far("DummyStorageNode"));
+  agoricNames.resolve(Far("agoricNames"));
   trace('startOrchCoreEval done');
 };

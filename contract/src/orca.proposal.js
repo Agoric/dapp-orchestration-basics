@@ -44,16 +44,19 @@ export const allValues = async obj => {
  * @param config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
-  trace('startOrcaContract()...');
+  trace('startOrcaContract()... 0.0.6');
+  console.log(permittedPowers)
 
   const {
     consume: {
       agoricNames: agoricNamesP,
       board,
       chainTimerService,
-      orchestration: orchestrationP,
       localchain,
       chainStorage,
+      // orchestration,
+      cosmosInterchainService,
+
     },
     instance: {
       produce: { orca: produceInstance },
@@ -75,25 +78,39 @@ export const startOrcaContract = async (permittedPowers, config) => {
     bundleID,
   });
 
-  const logp = label => async p => {
-    trace(label, '...');
-    const r = await p;
-    trace(label, r);
-    return r;
-  };
+  console.log("permittedPowers")
+  console.log(permittedPowers)
+  console.log("from inside startOrcaContract:", installation)
+  // const logp = label => async p => {
+  //   trace(label, '...');
+  //   const r = await p;
+  //   trace(label, r);
+  //   return r;
+  // };
 
-  const orchestration = await logp('orchestration')(orchestrationP);
+  // console.log(logp)
+  // console.log("logp")
+  // const orchestration = await logp('orchestration')(orchestrationP);
+  // const orchestration = await orchestrationP;
+  const orchestration = await cosmosInterchainService;
+  console.log(orchestration)
   const agoricNames = await agoricNamesP;
+  console.log(agoricNames)
   const mainNode = await E(chainStorage).makeChildNode('orca');
+  console.log(mainNode)
   const storageNode = await E(mainNode).makeChildNode('state');
+  console.log(storageNode)
   const marshaller = await E(board).getPublishingMarshaller();
+  console.log(marshaller)
 
   const privateArgs = {
     storageNode,
     marshaller,
-    orchestration: await orchestration,
+    cosmosInterchainService: await orchestration,
+    // orchestration: await orchestration,
     timer: await chainTimerService,
-    localchain: await logp('localchain')(localchain),
+    // localchain: await logp('localchain')(localchain),
+    localchain: await localchain,
     agoricNames: await agoricNames,
   };
 
@@ -120,6 +137,7 @@ const orcaManifest = {
       zoe: true,
       chainTimerService: true,
       localchain: true,
+      cosmosInterchainService: true,
     },
     installation: {
       consume: { orca: true },
@@ -154,7 +172,7 @@ export const permit = harden({
     zoe: true,
     localchain: true,
     chainTimerService: true,
-    orchestration: true,
+    cosmosInterchainService: true,
   },
   installation: {
     consume: { orca: true },

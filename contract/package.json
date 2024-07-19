@@ -4,7 +4,6 @@
   "private": true,
   "description": "Agoric Orchestration Contract",
   "type": "module",
-  "packageManager": "yarn@4.3.1",
   "scripts": {
     "start:docker": "docker compose up -d",
     "docker:logs": "docker compose logs --tail 200 -f",
@@ -30,7 +29,7 @@
   "devDependencies": {
     "@agoric/eslint-config": "^0.4.1-upgrade-16-fi-dev-8879538.0",
     "@agoric/inter-protocol": "^0.16.2-upgrade-16-fi-dev-8879538.0",
-    "@agoric/vats": "^0.15.2-dev-3aa5d66.0",
+    "@agoric/vats": "dev",
     "@endo/bundle-source": "3.2.3",
     "@endo/eslint-plugin": "^0.5.2",
     "@endo/far": "1.1.2",
@@ -56,15 +55,15 @@
     "typescript-eslint": "^7.13.0"
   },
   "dependencies": {
-    "@agoric/async-flow": "dev",
+    "@agoric/async-flow": "0.1.1-dev-0b6d5f3.0",
     "@agoric/cosmic-proto": "dev",
     "@agoric/ertp": "dev",
     "@agoric/internal": "dev",
-    "@agoric/orchestration": "dev",
+    "@agoric/orchestration": "0.1.1-dev-0b6d5f3.0",
     "@agoric/time": "dev",
-    "@agoric/vow": "dev",
+    "@agoric/vow": "0.1.1-dev-0b6d5f3.0",
     "@agoric/zoe": "dev",
-    "@agoric/zone": "dev",
+    "@agoric/zone": "0.2.3-dev-0b6d5f3.0",
     "@endo/far": "^1.1.2",
     "@endo/marshal": "^1.5.0",
     "@endo/patterns": "^1.2.0",
@@ -76,6 +75,7 @@
       "ts": "module"
     },
     "files": [
+      "test/**/test-*.*",
       "test/**/*.test.*"
     ],
     "nodeArguments": [],

@@ -16,11 +16,12 @@ export const installContract = async (
   { consume: { zoe }, installation: { produce: produceInstallation } },
   { name, bundleID },
 ) => {
-  console.log('installContract function: ', bundleID);
+  console.log('installContract function 0.0.1: ', bundleID, " ", name);
   console.log('installContract zoe: ', zoe);
   const installation = await E(zoe).installBundleID(bundleID);
   console.log('installContract: after installBundleID');
   console.log(installation);
+  console.log(produceInstallation)
   produceInstallation[name].reset();
   produceInstallation[name].resolve(installation);
   console.log(name, '(re-)installed as', bundleID.slice(0, 8));
@@ -48,7 +49,7 @@ export const startContract = async (
   { name, startArgs, issuerNames },
   privateArgs,
 ) => {
-  console.log('startContract... v0.0.57');
+  console.log('startContract... v0.0.60');
 
   const {
     consume: { startUpgradable },

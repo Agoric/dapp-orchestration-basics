@@ -1,60 +1,118 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AgoricWalletConnection, useAgoric } from '@agoric/react-components';
 import { DynamicToastChild } from '../Tabs';
 import { useContractStore } from '../../store/contract';
 import { NotificationContext } from '../../context/NotificationContext';
 
+const makeAndContinueOffer = async (
+  wallet: AgoricWalletConnection,
+  addNotification: (arg0: DynamicToastChild) => void,
+  ticketKind: string,
+  ticketValue: bigint,
+  giveValue: bigint
+) => {
+  const { instances, brands } = useContractStore.getState();
+  const instance = instances?.['orca'];
+  if (!instance) throw Error('no contract instance');
 
-const makeOffer = (
-    wallet: AgoricWalletConnection,
-    addNotification: (arg0: DynamicToastChild) => void,
-    ticketKind: string,
-    ticketValue: bigint,
-    giveValue: bigint,
-  ) => {
-    const { instances, brands } = useContractStore.getState();
-    console.log(instances)
-    const instance = instances?.['orca'];
-    if (!instance) throw Error('no contract instance');
-    console.log(brands)
-    // if (!(brands && brands.IST && brands.Ticket))
-    //   throw Error('brands not available');
-  
-    // const choices: [string, bigint][] = [
-    //   [ticketKind.toLowerCase() + 'Row', ticketValue],
-    // ];
-    // const choiceBag = makeCopyBag(choices);
-    // const ticketAmount = AmountMath.make(brands.Ticket, choiceBag);
-    const want = { };
-    const give = { };
-  
-    wallet?.makeOffer(
-      {
-        source: 'contract',
-        instance,
-        publicInvitationMaker: 'makeAccountInvitation',
-      },
-      { give, want },
-      undefined,
-      (update: { status: string; data?: unknown }) => {
-        if (update.status === 'error') {
-            console.log(status)
-            console.log(update)
-        }
-        if (update.status === 'accepted') {
-            console.log(update)
-        }
-        if (update.status === 'refunded') {
-            console.log(update)
-        }   
-      },
-    );
-  };
+  const want = {};
+  const give = {};
+
+  // const makeAccountofferId = `makeAccount-${Date.now()}`;
+  const makeAccountofferId = Date.now();
+
+  // Make the initial offer
+  wallet?.makeOffer(
+    {
+      // source: 'contract',
+      // instance, 
+      // publicInvitationMaker: 'makeAccountInvitation',
+      source: 'agoricContract',
+      instancePath: ['orca'],
+      callPipe: [['makeAccountInvitation']],
+    },
+    { give, want },
+    undefined,
+    (update: { status: string; data?: unknown }) => {
+      if (update.status === 'error') {
+        console.log(update);
+      }
+      if (update.status === 'accepted') {
+        console.log(update);
+        // Proceed with the continuing offer only if the initial offer is accepted
+        wallet?.makeOffer(
+          {
+            source: 'continuing',
+            previousOffer: makeAccountofferId, // Replace 100 with the actual offer ID
+            invitationMakerName: 'makeAccountInvitation',
+          },
+          { give, want },
+          undefined,
+          (continuingUpdate: { status: string; data?: unknown }) => {
+            if (continuingUpdate.status === 'error') {
+              console.log(continuingUpdate);
+            }
+            if (continuingUpdate.status === 'accepted') {
+              console.log(continuingUpdate);
+            }
+            if (continuingUpdate.status === 'refunded') {
+              console.log(continuingUpdate);
+            }
+          },
+          1
+        );
+      }
+      if (update.status === 'refunded') {
+        console.log(update);
+      }
+    },
+    makeAccountofferId
+  );
+};
+
+const continueOfferWithId = (
+  wallet: AgoricWalletConnection,
+  addNotification: (arg0: DynamicToastChild) => void,
+  offerId: string,
+  ticketKind: string,
+  ticketValue: bigint,
+  giveValue: bigint
+) => {
+  const { instances, brands } = useContractStore.getState();
+  const instance = instances?.['orca'];
+  if (!instance) throw Error('no contract instance');
+
+  const want = {};
+  const give = {};
+
+  wallet?.makeOffer(
+    {
+      source: 'continuing',
+      previousOffer: Number(offerId),
+      invitationMakerName: 'makeAccountInvitation',
+    },
+    { give, want },
+    undefined,
+    (update: { status: string; data?: unknown }) => {
+      if (update.status === 'error') {
+        console.log(update);
+      }
+      if (update.status === 'accepted') {
+        console.log(update);
+      }
+      if (update.status === 'refunded') {
+        console.log(update);
+      }
+    },
+    1
+  );
+};
 
 // TODO: this can be for making an account
 const MakeAccount = () => {
 const { walletConnection } = useAgoric();
 const { addNotification } = useContext(NotificationContext);
+const [offerId, setOfferId] = useState('');
 
   return (
     <div className="flex w-full flex-row justify-center">
@@ -71,7 +129,7 @@ const { addNotification } = useContext(NotificationContext);
               className="daisyui-btn daisyui-btn-primary self-center"
               onClick={() => {
                 if (walletConnection) {
-                  makeOffer(
+                  makeAndContinueOffer(
                     walletConnection,
                     addNotification!,
                     "dev",
@@ -89,6 +147,40 @@ const { addNotification } = useContext(NotificationContext);
             >
               Create Account
             </button>
+
+
+            <input
+            type="text"
+            value={offerId}
+            onChange={(e) => setOfferId(e.target.value)}
+            placeholder="Enter previous offer ID"
+            className="input input-bordered"
+          />
+
+          <button
+            className="daisyui-btn daisyui-btn-primary self-center"
+            onClick={() => {
+              if (walletConnection) {
+                continueOfferWithId(
+                  walletConnection,
+                  addNotification!,
+                  offerId,
+                  "dev",
+                  BigInt(1),
+                  BigInt(1)
+                );
+              } else {
+                addNotification!({
+                  text: 'error: please connect your wallet or check your connection to RPC endpoints',
+                  status: 'error',
+                });
+                return;
+              }
+            }}
+          >
+            Continue Offer with ID
+          </button>
+
         </div>
         
       </div>

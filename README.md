@@ -337,6 +337,11 @@ const publicFacet = zone.exo(
 
 Make sure the offer handlers are in the top-level scope, so they don't inherit any "side effects"
 
+
+
+
+
+
 # tests from root directory
 ```
 yarn cache clean; yarn; yarn workspace dapp-agoric-orca-contract test ; rm -rf -v yarn.lock package-lock.json node_modules contract/node_modules; yarn; yarn workspace dapp-agoric-orca-contract test
@@ -378,4 +383,9 @@ Troubleshooting remote calls
 
 If an ordinary synchronous call (obj.method()) fails because the method doesn't exist, the obj may be remote, in which case E(obj).method() might work.
 
+# ensure to override the chain registry (from inside multichain-testing):
 
+```
+yarn build (from agoric-sdk root)
+make override-chain-registry
+```
