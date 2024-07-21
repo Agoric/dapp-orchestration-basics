@@ -8,6 +8,8 @@ import {
   startContract,
 } from './platform-goals/start-contract.js';
 import { makeTracer } from './tools/debug.js';
+import { makeStorageNodeChild } from '@agoric/internal/src/lib-chainStorage.js';
+
 // TODO want to do this eventually
 // import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
 // import { makeChainHub } from '../exos/chain-hub.js';
@@ -40,18 +42,17 @@ export const allValues = async obj => {
 };
 
 
-async function setupChains(chainHub) {
-  await chainHub.registerChain('agoric', agoricChainDetails);
-  await chainHub.registerChain('osmosis', osmosisChainDetails);
-  // Add other chains as needed
-}
+// async function setupChains(chainHub) {
+//   await chainHub.registerChain('agoric', agoricChainDetails);
+//   await chainHub.registerChain('osmosis', osmosisChainDetails);
+// }
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {stakeBld: Installation<import('./orca.contract.js').start>}}}} permittedPowers
  * @param config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
-  trace('startOrcaContract()... 0.0.6');
+  trace('startOrcaContract()... 0.0.7');
   console.log(permittedPowers)
 
   const {
@@ -63,7 +64,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
       chainStorage,
       // orchestration,
       cosmosInterchainService,
-
+      startUpgradable
     },
     instance: {
       produce: { orca: produceInstance },
@@ -105,10 +106,15 @@ export const startOrcaContract = async (permittedPowers, config) => {
   console.log(agoricNames)
   const mainNode = await E(chainStorage).makeChildNode('orca');
   console.log(mainNode)
+  console.log("DONE MAKING NODES v0.1")
+  // debug
   const storageNode = await E(mainNode).makeChildNode('state');
+  // const storageNode = await makeStorageNodeChild(chainStorage, contractName);
+
   console.log(storageNode)
   const marshaller = await E(board).getPublishingMarshaller();
   console.log(marshaller)
+
 
   const privateArgs = {
     storageNode,
@@ -121,15 +127,28 @@ export const startOrcaContract = async (permittedPowers, config) => {
     agoricNames: await agoricNames,
   };
 
-  const started = await startContract(
-    permittedPowers,
-    { name: contractName, startArgs: { installation } },
-    privateArgs,
-  );
+  // const started = await startContract(
+  //   permittedPowers,
+  //   { name: contractName, startArgs: { installation } },
+  //   privateArgs,
+  // );
+
+  /** @type {StartUpgradableOpts<OrcaSF>} */
+  const startOpts = {
+    label: 'orca',
+    installation,
+    terms: undefined,
+    privateArgs
+  };
+
+  const { instance } = await E(startUpgradable)(startOpts);
 
   trace(contractName, '(re)started WITH RESET');
-  produceInstance.reset();
-  produceInstance.resolve(started.instance);
+  // produceInstance.reset();
+  // produceInstance.resolve(started.instance);
+  produceInstance.resolve(instance);
+
+  // await E(brandAuxPublisher).publishBrandInfo(brand);
 };
 
 /** @type { import("@agoric/vats/src/core/lib-boot").BootstrapManifest } */

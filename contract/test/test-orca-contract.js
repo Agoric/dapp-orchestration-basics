@@ -13,7 +13,7 @@ import { startOrcaContract } from '../src/orca.proposal.js';
 import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
-
+// import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
 // import {commonSetup} from '@agoric/orchestration/test/support.js'
 // import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
 // import { prepareOrchestrationTools } from '@agoric/orchestration'
@@ -54,7 +54,54 @@ const makeTestContext = async t => {
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
   const tools = await makeMockTools(t, bundleCache);
-  return { zoe, bundle, bundleCache, feeMintAccess, ...tools };
+  
+
+  // mock agoricNames
+  const agoricNames = Far('DummyAgoricNames', {
+    lookup: async (key, name) => {
+      if (key === 'chain' && (name === 'agoric' || name === 'osmosis')) {
+        return {
+          name,
+          chainId: `${name}local`,
+          denom: name === 'agoric' ? 'ubld' : 'uosmo',
+          expectedAddressPrefix: name,
+          details: `${name} chain details`
+        };
+      }
+      throw Error(`Chain not found: ${name}`);
+    },
+  });
+
+  // mock cosmosInterchainService
+  const cosmosInterchainService = Far('DummyCosmosInterchainService', {
+    getChainHub: async () => {
+      const chainHub = {
+        registerChain: async (name, details) => {
+          console.log(`chain registered: ${name}`, details);
+        },
+        getChain: async (name) => {
+          if (name === 'agoric' || name === 'osmosis') {
+            return { name, details: `${name} chain details` };
+          }
+          throw Error(`chain not found: ${name}`);
+        },
+        lookup: async (name) => {
+          t.log("INSIDE FAKE LOOKUP")
+          if (name === 'agoric' || name === 'osmosis') {
+            return { name, details: `${name} chain details` };
+          }
+          throw Error(`chain not found: ${name}`);
+        },
+      };
+      return chainHub;
+    },
+  });
+
+  // setup chain registration for tests
+  const chainHub = await E(cosmosInterchainService).getChainHub();
+  await setupChainsForTests(chainHub);
+  
+  return { zoe, bundle, bundleCache, feeMintAccess, cosmosInterchainService, agoricNames, ...tools };
 };
 
 test.before(async t => (t.context = await makeTestContext(t)));
@@ -67,17 +114,20 @@ test('Install the contract', async t => {
 });
 
 test('Start Orca contract', async t => {
-  const { zoe, bundle } = t.context;
+  const { zoe, bundle, cosmosInterchainService, agoricNames } = t.context;
   const installation = E(zoe).install(bundle);
 
+  
   const privateArgs = harden({
     // orchestration: Far('DummyOrchestration'),
-    cosmosInterchainService: Far('DummyOrchestration'),
+    // cosmosInterchainService: Far('DummyOrchestration'),
+    cosmosInterchainService,
     storageNode: Far('DummyStorageNode'),
     marshaller: Far('DummyMarshaller'),
     timer: Far('DummyTimer'),
     localchain: Far('Dumm'),
-    agoricNames: Far('agoricNames')
+    // agoricNames: Far('agoricNames')
+    agoricNames
   });
 
   const { instance } = await E(zoe).startInstance(
@@ -128,6 +178,10 @@ test('Start Orca contract using core-eval', async t => {
   t.log(instance[name]);
 });
 
+
+/////////////////////////
+
+
 export const chainConfigs = {
   cosmoshub: {
     chainId: 'gaialocal',
@@ -146,6 +200,35 @@ export const chainConfigs = {
   },
 };
 
+const agoricChainDetails = {
+  chainId: 'agoriclocal',
+  denom: 'ubld',
+  expectedAddressPrefix: 'agoric',
+};
+
+const osmosisChainDetails = {
+  chainId: 'osmosislocal',
+  denom: 'uosmo',
+  expectedAddressPrefix: 'osmo',
+};
+
+const setupChainsForTests = async (chainHub) => {
+  await E(chainHub).registerChain('agoric', agoricChainDetails);
+  await E(chainHub).registerChain('osmosis', osmosisChainDetails);
+};
+
+
+test('Verify chain registration', async t => {
+  const { cosmosInterchainService } = t.context;
+  const chainHub = await E(cosmosInterchainService).getChainHub();
+
+  const agoricChain = await E(chainHub).getChain('agoric');
+  t.truthy(agoricChain, 'Agoric chain should be registered');
+
+  const osmosisChain = await E(chainHub).getChain('osmosis');
+  t.truthy(osmosisChain, 'Osmosis chain should be registered');
+});
+
 const orchestrationAccountScenario = test.macro({
   title: (_, chainName) =>
     `orchestrate - ${chainName} makeAccount returns a ContinuingOfferResult`,
@@ -158,18 +241,20 @@ const orchestrationAccountScenario = test.macro({
     const { 
       // bootstrap: { vowTools: vt },
       zoe, 
-      bundle } = t.context;
+      bundle, cosmosInterchainService, agoricNames } = t.context;
     // const { zoe, bundle } = t.context;
     const installation = E(zoe).install(bundle);
 
     const privateArgs = harden({
       // orchestration: Far('DummyOrchestration'),
-      cosmosInterchainService: Far('DummyOrchestration'),
+      // cosmosInterchainService: Far('DummyOrchestration'),
+      cosmosInterchainService,
       storageNode: Far('DummyStorageNode'),
       marshaller: Far('DummyMarshaller'),
       timer: Far('DummyTimer'),
       localchain: Far('Dumm'),
-      agoricNames: Far('agoricNames')
+      // agoricNames: Far('agoricNames')
+      agoricNames
     });
 
     const { instance } = await E(zoe).startInstance(
@@ -202,42 +287,6 @@ const orchestrationAccountScenario = test.macro({
     t.log("initialUserSeat")
     t.log(initialUserSeat)
 
-    // const { invitationMakers, publicSubscribers } = await vt.when(
-    //   E(initialUserSeat).getOfferResult(),
-    // );
-
-    //
-
-    // const initialOfferResult = await E(initialUserSeat).getOfferResult();
-    // t.log("initialOfferResult")
-    // t.log(initialOfferResult)
-
-    // const initialOfferId = await E(initialUserSeat).getOfferId();
-    // t.log("initialOfferId")
-    // t.log(initialOfferId)
-
-    // t.log('Initial Offer Result:', initialOfferResult);
-    // t.log('Initial Offer ID:', initialOfferId);
-
-    // // ensure the initial offer was accepted
-    // t.truthy(initialOfferId, 'Initial offer ID should be defined');
-
-    ///
-
-
-    // make the continuing offer
-    // const continuingInvitation = E(publicFacet).makeAccountInvitation();
-    // const continuingUserSeat = E(zoe).offer(
-    //   continuingInvitation,
-    //   { source: 'continuing', previousOffer: initialOfferId },
-    //   undefined,
-    //   { chainName }
-    // );
-    // const continuingOfferResult = await E(continuingUserSeat).getOfferResult();
-
-    // t.log('Continuing Offer Result:', continuingOfferResult);
-
-    // t.truthy(continuingOfferResult, 'continuing offer result should be defined');
   },
 });
 

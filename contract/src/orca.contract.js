@@ -88,7 +88,7 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.26');
+  trace('version 0.1.30');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -146,7 +146,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.75');
+  trace('inside start function: v1.0.78');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
@@ -190,14 +190,18 @@ export const start = async (zcf, privateArgs, baggage) => {
     marshaller,
   );
 
-  console.log('Got an orchestrate object version 0.52.117');
+  console.log('Got an orchestrate object version 0.52.121');
   console.log(orchestrate);
 
   // const chains = await chainHub.getChainsAndConnection()
   // console.log("chains from chainhub")
   // console.log(chains)
 
-  const createAccounts = orchestrate('LSTTia', { zcf }, createAccountsFn);
+  const createAccounts = orchestrate(
+    'LSTTia', 
+    { zcf }, 
+    createAccountsFn
+  );
 
   const ConnectionInfoShape = M.record(); // TODO
 
@@ -209,7 +213,20 @@ export const start = async (zcf, privateArgs, baggage) => {
     }),
     {
       async makeAccountInvitation() {
-        const invitation = await zcf.makeInvitation(
+        // const invitation = await zcf.makeInvitation(
+        //   createAccounts,
+        //   'Create accounts',
+        //   undefined,
+        //   harden({
+        //     give: {},
+        //     want: {},
+        //     exit: M.any(),
+        //   }),
+        // );
+        // // return Promise.resolve(invitation);
+        // return invitation;
+        // return M.promise()
+        return zcf.makeInvitation(
           createAccounts,
           'Create accounts',
           undefined,
@@ -217,11 +234,8 @@ export const start = async (zcf, privateArgs, baggage) => {
             give: {},
             want: {},
             exit: M.any(),
-          }),
+          })
         );
-        // return Promise.resolve(invitation);
-        return invitation;
-        // return M.promise()
       },
     },
   );

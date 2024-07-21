@@ -68,7 +68,7 @@ const makeAndContinueOffer = async (
               console.log(continuingUpdate);
             }
           },
-          1
+          1000
         );
       }
       if (update.status === 'refunded') {
@@ -113,7 +113,7 @@ const continueOfferWithId = (
         console.log(update);
       }
     },
-    1
+    10000
   );
 };
 
