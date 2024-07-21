@@ -193,10 +193,6 @@ export const start = async (zcf, privateArgs, baggage) => {
   console.log('Got an orchestrate object version 0.52.121');
   console.log(orchestrate);
 
-  // const chains = await chainHub.getChainsAndConnection()
-  // console.log("chains from chainhub")
-  // console.log(chains)
-
   const createAccounts = orchestrate(
     'LSTTia', 
     { zcf }, 
