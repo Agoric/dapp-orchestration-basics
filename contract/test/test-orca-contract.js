@@ -59,7 +59,13 @@ const makeTestContext = async t => {
   // mock agoricNames
   const agoricNames = Far('DummyAgoricNames', {
     lookup: async (key, name) => {
-      if (key === 'chain' && (name === 'agoric' || name === 'osmosis')) {
+      t.log("inside fake agoriname lookup")
+      console.log("inside fake 2", key, name)
+      if (key === 'chain' && (
+        name === 'agoric' 
+        || 
+        name === 'osmosis'
+      )) {
         return {
           name,
           chainId: `${name}local`,
@@ -67,8 +73,36 @@ const makeTestContext = async t => {
           expectedAddressPrefix: name,
           details: `${name} chain details`
         };
+      } else if (key === 'chainConnection' && (
+        name === 'agoriclocal_osmosislocal'
+        || name === 'osmosislocal_agoriclocal')) {
+          return harden({
+            connectionName: name,
+            sourceChain: name.split('_')[0],
+            destinationChain: name.split('_')[1],
+            transferChannel: harden({
+              version: '1',
+              state: 'open',
+              portId: 'transfer',
+              ordering: 'ordered',
+              counterPartyPortId: 'transfer',
+              counterPartyChannelId: 'channel-1',
+              channelId: 'channel-0'
+            }),
+            state: 'active',
+            id: 'connection-0',
+            counterparty: harden({
+              client_id: 'client-0',
+              connection_id: 'connection-0',
+              prefix: {
+                key_prefix: 'key-prefix-0'
+              }
+            }),
+            client_id: 'client-0',
+            connectionDetails: `${name} connection details`
+          });
       }
-      throw Error(`Chain not found: ${name}`);
+      throw Error(`Chain or connection not found: ${name}`);
     },
   });
 
@@ -81,14 +115,27 @@ const makeTestContext = async t => {
         },
         getChain: async (name) => {
           if (name === 'agoric' || name === 'osmosis') {
-            return { name, details: `${name} chain details` };
+            return {
+              name,
+              chainId: `${name}local`,
+              denom: name === 'agoric' ? 'ubld' : 'uosmo',
+              expectedAddressPrefix: name,
+              details: `${name} chain details`
+            };
           }
           throw Error(`chain not found: ${name}`);
         },
+        
         lookup: async (name) => {
           t.log("INSIDE FAKE LOOKUP")
           if (name === 'agoric' || name === 'osmosis') {
-            return { name, details: `${name} chain details` };
+            return {
+              name,
+              chainId: `${name}local`,
+              denom: name === 'agoric' ? 'ubld' : 'uosmo',
+              expectedAddressPrefix: name,
+              details: `${name} chain details`
+            };
           }
           throw Error(`chain not found: ${name}`);
         },
