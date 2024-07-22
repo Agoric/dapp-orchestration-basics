@@ -209,6 +209,29 @@ const makeTestContext = async t => {
   };
 };
 
+const makeQueryTool = () => {
+  return {
+    queryData: async (path) => {
+      console.log(`Querying data at path: ${path}`);
+      if (path.includes('wallet')) {
+        return {
+          offerToPublicSubscriberPaths: [
+            ['offerId', { account: 'osmo1abc' }]
+          ],
+          status: {
+            id: 'offerId',
+            numWantsSatisfied: 1,
+            result: 'UNPUBLISHED',
+            error: undefined,
+          },
+        };
+      }
+      return {};
+    },
+  };
+};
+
+
 test.before(async t => (t.context = await makeTestContext(t)));
 
 test('Install the contract', async t => {
@@ -334,72 +357,102 @@ test('Verify chain registration', async t => {
   t.truthy(osmosisChain, 'Osmosis chain should be registered');
 });
 
+
+
+const queryVstorage = async (t, qt, wallet, offerId) => {
+  t.log(`querying vstorage for wallet: ${wallet}, offerId: ${offerId}`);
+  const currentWalletRecord = await qt.queryData(`published.wallet.${wallet}.current`);
+  t.log('current wallet record:', currentWalletRecord);
+  const offerToPublicSubscriberMap = Object.fromEntries(currentWalletRecord.offerToPublicSubscriberPaths);
+  t.log('offer to public subscriber map:', offerToPublicSubscriberMap);
+  const address = offerToPublicSubscriberMap[offerId]?.account.split('.').pop();
+  t.log('extracted address:', address);
+  return { address, currentWalletRecord };
+};
+
+const logVstorageState = async (t, qt, path) => {
+  const data = await qt.queryData(path);
+  t.log(`vstorage data at ${path}:`, data);
+};
+
 const orchestrationAccountScenario = test.macro({
   title: (_, chainName) =>
     `orchestrate - ${chainName} makeAccount returns a ContinuingOfferResult`,
   exec: async (t, chainName) => {
     const config = chainConfigs[chainName];
     if (!config) {
-      return t.fail(`Unknown chain: ${chainName}`);
+      return t.fail(`unknown chain: ${chainName}`);
     }
 
-    const { 
-      // bootstrap: { vowTools: vt },
-      zoe, 
-      bundle, cosmosInterchainService, agoricNames, storageNode, marshaller } = t.context;
-    // const { zoe, bundle } = t.context;
+    const { zoe, bundle, cosmosInterchainService, agoricNames, storageNode, marshaller } = t.context;
+    t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
-
+    
     const privateArgs = harden({
-      // orchestration: Far('DummyOrchestration'),
-      // cosmosInterchainService: Far('DummyOrchestration'),
       cosmosInterchainService,
-      // storageNode: Far('DummyStorageNode'),
       storageNode,
-      // marshaller: Far('DummyMarshaller'),
       marshaller,
       timer: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
-      // agoricNames: Far('agoricNames')
-      agoricNames
+      agoricNames,
     });
 
-    const { instance } = await E(zoe).startInstance(
-      installation,
-      {},
-      {},
-      privateArgs,
-    );
-    t.log('started:', instance);
+    t.log('starting the instance...');
+    const { instance } = await E(zoe).startInstance(installation, {}, {}, privateArgs);
+    t.log('instance started:', instance);
     t.truthy(instance);
-    t.log("before get public facet")
-    const publicFacet = await E(zoe).getPublicFacet(instance);
-    t.log("after get public facet")
-    t.log(publicFacet)
 
-    // make the initial offer
+    t.log('getting public facet...');
+    const publicFacet = await E(zoe).getPublicFacet(instance);
+    t.log('public facet obtained:', publicFacet);
+
+    t.log('creating account invitation...');
     const initialInvitation = await E(publicFacet).makeAccountInvitation();
-    t.log("invitation")
-    t.log(initialInvitation)
+    t.log('invitation created:', initialInvitation);
 
     const makeAccountOffer = {
-      give: {
-      },
-      want: {
-      },
+      give: {},
+      want: {},
       exit: { onDemand: null }, 
     };
 
-    const initialUserSeat = await E(zoe).offer(initialInvitation, makeAccountOffer, undefined, undefined);
-    t.log("initialUserSeat")
-    t.log(initialUserSeat)
-
-    // Get the result of the initial offer
+    t.log('making offer...');
+    const offerId = 'offerId';  
+    const initialUserSeat = await E(zoe).offer(initialInvitation, makeAccountOffer, undefined, { id: offerId });
+    t.log('initial user seat:', initialUserSeat);
+    
+    t.log('getting offer result...');
     const offerResult = await E(initialUserSeat).getOfferResult();
-    t.log("offerResult", offerResult);
+    t.log('offer result:', offerResult);
+    t.truthy(offerResult, 'Offer result should exist');
 
+    const qt = makeQueryTool();
+    const wallet = 'test-wallet'; 
+    // log vstorage state before querying
+    await logVstorageState(t, qt, 'published.agoricNames');
+
+    const { address, currentWalletRecord } = await queryVstorage(t, qt, wallet, offerId);
+
+    t.log('got address:', address);
+    t.regex(address, new RegExp(`^${config.expectedAddressPrefix}1`), `Address for ${chainName} is valid`);
+    t.log('current wallet record', currentWalletRecord);
+
+    // Continue with the offer if required
+    const continuingInvitation = await E(publicFacet).makeAccountInvitation();
+    t.truthy(continuingInvitation, 'continuing invitation should be created');
+
+    const continuingOffer = {
+      give: {},
+      want: {},
+      exit: { onDemand: null },
+    };
+
+    const continuingUserSeat = await E(zoe).offer(continuingInvitation, continuingOffer, undefined, { previousOffer: offerId });
+    const continuingOfferResult = await E(continuingUserSeat).getOfferResult();
+
+    t.truthy(continuingOfferResult, 'continuing offer should produce a result');
+    t.log('continuing offer result', continuingOfferResult);
   },
 });
 
-// test(orchestrationAccountScenario, 'agoric');
 test(orchestrationAccountScenario, 'osmosis');
