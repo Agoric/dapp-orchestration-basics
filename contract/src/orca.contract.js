@@ -88,7 +88,7 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.31');
+  trace('version 0.1.34');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -107,8 +107,8 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
     trace('chain object');
     trace(chain);
 
-    // const info = await E(chain).getChainInfo();
-    const info = await chain.getChainInfo();
+    const info = await E(chain).getChainInfo();
+    // const info = await chain.getChainInfo();
     trace('chain info', info);
     
 
@@ -121,7 +121,8 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
     //   localChain.makeAccount(),
     // ]);
 
-    const chainAccount = await chain.makeAccount();
+    // const chainAccount = await chain.makeAccount();
+    const chainAccount = await E(chain).makeAccount();
     console.log("chainAccount")
     console.log(chainAccount)
     return await chainAccount.asContinuingOffer();
@@ -147,7 +148,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.79');
+  trace('inside start function: v1.0.82');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
@@ -191,7 +192,7 @@ export const start = async (zcf, privateArgs, baggage) => {
     marshaller,
   );
 
-  console.log('Got an orchestrate object version 0.52.121');
+  console.log('Got an orchestrate object version 0.52.124');
   console.log(orchestrate);
 
   const createAccounts = orchestrate(

@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1rme48dzjhay9vfjry20ppaxxtmxtnh37yyac0k
+ADDR=agoric1qj8gpyfp543qsk2h0vhhf5ehffsf88ptfn43k4
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -254,8 +254,8 @@ e2e:
 
 
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-023e19f.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-6bc363b.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-ee2126b.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-ee2126b.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
 
 	make copy-bn-js  

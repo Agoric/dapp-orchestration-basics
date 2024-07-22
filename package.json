@@ -41,6 +41,7 @@
     "bn.js@npm:^4.11.8": "patch:bn.js@npm%3A4.12.0#~/.yarn/patches/bn.js-npm-4.12.0-3ec6c884f6.patch",
     "bn.js@npm:^4.1.0": "patch:bn.js@npm%3A4.12.0#~/.yarn/patches/bn.js-npm-4.12.0-3ec6c884f6.patch",
     "bn.js@npm:^4.0.0": "patch:bn.js@npm%3A4.12.0#~/.yarn/patches/bn.js-npm-4.12.0-3ec6c884f6.patch",
-    "bn.js@npm:^5.0.0": "patch:bn.js@npm%3A4.12.0#~/.yarn/patches/bn.js-npm-4.12.0-3ec6c884f6.patch"
+    "bn.js@npm:^5.0.0": "patch:bn.js@npm%3A4.12.0#~/.yarn/patches/bn.js-npm-4.12.0-3ec6c884f6.patch",
+    "@agoric/orchestration/@noble/hashes": "github:paulmillr/noble-hashes#ae060daa6252f3ff2aa2f84e887de0aab491281d"
   }
 }
