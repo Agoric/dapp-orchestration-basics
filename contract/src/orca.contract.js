@@ -104,12 +104,13 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   try {
     // const chain = await E(orch).getChain('osmosis'); //host code vs guest
     const chain = await orch.getChain('osmosis');
-    trace('chain');
+    trace('chain object');
     trace(chain);
 
     // const info = await E(chain).getChainInfo();
-    const info = await chain.getChainInfo();
-    trace('info', info);
+    // const info = await chain.getChainInfo();
+    // trace('chain info', info);
+    
 
     // const localChain = orch.getChain('agoric');
     // trace("localChain");
@@ -123,7 +124,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
     const chainAccount = await chain.makeAccount();
     console.log("chainAccount")
     console.log(chainAccount)
-    return chainAccount.asContinuingOffer();
+    return await chainAccount.asContinuingOffer();
 
     // const localAccount = await localChain.makeAccount();
     // console.log("localAccount")

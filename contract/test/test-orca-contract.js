@@ -13,19 +13,7 @@ import { startOrcaContract } from '../src/orca.proposal.js';
 import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
-// import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
-// import {commonSetup} from '@agoric/orchestration/test/support.js'
-// import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
-// import { prepareOrchestrationTools } from '@agoric/orchestration'
-
-// import { reincarnate } from '@agoric/swingset-liveslots/tools/setup-vat-data.js';
-
-// /** @type {ReturnType<typeof reincarnate>} */
-// let incarnation;
-
-// export const getBaggage = () => {
-//   return incarnation.fakeVomKit.cm.provideBaggage();
-// };
+import { get } from 'http';
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
@@ -55,58 +43,101 @@ const makeTestContext = async t => {
   const bundle = await bundleCache.load(contractPath, 'orca');
   const tools = await makeMockTools(t, bundleCache);
   
+  const makeDummyStorageNode = (nodeName = 'rootNode') => {
+    return Far('DummyStorageNode', {
+      makeChildNode: async (childName) => {
+        console.log(`makeChildNode called with name: ${childName}`);
+        return makeDummyStorageNode(childName);
+      },
+      getPath: () => {
+        console.log(`getPath called on node: ${nodeName}`);
+        return `/${nodeName}`;
+      },
+      toCapData: () => {
+        console.log(`toCapData called on node: ${nodeName}`);
+        return {};
+      },
+      setValue: (value) => {
+        console.log(`setValue called on node: ${nodeName} with value: ${value}`);
+        return value;
+      },
+    });
+  };
 
-  // mock agoricNames
+
+  const makeDummyMarshaller = () => {
+    return Far('DummyMarshaller', {
+      toCapData: (data) => {
+        console.log('toCapData called with data:', data);
+        return {};
+      },
+      fromCapData: (capData) => {
+        console.log('fromCapData called with capData:', capData);
+        return {};
+      },
+    });
+  };
+
   const agoricNames = Far('DummyAgoricNames', {
     lookup: async (key, name) => {
       t.log("inside fake agoriname lookup")
       console.log("inside fake 2", key, name)
-      if (key === 'chain' && (
-        name === 'agoric' 
-        || 
-        name === 'osmosis'
-      )) {
-        return {
-          name,
+      if (key === 'chain' && (name === 'agoric' || name === 'osmosis')) {
+
+        const state = harden({
+          name: name,
           chainId: `${name}local`,
           denom: name === 'agoric' ? 'ubld' : 'uosmo',
           expectedAddressPrefix: name,
-          details: `${name} chain details`
-        };
-      } else if (key === 'chainConnection' && (
-        name === 'agoriclocal_osmosislocal'
-        || name === 'osmosislocal_agoriclocal')) {
-          return harden({
-            connectionName: name,
-            sourceChain: name.split('_')[0],
-            destinationChain: name.split('_')[1],
-            transferChannel: harden({
-              version: '1',
-              state: 'open',
-              portId: 'transfer',
-              ordering: 'ordered',
-              counterPartyPortId: 'transfer',
-              counterPartyChannelId: 'channel-1',
-              channelId: 'channel-0'
-            }),
-            state: 'active',
-            id: 'connection-0',
-            counterparty: harden({
-              client_id: 'client-0',
-              connection_id: 'connection-0',
-              prefix: {
-                key_prefix: 'key-prefix-0'
-              }
-            }),
+          details: `${name} chain details`,
+          stakingTokens: [{ denom: name === 'agoric' ? 'ubld' : 'uosmo' }],
+        });
+    
+        return harden({
+          ...state,
+          makeAccount: Far('Account', {
+            getChainId: () => state.chainId,
+            getAccountAddress: () => `${state.name}AccountAddress`,
+            getBalance: () => `1000${state.denom}`,
+          }),
+          getChainInfo: Far('ChainInfo', {
+            getChainId: () => state.chainId,
+            getDenom: () => state.denom,
+            getExpectedAddressPrefix: () => state.expectedAddressPrefix,
+          }),
+        });
+
+      } else if (key === 'chainConnection' && (name === 'agoriclocal_osmosislocal' || name === 'osmosislocal_agoriclocal')) {
+        return harden({
+          connectionName: name,
+          sourceChain: name.split('_')[0],
+          destinationChain: name.split('_')[1],
+          transferChannel: harden({
+            version: '1',
+            state: 'open',
+            portId: 'transfer',
+            ordering: 'ordered',
+            counterPartyPortId: 'transfer',
+            counterPartyChannelId: 'channel-1',
+            channelId: 'channel-0'
+          }),
+          state: 'active',
+          id: 'connection-0',
+          counterparty: harden({
             client_id: 'client-0',
-            connectionDetails: `${name} connection details`
-          });
+            connection_id: 'connection-0',
+            prefix: {
+              key_prefix: 'key-prefix-0'
+            }
+          }),
+          client_id: 'client-0',
+          connectionDetails: `${name} connection details`,
+        });
       }
       throw Error(`Chain or connection not found: ${name}`);
     },
   });
 
-  // mock cosmosInterchainService
   const cosmosInterchainService = Far('DummyCosmosInterchainService', {
     getChainHub: async () => {
       const chainHub = {
@@ -114,41 +145,68 @@ const makeTestContext = async t => {
           console.log(`chain registered: ${name}`, details);
         },
         getChain: async (name) => {
-          if (name === 'agoric' || name === 'osmosis') {
-            return {
-              name,
+          if (name === 'agoric' || name === 'osmosis' || name === 'agoriclocal' || name === 'osmosislocal') {
+  
+            const state = harden({
+              name: name,
               chainId: `${name}local`,
               denom: name === 'agoric' ? 'ubld' : 'uosmo',
               expectedAddressPrefix: name,
-              details: `${name} chain details`
-            };
-          }
-          throw Error(`chain not found: ${name}`);
-        },
+              details: `${name} chain details`,
+              stakingTokens: [{ denom: name === 'agoric' ? 'ubld' : 'uosmo' }],
+            });
         
-        lookup: async (name) => {
-          t.log("INSIDE FAKE LOOKUP")
-          if (name === 'agoric' || name === 'osmosis') {
-            return {
-              name,
-              chainId: `${name}local`,
-              denom: name === 'agoric' ? 'ubld' : 'uosmo',
-              expectedAddressPrefix: name,
-              details: `${name} chain details`
-            };
+            return harden({
+              ...state,
+              makeAccount: ()=>Far('Account', {
+                getChainId: () => state.chainId,
+                getAccountAddress: () => `${state.name}AccountAddress`,
+                getAddress: () => harden({
+                  chainId: state.chainId,
+                  value: `${state.name}AccountAddress`,
+                  encoding: 'bech32' // or 'ethereum', based on your requirements
+                }),
+                getBalance: () => `1000${state.denom}`,
+              }),
+              getChainInfo: ()=>Far('ChainInfo', {
+                getChainId: () => state.chainId,
+                getDenom: () => state.denom,
+                getExpectedAddressPrefix: () => state.expectedAddressPrefix,
+              }),
+            });
+    
           }
           throw Error(`chain not found: ${name}`);
         },
       };
       return chainHub;
     },
+    makeAccount: async (name) => {
+      const chainHub = await E(cosmosInterchainService).getChainHub();
+      const chain = await E(chainHub).getChain(name);
+      return E(chain).makeAccount();
+    },
+    getChainInfo: async (name) => {
+      const chainHub = await E(cosmosInterchainService).getChainHub();
+      const chain = await E(chainHub).getChain(name);
+      return E(chain).getChainInfo();
+    },
   });
 
-  // setup chain registration for tests
   const chainHub = await E(cosmosInterchainService).getChainHub();
   await setupChainsForTests(chainHub);
   
-  return { zoe, bundle, bundleCache, feeMintAccess, cosmosInterchainService, agoricNames, ...tools };
+  return { 
+    zoe, 
+    bundle, 
+    bundleCache, 
+    feeMintAccess, 
+    cosmosInterchainService, 
+    agoricNames,     
+    storageNode: makeDummyStorageNode(),
+    marshaller: makeDummyMarshaller(),
+    ...tools 
+  };
 };
 
 test.before(async t => (t.context = await makeTestContext(t)));
@@ -161,7 +219,7 @@ test('Install the contract', async t => {
 });
 
 test('Start Orca contract', async t => {
-  const { zoe, bundle, cosmosInterchainService, agoricNames } = t.context;
+  const { zoe, bundle, cosmosInterchainService, agoricNames, storageNode, marshaller } = t.context;
   const installation = E(zoe).install(bundle);
 
   
@@ -169,8 +227,10 @@ test('Start Orca contract', async t => {
     // orchestration: Far('DummyOrchestration'),
     // cosmosInterchainService: Far('DummyOrchestration'),
     cosmosInterchainService,
-    storageNode: Far('DummyStorageNode'),
-    marshaller: Far('DummyMarshaller'),
+    // storageNode: Far('DummyStorageNode'),
+    storageNode,
+    // marshaller: Far('DummyMarshaller'),
+    marshaller,
     timer: Far('DummyTimer'),
     localchain: Far('Dumm'),
     // agoricNames: Far('agoricNames')
@@ -225,8 +285,6 @@ test('Start Orca contract using core-eval', async t => {
   t.log(instance[name]);
 });
 
-
-/////////////////////////
 
 
 export const chainConfigs = {
@@ -288,7 +346,7 @@ const orchestrationAccountScenario = test.macro({
     const { 
       // bootstrap: { vowTools: vt },
       zoe, 
-      bundle, cosmosInterchainService, agoricNames } = t.context;
+      bundle, cosmosInterchainService, agoricNames, storageNode, marshaller } = t.context;
     // const { zoe, bundle } = t.context;
     const installation = E(zoe).install(bundle);
 
@@ -296,10 +354,12 @@ const orchestrationAccountScenario = test.macro({
       // orchestration: Far('DummyOrchestration'),
       // cosmosInterchainService: Far('DummyOrchestration'),
       cosmosInterchainService,
-      storageNode: Far('DummyStorageNode'),
-      marshaller: Far('DummyMarshaller'),
+      // storageNode: Far('DummyStorageNode'),
+      storageNode,
+      // marshaller: Far('DummyMarshaller'),
+      marshaller,
       timer: Far('DummyTimer'),
-      localchain: Far('Dumm'),
+      localchain: Far('DummyLocalchain'),
       // agoricNames: Far('agoricNames')
       agoricNames
     });
@@ -333,6 +393,10 @@ const orchestrationAccountScenario = test.macro({
     const initialUserSeat = await E(zoe).offer(initialInvitation, makeAccountOffer, undefined, undefined);
     t.log("initialUserSeat")
     t.log(initialUserSeat)
+
+    // Get the result of the initial offer
+    const offerResult = await E(initialUserSeat).getOfferResult();
+    t.log("offerResult", offerResult);
 
   },
 });
