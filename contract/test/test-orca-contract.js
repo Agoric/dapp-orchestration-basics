@@ -437,7 +437,6 @@ const orchestrationAccountScenario = test.macro({
     t.regex(address, new RegExp(`^${config.expectedAddressPrefix}1`), `Address for ${chainName} is valid`);
     t.log('current wallet record', currentWalletRecord);
 
-    // Continue with the offer if required
     const continuingInvitation = await E(publicFacet).makeAccountInvitation();
     t.truthy(continuingInvitation, 'continuing invitation should be created');
 
