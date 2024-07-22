@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1lht90jsmj62mzjfqe5fx3c9thsk83tzz5z2ywx
+ADDR=agoric1rme48dzjhay9vfjry20ppaxxtmxtnh37yyac0k
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -156,6 +156,9 @@ provision-smart-wallet:
 fund-dev:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000ubld -y
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000uist -y
+local-fund:
+	agd tx bank send faucet $(ADDR) 999999999ubld -y
+	agd tx bank send faucet $(ADDR) 999999999uist -y
 # add address
 add-address:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add alice || true
@@ -228,7 +231,7 @@ deployc:
 deploy:
 	yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js
 test-orca:
-	yarn test ./test/test-orca-contract.js
+	yarn test ./test/orca-contract.test.js
 
 
 # todo remove clean install steps after debugging

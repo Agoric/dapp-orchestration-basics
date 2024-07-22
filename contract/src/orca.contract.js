@@ -88,7 +88,7 @@ export const privateArgsShape = meta.privateArgsShape;
  */
 const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.30');
+  trace('version 0.1.31');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -108,8 +108,8 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
     trace(chain);
 
     // const info = await E(chain).getChainInfo();
-    // const info = await chain.getChainInfo();
-    // trace('chain info', info);
+    const info = await chain.getChainInfo();
+    trace('chain info', info);
     
 
     // const localChain = orch.getChain('agoric');
@@ -147,7 +147,7 @@ const createAccountsFn = async (orch, { zcf }, seat, offerArgs) => {
 
 export const start = async (zcf, privateArgs, baggage) => {
   // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.78');
+  trace('inside start function: v1.0.79');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
