@@ -14,19 +14,20 @@ const customManifest = {
   startOrcaContract: {
     brand: {
       consume: {
-        IST: true,
+        // IST: true,
       },
       produce: {},
     },
     consume: {
       agoricNames: true,
       board: true,
-      brandAuxPublisher: true,
+      // brandAuxPublisher: true,
       chainStorage: true,
       chainTimerService: true,
       localchain: true,
       startUpgradable: true,
-      zoe: true,
+      cosmosInterchainService: true,
+      // zoe: true,
     },
     installation: {
       consume: {
@@ -41,12 +42,12 @@ const customManifest = {
         orca: true,
       },
     },
-    issuer: {
-      consume: {
-        IST: true,
-      },
-      produce: {},
-    },
+    // issuer: {
+    //   consume: {
+    //     IST: true,
+    //   },
+    //   produce: {},
+    // },
   },
 };
 

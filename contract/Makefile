@@ -6,7 +6,7 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1qj8gpyfp543qsk2h0vhhf5ehffsf88ptfn43k4
+ADDR=agoric1w55jl9ld2pth0dxyl6jq93phd658zruf4rtscl
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -153,6 +153,9 @@ provision-smart-wallet:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys list
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from ${ADDR} -y -b block
 
+local-provision-smart-wallet:
+	agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from $(ADDR) -y -b block  --chain-id agoriclocal
+
 fund-dev:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000ubld -y
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000uist -y
@@ -247,7 +250,7 @@ e2e:
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
 # kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@0.1.1-upgrade-16-dev-d45b478.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-023e19f.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-ee2126b.0"
 	
 # install orch
 # kubectl cp ../node_modules/@agoric/orchestration default/agoriclocal-genesis-0:/root/node_modules/@agoric/orchestration

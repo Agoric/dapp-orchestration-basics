@@ -4,15 +4,6 @@ import { DynamicToastChild } from '../Tabs';
 import { useContractStore } from '../../store/contract';
 import { NotificationContext } from '../../context/NotificationContext';
 
-const fetchBalances = async (addresses) => {
-  // Replace with actual API call to fetch balances for the given addresses
-  return addresses.map((address, idx) => ({
-    address,
-    agoricBalance: 1000 + idx * 100, // Dummy data
-    tokenBalance: 500 + idx * 50, // Dummy data
-  }));
-};
-
 const makeAndContinueOffer = async (
   wallet: AgoricWalletConnection,
   addNotification: (arg0: DynamicToastChild) => void,
@@ -21,7 +12,9 @@ const makeAndContinueOffer = async (
   giveValue: bigint
 ) => {
   const { instances, brands } = useContractStore.getState();
+  // const instance = instances?.['basicFlows'];
   const instance = instances?.['orca'];
+
   if (!instance) throw Error('no contract instance');
 
   const want = {};
@@ -33,43 +26,45 @@ const makeAndContinueOffer = async (
   // Make the initial offer
   wallet?.makeOffer(
     {
-      // source: 'contract',
-      // instance, 
-      // publicInvitationMaker: 'makeAccountInvitation',
-      source: 'agoricContract',
-      instancePath: ['orca'],
-      callPipe: [['makeAccountInvitation']],
+      source: 'contract',
+      instance, 
+      // publicInvitationMaker: 'makeOrchAccountInvitation',
+      publicInvitationMaker: 'makeAccountInvitation',
+      // source: 'agoricContract',
+      // instancePath: ['basicFlows'],
+      // callPipe: [['makeOrchAccountInvitation']],
     },
     { give, want },
-    undefined,
+    { chainName: "osmosis"},
+    // {},
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
         console.log(update);
       }
       if (update.status === 'accepted') {
         console.log(update);
-        // Proceed with the continuing offer only if the initial offer is accepted
-        wallet?.makeOffer(
-          {
-            source: 'continuing',
-            previousOffer: makeAccountofferId, // Replace 100 with the actual offer ID
-            invitationMakerName: 'makeAccountInvitation',
-          },
-          { give, want },
-          undefined,
-          (continuingUpdate: { status: string; data?: unknown }) => {
-            if (continuingUpdate.status === 'error') {
-              console.log(continuingUpdate);
-            }
-            if (continuingUpdate.status === 'accepted') {
-              console.log(continuingUpdate);
-            }
-            if (continuingUpdate.status === 'refunded') {
-              console.log(continuingUpdate);
-            }
-          },
-          1000
-        );
+        // // Proceed with the continuing offer only if the initial offer is accepted
+        // wallet?.makeOffer(
+        //   {
+        //     source: 'continuing',
+        //     previousOffer: makeAccountofferId, // Replace 100 with the actual offer ID
+        //     invitationMakerName: 'makeAccountInvitation',
+        //   },
+        //   { give, want },
+        //   undefined,
+        //   (continuingUpdate: { status: string; data?: unknown }) => {
+        //     if (continuingUpdate.status === 'error') {
+        //       console.log(continuingUpdate);
+        //     }
+        //     if (continuingUpdate.status === 'accepted') {
+        //       console.log(continuingUpdate);
+        //     }
+        //     if (continuingUpdate.status === 'refunded') {
+        //       console.log(continuingUpdate);
+        //     }
+        //   },
+        //   1000
+        // );
       }
       if (update.status === 'refunded') {
         console.log(update);
@@ -97,10 +92,11 @@ const continueOfferWithId = (
   wallet?.makeOffer(
     {
       source: 'continuing',
+      // source: 'offer',
       previousOffer: Number(offerId),
-      invitationMakerName: 'makeAccountInvitation',
+      invitationMakerName: 'makeAccountInvitation', //delegate
     },
-    { give, want },
+    {}, //{ give, want },
     undefined,
     (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {

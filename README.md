@@ -340,6 +340,49 @@ Make sure the offer handlers are in the top-level scope, so they don't inherit a
 
 
 
+20)
+```js
+await makeAccountInvitation() {
+```
+instead of:
+```js
+makeAccountInvitation() {
+```
+
+also the function signature that works is:
+```js
+
+/**
+ * handler function for creating and managing accounts //* Xparam {object} offerArgs
+ * @param {Orchestrator} orch
+ * @param {undefined} _ctx
+ * @param {ZCFSeat} seat
+ * @param {{ chainName: string }} offerArgs
+ */
+const createAccountsFn = async (orch, _ctx, seat, {chainName}) => {```
+
+some types were not correct
+```
+
+Then also, fron the client:
+
+```js
+wallet?.makeOffer(
+    {
+      source: 'contract',
+      instance, 
+      publicInvitationMaker: 'makeOrchAccountInvitation',
+      // publicInvitationMaker: 'makeAccountInvitation',
+      // source: 'agoricContract',
+      // instancePath: ['basicFlows'],
+      // callPipe: [['makeOrchAccountInvitation']],
+    },
+    { give, want },
+    { chainName: "osmosis"},
+```
+
+The offerArgs was empty
+
 
 
 # tests from root directory

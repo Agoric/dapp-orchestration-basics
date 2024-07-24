@@ -5,7 +5,6 @@
 import { E } from '@endo/far';
 import {
   installContract,
-  startContract,
 } from './platform-goals/start-contract.js';
 import { makeTracer } from './tools/debug.js';
 import { makeStorageNodeChild } from '@agoric/internal/src/lib-chainStorage.js';
@@ -48,31 +47,38 @@ export const allValues = async obj => {
 // }
 
 /**
- * @param {BootstrapPowers & {installation: {consume: {stakeBld: Installation<import('./orca.contract.js').start>}}}} permittedPowers
+ * @param {BootstrapPowers & {installation: {consume: {orca: Installation<import('./orca.contract.js').start>}}}} permittedPowers
  * @param config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
-  trace('startOrcaContract()... 0.0.7');
+  trace('startOrcaContract()... 0.0.93');
   console.log(permittedPowers)
 
   const {
     consume: {
-      agoricNames: agoricNamesP,
+      // agoricNames: agoricNamesP,
+      agoricNames,
       board,
       chainTimerService,
       localchain,
+      // chainStorage: chainStorageP,
       chainStorage,
       // orchestration,
       cosmosInterchainService,
-      startUpgradable
+      startUpgradable,
     },
+    // installation: {
+    //   // @ts-expect-error not a WellKnownName
+    //   consume: { orca: installation },
+    // },
     instance: {
+      // @ts-expect-error not a WellKnownName
       produce: { orca: produceInstance },
     },
   } = permittedPowers;
 
   trace('config', config);
-
+  trace('permittedPowers', permittedPowers)
   const {
     // must be supplied by caller or template-replaced
     bundleID = Fail`no bundleID`,
@@ -100,32 +106,30 @@ export const startOrcaContract = async (permittedPowers, config) => {
   // console.log("logp")
   // const orchestration = await logp('orchestration')(orchestrationP);
   // const orchestration = await orchestrationP;
-  const orchestration = await cosmosInterchainService;
-  console.log(orchestration)
-  const agoricNames = await agoricNamesP;
-  console.log(agoricNames)
-  const mainNode = await E(chainStorage).makeChildNode('orca');
-  console.log(mainNode)
-  console.log("DONE MAKING NODES v0.1")
-  // debug
-  const storageNode = await E(mainNode).makeChildNode('state');
-  // const storageNode = await makeStorageNodeChild(chainStorage, contractName);
+  // const orchestration = await cosmosInterchainService;
+  console.log(cosmosInterchainService)
+  // const agoricNames = await agoricNamesP;
+  console.log(agoricNames) // make storage node
+  // const mainNode = await E(chainStorage).makeChildNode('orca');
+  // const chainStorage = await chainStorageP;
+  console.log("chainStorage")
+  console.log(chainStorage)
+  // const mainNode = await makeStorageNodeChild(chainStorageP, "orca");
+  // const mainNode = await E(chainStorage).makeChildNode('orca');
+  // const storageNode = await E(chainStorage).makeChildNode('orca');
+  const storageNode = await E(await chainStorage).makeChildNode('orca');
+  // const storageNode = await makeStorageNodeChild(chainStorage, "orca");
+  // const mainNode = await makeStorageNodeChild(storageNode, "orca")
 
   console.log(storageNode)
+  console.log("DONE MAKING NODES v0.2")
+  // debug
+  // const storageNode = await E(mainNode).makeChildNode('state');
+  // const storageNode = await makeStorageNodeChild(chainStorage, contractName);
+
+  // console.log(storageNode)
   const marshaller = await E(board).getPublishingMarshaller();
   console.log(marshaller)
-
-
-  const privateArgs = {
-    storageNode,
-    marshaller,
-    cosmosInterchainService: await orchestration,
-    // orchestration: await orchestration,
-    timer: await chainTimerService,
-    // localchain: await logp('localchain')(localchain),
-    localchain: await localchain,
-    agoricNames: await agoricNames,
-  };
 
   // const started = await startContract(
   //   permittedPowers,
@@ -138,13 +142,21 @@ export const startOrcaContract = async (permittedPowers, config) => {
     label: 'orca',
     installation,
     terms: undefined,
-    privateArgs
+    privateArgs: {
+      storageNode, 
+      marshaller,
+      orchestrationService: await cosmosInterchainService,
+      timerService: await chainTimerService,
+      localchain: await localchain,
+      agoricNames: await agoricNames,
+    }
   };
 
+  trace("startOpts", startOpts)
   const { instance } = await E(startUpgradable)(startOpts);
 
   trace(contractName, '(re)started WITH RESET');
-  // produceInstance.reset();
+  produceInstance.reset();
   // produceInstance.resolve(started.instance);
   produceInstance.resolve(instance);
 
@@ -156,22 +168,24 @@ const orcaManifest = {
   [startOrcaContract.name]: {
     consume: {
       agoricNames: true,
-      brandAuxPublisher: true,
+      // brandAuxPublisher: true,
       board: true,
       chainStorage: true,
       startUpgradable: true,
       zoe: true,
-      chainTimerService: true,
       localchain: true,
+      chainTimerService: true,
       cosmosInterchainService: true,
+      // timerService: true,
+      // orchestrationService: true
     },
     installation: {
+      produce: { orca: true },
       consume: { orca: true },
+    },
+    instance: {
       produce: { orca: true },
     },
-    issuer: { consume: { IST: true }, produce: {} },
-    brand: { consume: { IST: true }, produce: {} },
-    instance: { produce: { orca: true } },
   },
 };
 harden(orcaManifest);
@@ -191,7 +205,7 @@ export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
 export const permit = harden({
   consume: {
     agoricNames: true,
-    brandAuxPublisher: true,
+    // brandAuxPublisher: true,
     board: true,
     chainStorage: true,
     startUpgradable: true,
@@ -199,13 +213,13 @@ export const permit = harden({
     localchain: true,
     chainTimerService: true,
     cosmosInterchainService: true,
+    // timerService: true,
+    // orchestrationService: true
   },
   installation: {
     consume: { orca: true },
     produce: { orca: true },
   },
-  issuer: { consume: { IST: true }, produce: {} },
-  brand: { consume: { IST: true }, produce: {} },
   instance: { produce: { orca: true } },
 });
 

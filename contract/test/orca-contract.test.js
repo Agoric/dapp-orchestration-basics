@@ -250,11 +250,13 @@ test('Start Orca contract', async t => {
     // orchestration: Far('DummyOrchestration'),
     // cosmosInterchainService: Far('DummyOrchestration'),
     cosmosInterchainService,
+    orchestrationService: cosmosInterchainService,
     // storageNode: Far('DummyStorageNode'),
     storageNode,
     // marshaller: Far('DummyMarshaller'),
     marshaller,
     timer: Far('DummyTimer'),
+    timerService: Far('DummyTimer'),
     localchain: Far('Dumm'),
     // agoricNames: Far('agoricNames')
     agoricNames
@@ -390,9 +392,11 @@ const orchestrationAccountScenario = test.macro({
     
     const privateArgs = harden({
       cosmosInterchainService,
+      orchestrationService: cosmosInterchainService,
       storageNode,
       marshaller,
       timer: Far('DummyTimer'),
+      timerService: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
       agoricNames,
     });
