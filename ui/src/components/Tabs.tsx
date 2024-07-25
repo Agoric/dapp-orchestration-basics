@@ -5,7 +5,8 @@ import { Notifications } from './Notifications';
 import { NotificationContext } from '../context/NotificationContext';
 import Swap from './swap/Swap';
 import Pay from './pay/Pay';
-import { MakeAccount } from './MakeAccount/MakeAccount';
+import { MakeAccount } from './Orchestration/MakeAccount';
+import Orchestration from './Orchestration';
 
 
 // notification related types
@@ -55,8 +56,8 @@ const Tabs = () => {
             activeTab={activeTab}
             handleTabClick={handleTabClick}
           >
-            {/* <Mint /> */}
-            <MakeAccount />
+            {/* <MakeAccount /> */}
+            <Orchestration />
           </TabWrapper>
           {/* <TabWrapper
             tab="IBC Send"
