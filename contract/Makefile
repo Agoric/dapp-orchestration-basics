@@ -6,11 +6,14 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric1w55jl9ld2pth0dxyl6jq93phd658zruf4rtscl
+ADDR=agoric1ztdxv63qvke0cecxalj79c9mtcyz6fdfen4lwv
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
 VOTE_OPTION=yes
+
+CLIENTADDR=agoric12j5kzvrwunqvrga5vm4zpy3mkeh3lvyld0amz5
+CLIENT_OSMO_ADDR=osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z
 
 .PHONY: list
 # https://stackoverflow.com/a/73159833/7963
@@ -143,6 +146,13 @@ fund: fund-provision-pool check-balance
 	make fund-wallet;
 	make check-balance;
 	make provision-smart-wallet;
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet ${CLIENTADDR} 10000000000000ubld -y;
+	sleep 5;
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet ${CLIENTADDR} 10000000000000uist -y;
+	make fund-osmo
+
+fund-osmo:
+	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx bank send faucet ${CLIENT_OSMO_ADDR} 9870000000uosmo --fees 1000uosmo -y;
 check-balance:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd q bank balances $(ADDR)
 fund-wallet:

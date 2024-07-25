@@ -6,3 +6,5 @@ redeploy:
 	yarn workspace dapp-agoric-orca-contract deployc
 test-orca:
 	yarn workspace dapp-agoric-orca-contract test
+fund:
+	yarn workspace  dapp-agoric-orca-contract fund

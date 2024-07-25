@@ -1,7 +1,4 @@
-// @ts-check
-// import { makeMarshal } from '@endo/marshal';
-// import { AmountMath } from '@agoric/ertp/src/amountMath.js';
-// change for tests?
+
 import { E } from '@endo/far';
 import {
   installContract,
@@ -9,9 +6,6 @@ import {
 import { makeTracer } from './tools/debug.js';
 import { makeStorageNodeChild } from '@agoric/internal/src/lib-chainStorage.js';
 
-// TODO want to do this eventually
-// import { makeChainHub } from '@agoric/orchestration/src/utils/chainHub.js';
-// import { makeChainHub } from '../exos/chain-hub.js';
 
 const trace = makeTracer('OrCE');
 const { entries, fromEntries } = Object;
@@ -23,7 +17,6 @@ const { Fail } = assert;
 const BOARD_AUX = 'boardAux';
 const contractName = 'orca';
 
-// const marshalData = makeMarshal(_val => Fail`data only`);
 
 const IST_UNIT = 1_000_000n;
 const CENT = IST_UNIT / 100n;
@@ -41,10 +34,6 @@ export const allValues = async obj => {
 };
 
 
-// async function setupChains(chainHub) {
-//   await chainHub.registerChain('agoric', agoricChainDetails);
-//   await chainHub.registerChain('osmosis', osmosisChainDetails);
-// }
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {orca: Installation<import('./orca.contract.js').start>}}}} permittedPowers
@@ -56,21 +45,14 @@ export const startOrcaContract = async (permittedPowers, config) => {
 
   const {
     consume: {
-      // agoricNames: agoricNamesP,
       agoricNames,
       board,
       chainTimerService,
       localchain,
-      // chainStorage: chainStorageP,
       chainStorage,
-      // orchestration,
       cosmosInterchainService,
       startUpgradable,
     },
-    // installation: {
-    //   // @ts-expect-error not a WellKnownName
-    //   consume: { orca: installation },
-    // },
     instance: {
       // @ts-expect-error not a WellKnownName
       produce: { orca: produceInstance },
@@ -85,7 +67,6 @@ export const startOrcaContract = async (permittedPowers, config) => {
   } = config?.options?.[contractName] ?? {};
 
   // agoricNames gets updated each time; the promise space only once XXXXXXX
-  // const installation = await orcaInstallationP;
 
   const installation = await installContract(permittedPowers, {
     name: contractName,
@@ -95,47 +76,17 @@ export const startOrcaContract = async (permittedPowers, config) => {
   console.log("permittedPowers")
   console.log(permittedPowers)
   console.log("from inside startOrcaContract:", installation)
-  // const logp = label => async p => {
-  //   trace(label, '...');
-  //   const r = await p;
-  //   trace(label, r);
-  //   return r;
-  // };
 
-  // console.log(logp)
-  // console.log("logp")
-  // const orchestration = await logp('orchestration')(orchestrationP);
-  // const orchestration = await orchestrationP;
-  // const orchestration = await cosmosInterchainService;
   console.log(cosmosInterchainService)
-  // const agoricNames = await agoricNamesP;
   console.log(agoricNames) // make storage node
-  // const mainNode = await E(chainStorage).makeChildNode('orca');
-  // const chainStorage = await chainStorageP;
   console.log("chainStorage")
   console.log(chainStorage)
-  // const mainNode = await makeStorageNodeChild(chainStorageP, "orca");
-  // const mainNode = await E(chainStorage).makeChildNode('orca');
-  // const storageNode = await E(chainStorage).makeChildNode('orca');
-  const storageNode = await E(await chainStorage).makeChildNode('orca');
-  // const storageNode = await makeStorageNodeChild(chainStorage, "orca");
-  // const mainNode = await makeStorageNodeChild(storageNode, "orca")
+  const storageNode = await E(chainStorage).makeChildNode('orca');
 
   console.log(storageNode)
-  console.log("DONE MAKING NODES v0.2")
-  // debug
-  // const storageNode = await E(mainNode).makeChildNode('state');
-  // const storageNode = await makeStorageNodeChild(chainStorage, contractName);
-
-  // console.log(storageNode)
+  console.log("DONE MAKING NODES v0.3")
   const marshaller = await E(board).getPublishingMarshaller();
   console.log(marshaller)
-
-  // const started = await startContract(
-  //   permittedPowers,
-  //   { name: contractName, startArgs: { installation } },
-  //   privateArgs,
-  // );
 
   /** @type {StartUpgradableOpts<OrcaSF>} */
   const startOpts = {
@@ -157,10 +108,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
 
   trace(contractName, '(re)started WITH RESET');
   produceInstance.reset();
-  // produceInstance.resolve(started.instance);
   produceInstance.resolve(instance);
-
-  // await E(brandAuxPublisher).publishBrandInfo(brand);
 };
 
 /** @type { import("@agoric/vats/src/core/lib-boot").BootstrapManifest } */
@@ -176,8 +124,6 @@ const orcaManifest = {
       localchain: true,
       chainTimerService: true,
       cosmosInterchainService: true,
-      // timerService: true,
-      // orchestrationService: true
     },
     installation: {
       produce: { orca: true },
@@ -205,7 +151,6 @@ export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
 export const permit = harden({
   consume: {
     agoricNames: true,
-    // brandAuxPublisher: true,
     board: true,
     chainStorage: true,
     startUpgradable: true,
@@ -213,8 +158,6 @@ export const permit = harden({
     localchain: true,
     chainTimerService: true,
     cosmosInterchainService: true,
-    // timerService: true,
-    // orchestrationService: true
   },
   installation: {
     consume: { orca: true },

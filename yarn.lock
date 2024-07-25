@@ -12064,7 +12064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:^4.7.2":
+"daisyui@npm:^4.12.10":
   version: 4.12.10
   resolution: "daisyui@npm:4.12.10"
   dependencies:
@@ -12145,7 +12145,7 @@ __metadata:
     buffer: "npm:^6.0.3"
     chain-registry: "npm:^1.28.1"
     cosmos-kit: "npm:^2.9.0"
-    daisyui: "npm:^4.7.2"
+    daisyui: "npm:^4.12.10"
     eslint: "npm:^8.56.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.5"

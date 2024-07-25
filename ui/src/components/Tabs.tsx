@@ -23,7 +23,7 @@ type DynamicToastChild = {
 
 const Tabs = () => {
   // tab state related functions
-  const [activeTab, setActiveTab] = useState('Make Account');
+  const [activeTab, setActiveTab] = useState('Interchain Accounts');
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -51,20 +51,20 @@ const Tabs = () => {
           className="daisyui-tabs-boxed daisyui-tabs daisyui-tabs-lg"
         >
           <TabWrapper
-            tab="Make Account"
+            tab="Interchain Accounts"
             activeTab={activeTab}
             handleTabClick={handleTabClick}
           >
             {/* <Mint /> */}
             <MakeAccount />
           </TabWrapper>
-          <TabWrapper
+          {/* <TabWrapper
             tab="IBC Send"
             activeTab={activeTab}
             handleTabClick={handleTabClick}
-          >
+          > */}
             {/* <Swap /> */}
-          </TabWrapper>
+          {/* </TabWrapper> */}
           {/* <TabWrapper
             tab="Pay"
             activeTab={activeTab}

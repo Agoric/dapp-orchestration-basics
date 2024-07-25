@@ -432,3 +432,18 @@ If an ordinary synchronous call (obj.method()) fails because the method doesn't 
 yarn build (from agoric-sdk root)
 make override-chain-registry
 ```
+
+# funding on osmosis
+```console
+osmosisd tx bank send faucet osmo1dw3nep8yqy5szzxn6hmma6j2z77vp4wz8tkh0w3gyrruwny0w03s070kaa 299999999uosmo --chain-id osmosislocal --gas-adjustment 2 --gas auto --from faucet --gas-prices 0.0025uosmo
+```
+
+example rpc for balances:
+```
+http://127.0.0.1:26657/abci_query?path=%22/cosmos.bank.v1beta1.Query/AllBalances%22&data=%22%5Cn-agoric12j5kzvrwunqvrga5vm4zpy3mkeh3lvyld0amz5%22
+```
+
+# tmp fund ica
+```console
+agd tx bank send keplr1 agoric15ch7da0d8nvqc8hk6dguq4ext0lvskpjcwm3patf8sygm63chmpqjlzt74 1000uist -y --chain-id agoriclocal
+```

@@ -22,7 +22,7 @@ const trace = makeTracer('OrchDev1');
  */
 const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.34');
+  trace('version 0.1.35');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -31,27 +31,17 @@ const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
   trace('seat');
   trace(seat);
   trace(chainName)
-  // trace("offerArgs")
-  // trace(offerArgs) // conversion throw because undefined for now
-  // trace('zcf');
-  // trace(zcf);
   seat.exit();
   try {
-    // const chain = await E(orch).getChain('osmosis'); //host code vs guest
-    const chain = await orch.getChain('osmosis');
+    const chain = await orch.getChain(chainName);
     trace('chain object');
     trace(chain);
-
-    // const info = await E(chain).getChainInfo();
     const info = await chain.getChainInfo();
     trace('chain info', info);
-
     const chainAccount = await chain.makeAccount();
-    // const chainAccount = await E(chain).makeAccount();
     console.log("chainAccount")
     console.log(chainAccount)
     return await chainAccount.asContinuingOffer();
-
   } catch (error) {
     console.error('Error in createAccounts:', error);
   }
@@ -65,8 +55,7 @@ const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
  * @param {Baggage} baggage
  */
 export const start = async (zcf, privateArgs, baggage) => {
-  // const zone = makeDurableZone(baggage);
-  trace('inside start function: v1.0.83');
+  trace('inside start function: v1.0.84');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
@@ -92,8 +81,8 @@ export const start = async (zcf, privateArgs, baggage) => {
   );
 
   /** @type {OfferHandler} */
-  const makeOrchAccount = orchestrate(
-    'makeOrchAccount',
+  const makeAccount = orchestrate(
+    'makeAccount',
     undefined,
     createAccountsFn,
   );
@@ -106,7 +95,7 @@ export const start = async (zcf, privateArgs, baggage) => {
     {
       makeAccountInvitation() {
         return zcf.makeInvitation(
-          makeOrchAccount,
+          makeAccount,
           'Make an Orchestration Account',
         );
       },

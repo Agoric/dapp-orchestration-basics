@@ -23,7 +23,7 @@
     "lint:fix": "eslint --fix '**/*.js'",
     "e2e": "make e2e",
     "execc": "make exec",
-    "fund:dev": "make fund-dev",
+    "fund": "make fund",
     "deployc": "make deployc"
   },
   "devDependencies": {
