@@ -22,7 +22,7 @@ const trace = makeTracer('OrchDev1');
  */
 const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
   const { give } = seat.getProposal();
-  trace('version 0.1.35');
+  trace('version 0.1.36');
   trace('give');
   trace(give);
   trace('inside createAccounts');
@@ -55,12 +55,12 @@ const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
  * @param {Baggage} baggage
  */
 export const start = async (zcf, privateArgs, baggage) => {
-  trace('inside start function: v1.0.84');
+  trace('inside start function: v1.0.85');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
   const {
-    cosmosInterchainService: orchestration,
+    orchestrationService: orchestration,
     marshaller,
     storageNode,
     timer,

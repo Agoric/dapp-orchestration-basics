@@ -33,20 +33,7 @@ const Orchestration = () => {
   const guidelines = false;
 
   const handleToggle = () => {
-    if (modalRef.current) {
-      if (modalOpen) {
-        modalRef.current.close();
-      } else {
-        modalRef.current.showModal();
-      }
-      setModalOpen(!modalOpen);
-    }
-  };
-
-  const openModal = (content: string, address: string = '') => {
-    setModalContent(content);
-    setModalAddress(address);
-    handleToggle();
+    setModalOpen(prevState => !prevState);
   };
 
   useEffect(() => {
@@ -64,34 +51,40 @@ const Orchestration = () => {
   }, [icas, selectedChain]);
 
 
+  const openModal = (content: string, address: string = '') => {
+    setModalContent(content);
+    setModalAddress(address);
+    handleToggle();
+  };
+
+  useEffect(() => {
+    if (modalRef.current) {
+      if (modalOpen) {
+        modalRef.current.showModal();
+      } else {
+        modalRef.current.close();
+      }
+    }
+  }, [modalOpen]);
+
   const handleCreateAccount = () => {
     openModal('Create Account');
     setLoadingCreateAccount(true);
-
+  
     if (walletConnection) {
-      makeAccountOffer(walletConnection, addNotification!, selectedChain)
-        .then(() => {
-            setLoadingCreateAccount(false);
-            handleToggle(); 
-        })
+      makeAccountOffer(walletConnection, addNotification!, selectedChain, setLoadingCreateAccount, handleToggle)
         .catch((error) => {
           addNotification!({
             text: `transaction failed: ${error.message}`,
             status: 'error',
           });
-          handleToggle(); 
-        //   setLoadingCreateAccount(false);
-        })
-        .finally(() => {
-            handleToggle(); 
-            setLoadingCreateAccount(false);
         });
     } else {
       addNotification!({
         text: 'error: please connect your wallet or check your connection to RPC endpoints',
         status: 'error',
       });
-    //   setLoadingCreateAccount(false); 
+      setLoadingCreateAccount(false); 
       handleToggle(); 
     }
   };
@@ -135,10 +128,13 @@ const Orchestration = () => {
         }
         console.log("message sent successfully");
       } else {
-        await window.keplr.enable(`${chain}local`);
-        const offlineSigner = window.getOfflineSigner(`${chain}local`);
+        // await window.keplr.enable(`${chain}local`);
+        // const offlineSigner = window.getOfflineSigner(`${chain}local`);
+        await window.keplr.enable(`agoriclocal`);
+        const offlineSigner = window.getOfflineSigner(`agoriclocal`);
         const accounts = await offlineSigner.getAccounts();
-        const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints[chain]}`, offlineSigner);
+        // const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints[chain]}`, offlineSigner);
+        const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints["agoric"]}`, offlineSigner);
         const sendMsg = {
           typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
           value: {

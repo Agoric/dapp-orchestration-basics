@@ -4,52 +4,39 @@
 
 ## Overview
 
-e2e
+The Orchestration Basics dApp showcases various features of the orchestration API running inside of an end-to-end environment, and a user interface:
 
-# 1
-from multitest, run `agd status` to check
+# Setting up the local environment
+See `agoric-sdk/multichain-testing/README.md` for more setup instructions
+
+you can run , run `agd status` to check if this was successful. If not try `make port-forward` again.
+
+Once this is running, you need to also run `make override-chain-registry`. This will update vstorage to work with the local startship environment. 
+
+From `agoric-sdk/multichain-testing`, you can use this command to restart your environment for any reason.
 ```
 make teardown ; make stop; make stop-forward; make clean; make; make port-forward
 ```
 
-```
-ramp swift rich agree then brown blur dentist come replace describe thumb confirm faint seat cabbage receive cement coyote quick thrive ramp horse name
-```
 
-# 2
+
+# Add a new address to the keychain inside of the kubernetes pod (for building/deploying inside of the pod)
+From inside /contract
 ```
 make add-address
 ```
-paste address in makefile for `ADDR`
+paste address in the `Makefile` for `ADDR`
 
-# 3 
+# Fund the account
+This will fund the pool, provision the smart wallet, and will also fund `CLIENTADDR` and `CLIENT_OSMO_ADDR`. This can be ran from the top-level directory
 ```
 make fund
 ```
 
-<!-- # 4 
+# Build & Deploy the dapp
+From the top level directory, run:
 ```
-make start
-``` -->
-
-# 4 v2
-```
-make start-contract-orca-v3
-```
-
-# 5 
-```
-make proposal-start
-```
-
-# 6 vote for start
-```
-make proposal-start-vote
-```
-
-# debug bundle
-```
-make bundle-debug
+make
 ```
 
 # Issues & their Solutions
