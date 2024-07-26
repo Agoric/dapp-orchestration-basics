@@ -143,7 +143,7 @@ const Orchestration = () => {
           typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
           value: {
             sourcePort: "transfer",
-            sourceChannel: "channel-0",
+            sourceChannel: "channel-1", //TODO: fetch correct channel id
             token: { denom: selectedDenom, amount: amount.toString() },
             sender: accounts[0].address,
             receiver: modalAddress,
