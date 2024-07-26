@@ -1,7 +1,8 @@
 const tokenLogos = {
     ubld: 'https://assets.coingecko.com/coins/images/24487/large/agoric_bld_logo.png?1696523668',
     uist: 'https://inter.trade/static/inter-protocol-logo-symbol-color-64318316bdb96c351674e3157a9f7546.png',
-    default: 'https://path/to/default/logo.png',
+    ibc: 'https://cdn-icons-png.flaticon.com/512/566/566295.png',
+    default: 'https://cdn-icons-png.flaticon.com/512/566/566295.png',
 };
 
 const AccountList = ({ balances, loadingDeposit, handleDeposit, loadingWithdraw, handleWithdraw, loadingStake, handleStake, loadingUnstake, handleUnstake, guidelines }) => {
