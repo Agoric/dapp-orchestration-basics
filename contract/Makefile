@@ -6,7 +6,8 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-ADDR=agoric14savu3437l476wkc4y70kczkgp67dxgrn02awt
+# your deployer address made from make add-address
+ADDR=agoric1ke99elqe2ph7t6ztxe5a5q9a2cavthq4rtnc8a
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1

@@ -29,6 +29,7 @@ const Orchestration = () => {
   const [modalAddress, setModalAddress] = useState('');
   const [selectedDenom, setSelectedDenom] = useState('uist');
   const [amount, setAmount] = useState(0);
+  const [statusText, setStatusText] = useState('');
   const modalRef = useRef<HTMLDialogElement | null>(null);
   const guidelines = false;
 
@@ -70,14 +71,17 @@ const Orchestration = () => {
   const handleCreateAccount = () => {
     openModal('Create Account');
     setLoadingCreateAccount(true);
-  
+    setStatusText('Submitted');
+
     if (walletConnection) {
-      makeAccountOffer(walletConnection, addNotification!, selectedChain, setLoadingCreateAccount, handleToggle)
+      makeAccountOffer(walletConnection, addNotification!, selectedChain, setLoadingCreateAccount, handleToggle, setStatusText)
         .catch((error) => {
           addNotification!({
             text: `transaction failed: ${error.message}`,
             status: 'error',
           });
+          setLoadingCreateAccount(false); 
+          handleToggle(); 
         });
     } else {
       addNotification!({
@@ -199,7 +203,17 @@ const Orchestration = () => {
             <div className="daisyui-modal-box w-full max-w-md">
                 <button className="daisyui-btn daisyui-btn-sm daisyui-btn-circle daisyui-btn-neutral absolute right-2 top-2" onClick={handleToggle}>✕</button>
                 <h3 className="font-bold text-lg">{modalContent}</h3>
-                <p className="py-4">Modal for {modalContent}.</p>
+                {modalContent === 'Create Account' && (
+                    <div className="py-4 flex flex-col items-center justify-center">
+                        <p>{statusText}</p>
+                        {loadingCreateAccount && (
+                            <svg aria-hidden="true" role="status" className="inline w-4 h-4 me-3 text-gray-200 animate-spin dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.6C100 78.2 77.6 100.6 50 100.6 22.4 100.6 0 78.2 0 50.6 0 23 22.4 0.6 50 0.6 77.6 0.6 100 23 100 50.6ZM9.1 50.6C9.1 73.2 27.4 91.5 50 91.5 72.6 91.5 90.9 73.2 90.9 50.6 90.9 28 72.6 9.7 50 9.7 27.4 9.7 9.1 28 9.1 50.6Z" fill="currentColor" />
+                                <path d="M94 39C96.4 38.4 97.9 35.9 97 33.6 95.3 28.8 92.9 24.4 89.8 20.3 85.8 15.1 80.9 10.7 75.2 7.4 69.5 4.1 63.3 1.9 56.8 1.1 51.8 0.4 46.7 0.4 41.7 1.3 39.3 1.7 37.8 4.2 38.5 6.6 39.1 9 41.6 10.5 44 10.1 47.9 9.5 51.7 9.5 55.5 10 60.9 10.8 66 12.5 70.6 15.3 75.3 18 79.3 21.6 82.6 25.8 84.9 28.9 86.8 32.3 88.2 35.9 89.1 38.2 91.5 39.7 94 39Z" fill="#1C64F2" />
+                            </svg>
+                        )}
+                    </div>
+                )}
                 {modalContent === 'Deposit' && (
                 <div>
                     <label className="block">

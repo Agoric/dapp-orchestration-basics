@@ -21,7 +21,7 @@ make teardown ; make stop; make stop-forward; make clean; make; make port-forwar
 
 
 # Add a new address to the keychain inside of the kubernetes pod (for building/deploying inside of the pod)
-From inside /contract
+From top level directory:
 ```
 make add-address
 ```

@@ -24,7 +24,8 @@
     "e2e": "make e2e",
     "execc": "make exec",
     "fund": "make fund",
-    "deployc": "make deployc"
+    "deployc": "make deployc",
+    "add:address": "make add-address"
   },
   "devDependencies": {
     "@agoric/eslint-config": "^0.4.1-upgrade-16-fi-dev-8879538.0",

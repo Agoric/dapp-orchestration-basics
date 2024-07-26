@@ -7,7 +7,8 @@ export const makeAccountOffer = async (
   addNotification: (arg0: DynamicToastChild) => void,
   selectedChain: string,
   setLoadingCreateAccount: React.Dispatch<React.SetStateAction<boolean>>,
-  handleToggle: () => void
+  handleToggle: () => void,
+  setStatusText: React.Dispatch<React.SetStateAction<string>>
 ) => {
   if (!selectedChain) {
     addNotification({
@@ -41,24 +42,37 @@ export const makeAccountOffer = async (
     },
     { give, want },
     { chainName: selectedChain },
-    (update: { status: string; data?: unknown }) => {
+    async (update: { status: string; data?: unknown }) => {
       if (update.status === 'error') {
+        const msg = `offer update error: ${update.data}`
         addNotification({
-          text: `offer update error: ${update.data}`,
+          text: msg,
           status: 'error',
         });
         setLoadingCreateAccount(false);
         handleToggle();
         console.log(update);
+        setStatusText(msg)
       }
       if (update.status === 'accepted') {
+        const msg = 'Account created successfully'
         addNotification({
-          text: 'offer accepted successfully',
+          text: msg,
           status: 'success',
         });
-        setLoadingCreateAccount(false);
-        handleToggle();
         console.log(update);
+        setStatusText(msg);
+
+        setTimeout(() => {
+            const msg = 'Account created successfully'
+            addNotification({
+            text: msg,
+            status: 'success',
+            });
+            setLoadingCreateAccount(false);
+            handleToggle();
+            setStatusText(msg);
+        }, 2000); 
       }
       if (update.status === 'refunded') {
         addNotification({
