@@ -4,7 +4,6 @@ const tokenLogos = {
     default: 'https://path/to/default/logo.png',
 };
 
-  
 const AccountList = ({ balances, loadingDeposit, handleDeposit, loadingWithdraw, handleWithdraw, loadingStake, handleStake, loadingUnstake, handleUnstake, guidelines }) => {
     return (
       <div className={`w-2/3 space-y-10 pr-4 rounded-lg p-4 border${guidelines ? "" : "-0"}`}>
@@ -19,7 +18,7 @@ const AccountList = ({ balances, loadingDeposit, handleDeposit, loadingWithdraw,
   
               <div className="flex flex-wrap">
                 {balance.balances.map((bal, idx) => (
-                  <div key={idx} className={`stat p-2  border${guidelines ? "" : "-0"}`}>
+                  <div key={idx} className={`stat p-2 border${guidelines ? "" : "-0"}`} style={{ minWidth: '150px', maxWidth: '200px' }}>
                     <div className="stat-figure text-secondary">
                       <div className="avatar online">
                         <div className="w-8 rounded-full">
@@ -27,7 +26,7 @@ const AccountList = ({ balances, loadingDeposit, handleDeposit, loadingWithdraw,
                         </div>
                       </div>
                     </div>
-                    <div className="stat-title">{bal.denom.toUpperCase()}</div>
+                    <div className="stat-title truncate">{bal.denom.toUpperCase()}</div>
                     <div className="stat-value text-secondary">{bal.amount}</div>
                   </div>
                 ))}
@@ -55,6 +54,5 @@ const AccountList = ({ balances, loadingDeposit, handleDeposit, loadingWithdraw,
       </div>
     );
   };
-
 
 export default AccountList;

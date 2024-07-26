@@ -71,7 +71,7 @@ const Orchestration = () => {
     if (walletConnection) {
       makeAccountOffer(walletConnection, addNotification!, selectedChain)
         .then(() => {
-            // setLoadingCreateAccount(false);
+            setLoadingCreateAccount(false);
             handleToggle(); 
         })
         .catch((error) => {
@@ -84,7 +84,7 @@ const Orchestration = () => {
         })
         .finally(() => {
             handleToggle(); 
-            // setLoadingCreateAccount(false);
+            setLoadingCreateAccount(false);
         });
     } else {
       addNotification!({
@@ -136,9 +136,9 @@ const Orchestration = () => {
         console.log("message sent successfully");
       } else {
         await window.keplr.enable(`${chain}local`);
-        const offlineSigner = window.getOfflineSigner(`agoriclocal`);
+        const offlineSigner = window.getOfflineSigner(`${chain}local`);
         const accounts = await offlineSigner.getAccounts();
-        const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints["agoric"]}`, offlineSigner);
+        const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints[chain]}`, offlineSigner);
         const sendMsg = {
           typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
           value: {
