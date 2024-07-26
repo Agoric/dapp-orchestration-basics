@@ -1,4 +1,4 @@
-# Simple Agoric ORChAstration Template
+# Agoric Orchestration Basics Dapp
 
 <img src="./images/orca2.png" width="100%" />
 
