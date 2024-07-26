@@ -15,4 +15,4 @@ const CreateAccountButton = ({ handleCreateAccount, loadingCreateAccount }) => (
   </button>
 );
 
-export default CreateAccountButton
+export default CreateAccountButton;

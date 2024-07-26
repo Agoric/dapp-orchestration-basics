@@ -63,18 +63,36 @@ const Orchestration = () => {
     }
   }, [icas, selectedChain]);
 
+
   const handleCreateAccount = () => {
     openModal('Create Account');
     setLoadingCreateAccount(true);
+
     if (walletConnection) {
-      makeAccountOffer(walletConnection, addNotification!, selectedChain);
-      setLoadingCreateAccount(false);
+      makeAccountOffer(walletConnection, addNotification!, selectedChain)
+        .then(() => {
+            // setLoadingCreateAccount(false);
+            handleToggle(); 
+        })
+        .catch((error) => {
+          addNotification!({
+            text: `transaction failed: ${error.message}`,
+            status: 'error',
+          });
+          handleToggle(); 
+        //   setLoadingCreateAccount(false);
+        })
+        .finally(() => {
+            handleToggle(); 
+            // setLoadingCreateAccount(false);
+        });
     } else {
       addNotification!({
         text: 'error: please connect your wallet or check your connection to RPC endpoints',
         status: 'error',
       });
-      setLoadingCreateAccount(false);
+    //   setLoadingCreateAccount(false); 
+      handleToggle(); 
     }
   };
 
@@ -118,9 +136,9 @@ const Orchestration = () => {
         console.log("message sent successfully");
       } else {
         await window.keplr.enable(`${chain}local`);
-        const offlineSigner = window.getOfflineSigner(`${chain}local`);
+        const offlineSigner = window.getOfflineSigner(`agoriclocal`);
         const accounts = await offlineSigner.getAccounts();
-        const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints[chain]}`, offlineSigner);
+        const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints["agoric"]}`, offlineSigner);
         const sendMsg = {
           typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
           value: {
@@ -185,7 +203,7 @@ const Orchestration = () => {
             <div className="daisyui-modal-box w-full max-w-md">
                 <button className="daisyui-btn daisyui-btn-sm daisyui-btn-circle daisyui-btn-neutral absolute right-2 top-2" onClick={handleToggle}>✕</button>
                 <h3 className="font-bold text-lg">{modalContent}</h3>
-                <p className="py-4">This is the modal content for {modalContent} operation.</p>
+                <p className="py-4">Modal for {modalContent}.</p>
                 {modalContent === 'Deposit' && (
                 <div>
                     <label className="block">
