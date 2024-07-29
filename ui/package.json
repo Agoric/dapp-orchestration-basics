@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "yarn@4.3.1",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "yarn lint --fix",
     "preview": "vite preview",
@@ -13,19 +14,20 @@
     "test:e2e": "exit 0"
   },
   "dependencies": {
-    "@agoric/react-components": "0.1.1-dev-8fc28e8.0",
+    "@agoric/react-components": "^0.1.1-dev-ca0ddde.0",
     "@agoric/ui-components": "^0.3.9-u13.0",
     "@agoric/web-components": "0.15.1-dev-8fc28e8.0",
     "buffer": "^6.0.3",
     "chain-registry": "^1.28.1",
     "cosmos-kit": "^2.9.0",
-    "daisyui": "^4.7.2",
-    "react": "^18.2.0",
+    "daisyui": "^4.12.10",
+    "react": "^18.3.1",
     "react-daisyui": "^5.0.0",
     "react-dom": "^18.2.0",
     "ses": "^1.2.0"
   },
   "devDependencies": {
+    "@interchain-ui/react": "^1.23.24",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",

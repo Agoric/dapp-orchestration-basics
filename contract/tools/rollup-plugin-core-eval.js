@@ -40,16 +40,27 @@ export const configureOptions = ({ options }) => {
 };
 
 export const configureBundleID = ({ name, rootModule, cache }) => {
-  const pattern = new RegExp(`bundleID\\b = Fail.*`, 'g');
+  // const pattern = new RegExp(`^ *bundleID\\b = Fail.*`);
+  // const pattern = new RegExp(`Fail\``);
+  // const pattern = /Fail`no bundleID`/
+  const pattern = new RegExp(`bundleID\\b = Fail.*`);
   const bundleCacheP = makeNodeBundleCache(cache, {}, s => import(s));
   return {
     name: 'configureBundleID',
-    transform: async (code, _id) => {
+    transform: async (code, _id) => { // passes in code
       const bundle = await bundleCacheP.then(c => c.load(rootModule, name));
+      console.log(bundle.endoZipBase64Sha512)
+      console.log("rootModule: ", rootModule)
+      console.log("name: ", name)
+      const test = JSON.stringify("z"+bundle.endoZipBase64Sha512)
+      console.log(test)
       const revised = code.replace(
         pattern,
-        `bundleID = ${JSON.stringify(`b1-${bundle.endoZipBase64Sha512}`)},`,
+        `bundleID = ${JSON.stringify(`b1-${bundle.endoZipBase64Sha512}`)}`,
+        // test,
+        // () => `b1-${test}`
       );
+      console.log("revised === code:", revised === code)
       if (revised === code) return null;
       return { code: revised };
     },
