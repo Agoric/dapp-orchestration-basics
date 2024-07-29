@@ -1,111 +1,108 @@
-// @ts-check
-
-// import { Far, E } from '@endo/far';
-// import { V as E } from '@agoric/vow/vat.js';
-// import V from '@agoric/vow/src/E.js';
-// import { V as _E } from "../../../../agoric-sdk/packages/vow/vat.js"
-
-
-// import { M, getCopyBagEntries, makeCopyBag } from '@endo/patterns';
-import { M } from '@endo/patterns';
-import { makeCopyBag, getCopyBagEntries } from '@agoric/store'
-import { AssetKind } from '@agoric/ertp/src/amountMath.js';
-import '@agoric/zoe/exported.js';
-import { AmountShape, AmountMath, PaymentShape } from '@agoric/ertp';
-import { atomicRearrange } from '@agoric/zoe/src/contractSupport/atomicTransfer.js';
-import { makeMyAddressNameAdminKit } from '@agoric/vats/src/core/utils';
-// import { makeOnewayPriceAuthorityKit } from '@agoric/zoe/src/contractSupport';
-import {
-    defineERecorderKit,
-    prepareRecorderKitMakers,
-    provideAll
-} from '@agoric/zoe/src/contractSupport/index.js';
-import { handleParamGovernance } from '@agoric/governance/src/contractHelper.js';
-import { ParamTypes } from '@agoric/governance/src/constants.js';
-
-import { makeTracer, StorageNodeShape } from '@agoric/internal';
-import { makeDurableZone } from '@agoric/zone/durable.js';
-
-// ISSUE IMPORTING THIS, which promted yarn link: 
-/*
-    [!] (plugin configureBundleID) TypeError: Failed to load module "./src/orchdev.contract.js" in package "file:///Users/jovonni/Documents/projects/experiments/orca/contract/" (1 underlying failures: Cannot find external module "@agoric/orchestration/src/exos/stakingAccountKit.js" in package file:///Users/jovonni/Documents/projects/experiments/orca/contract/
-src/orchdev.proposal.js
-*/
-import { prepareStakingAccountKit } from '@agoric/orchestration/src/exos/stakingAccountKit.js';
-
-  
-
-
-// import { Fail } from '@agoric/assert';
-const { Fail } = assert;
-
-import { makeOrchestrationFacade } from './facade.js';
-import { orcUtils } from './orc.js';
-
+import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
+import { M, mustMatch } from '@endo/patterns';
+import { provideOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
+import { makeTracer } from '@agoric/internal';
 const trace = makeTracer('OrchDev1');
 
 /**
- * @import { Baggage } from '@agoric/vat-data';
- * @import { IBCConnectionID } from '@agoric/vats';
- * @import { TimerService } from '@agoric/time';
- * @import { ICQConnection, OrchestrationService } from '../types.js';
+ * @import {Baggage} from '@agoric/vat-data';
+ * @import {Orchestrator} from '@agoric/orchestration';
+ * @import {OrchestrationPowers} from '@agoric/orchestration/src/utils/start-helper.js';
  */
-
-export const meta = harden({
-    privateArgsShape: {
-      orchestration: M.remotable('orchestration'),
-      storageNode: StorageNodeShape,
-      marshaller: M.remotable('Marshaller'),
-      timer: M.remotable('TimerService'),
-    },
-});
-
-export const privateArgsShape = meta.privateArgsShape;
-
-
-export const terms = harden({
-    
-});
 
 
 /**
+ * Create an account on a Cosmos chain and return a continuing offer with
+ * invitations makers for Delegate, WithdrawRewards, Transfer, etc.
  *
- * @param {ZCF<StakeAtomTerms>} zcf
- * @param {{
-*  orchestration: OrchestrationService;
-*  storageNode: StorageNode;
-*  marshaller: Marshaller;
-*  timer: TimerService;
-* }} privateArgs
-* @param {Baggage} baggage
-*/
-export const start = async (zcf , privateArgs, baggage) => {
+ * @param {Orchestrator} orch
+ * @param {undefined} _ctx
+ * @param {ZCFSeat} seat
+ * @param {{ chainName: string }} offerArgs
+ */
+const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
+  const { give } = seat.getProposal();
+  trace('version 0.1.36');
+  trace('give');
+  trace(give);
+  trace('inside createAccounts');
+  trace('orch');
+  trace(orch);
+  trace('seat');
+  trace(seat);
+  trace(chainName)
+  seat.exit();
+  try {
+    const chain = await orch.getChain(chainName);
+    trace('chain object');
+    trace(chain);
+    const info = await chain.getChainInfo();
+    trace('chain info', info);
+    const chainAccount = await chain.makeAccount();
+    console.log("chainAccount")
+    console.log(chainAccount)
+    return await chainAccount.asContinuingOffer();
+  } catch (error) {
+    console.error('Error in createAccounts:', error);
+  }
+};
 
-    console.log("===== CONTRACT STARTING :) ======")
-    const { hostConnectionId, controllerConnectionId, bondDenom } = zcf.getTerms();
-    const { orchestration, marshaller, storageNode, timer } = privateArgs;
+/**
+ * @param {ZCF} zcf
+ * @param {OrchestrationPowers & {
+ *   marshaller: Marshaller;
+ * }} privateArgs
+ * @param {Baggage} baggage
+ */
+export const start = async (zcf, privateArgs, baggage) => {
+  trace('inside start function: v1.0.85');
+  trace('privateArgs', privateArgs);
 
-    const zone = makeDurableZone(baggage);
+  // destructure privateArgs to extract necessary services
+  const {
+    orchestrationService: orchestration,
+    marshaller,
+    storageNode,
+    timer,
+    localchain,
+    agoricNames,
+  } = privateArgs;
+  trace('orchestration: ', orchestration);
+  trace('marshaller: ', marshaller);
+  trace('storageNode: ', storageNode);
+  trace('timer: ', timer);
+  trace('localchain: ', localchain);
+  trace('agoricNames: ', agoricNames);
+  const { orchestrate, zone } = provideOrchestration(
+    zcf,
+    baggage,
+    privateArgs,
+    privateArgs.marshaller,
+  );
 
-    const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
+  /** @type {OfferHandler} */
+  const makeAccount = orchestrate(
+    'makeAccount',
+    undefined,
+    createAccountsFn,
+  );
 
-    const makeStakingAccountKit = prepareStakingAccountKit(
-        baggage,
-        makeRecorderKit,
-        zcf,
-    );
+  const publicFacet = zone.exo(
+    'Orca Public Facet',
+    M.interface('Orca PF', {
+      makeAccountInvitation: M.callWhen().returns(InvitationShape),
+    }),
+    {
+      makeAccountInvitation() {
+        return zcf.makeInvitation(
+          makeAccount,
+          'Make an Orchestration Account',
+        );
+      },
+    },
+  );
 
-    const publicFacet = zone.exo(
-        'Orca Public Facet', 
-        M.interface('StakeAtomI', {
-            makeAccount: M.callWhen().returns(M.remotable('ChainAccount')),
-            makeAcountInvitationMaker: M.call().returns(M.promise()),
-        }),
-        {
-        
-    });
+  return { publicFacet };
+};
 
-    return harden({publicFacet});
-}
-
-harden(start)
+/** @typedef {typeof start} OrcaSF */
