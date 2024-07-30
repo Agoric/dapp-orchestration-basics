@@ -25,6 +25,34 @@ From `agoric-sdk/multichain-testing`, you can use this command to restart your e
 make teardown ; make stop; make stop-forward; make clean; make; make port-forward
 ```
 
+## Multichain-testing Makefile Helpers
+You can add these commands to the bottom of the `multichain-testing` `Makefile` for now:
+```Makefile
+
+teardown: stop-forward stop clean delete
+
+corepack-setup:
+	corepack prepare yarn@4 --activate
+corepack-enable:
+	corepack enable 
+test:
+	yarn test test/install-contracts.test.ts
+
+all: setup install
+	sleep 3
+	make port-forward
+	sleep 120
+	make fund-provision-pool
+	sleep 10
+	make add-address
+	echo "done running"
+
+hermes-update:
+	kubectl exec -i hermes-agoric-osmosis-0 -c relayer -- hermes update client --host-chain agoriclocal --client 07-tendermint-1
+	sleep 60
+	make hermes-update
+```
+
 
 
 # Add a new address to the keychain inside of the kubernetes pod (for building/deploying inside of the pod)
