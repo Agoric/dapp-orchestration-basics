@@ -1,0 +1,22 @@
+diff --git a/lib/bn.js b/lib/bn.js
+index adecc9496ca35802f8eef0c35a77b209cc2b22a0..d185f6c2f89f8d033725a7ab2ec9df145db15cdc 100644
+--- a/lib/bn.js
++++ b/lib/bn.js
+@@ -2632,7 +2632,7 @@
+       for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
+       if (i > 0) {
+         x.iushrn(i);
+-        while (i-- > 0) {
++        while ([i--][0] > 0) {
+           if (A.isOdd() || B.isOdd()) {
+             A.iadd(yp);
+             B.isub(xp);
+@@ -2700,7 +2700,7 @@
+       for (var i = 0, im = 1; (a.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
+       if (i > 0) {
+         a.iushrn(i);
+-        while (i-- > 0) {
++        while ([i--][0] > 0) {
+           if (x1.isOdd()) {
+             x1.iadd(delta);
+           }
