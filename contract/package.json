@@ -18,7 +18,7 @@
     "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
     "deploy": "make dev-working",
     "test": "ava --verbose",
-    "lint": "eslint '**/*.js'",
+    "lint": "eslint '**/*.js' --fix-dry-run --ignore-pattern '*patch*'",
     "lint:types": "tsc -p jsconfig.json",
     "lint:fix": "eslint --fix '**/*.js'",
     "e2e": "make e2e",

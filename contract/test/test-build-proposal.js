@@ -26,7 +26,7 @@ test.before(async t => {
   };
 
   const $ = (file, ...args) => {
-    console.error(cmd);
+    // console.error(cmd);
 
     return new Promise((resolve, reject) => {
       execFile(file, args, { encoding: 'utf8' }, (err, out) => {

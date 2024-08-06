@@ -7,7 +7,7 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1kwq5lf66lhjlvdrw409280pqt5gu49gf94qkar
+ADDR=agoric1sf02axavdzgx6lndpmdt8lp4n9src0q8pe6j0q
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -280,3 +280,6 @@ e2e:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 # todo: figure out why this sequence # is always off by 1 forcing a retry
+
+lint:
+	yarn lint --fix-dry-run --ignore-pattern "*patch*" 

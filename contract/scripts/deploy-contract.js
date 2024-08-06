@@ -16,7 +16,7 @@ const options = {
   install: { type: 'string' },
   eval: { type: 'string', multiple: true },
   service: { type: 'string', default: 'agd' },
-  workdir: { type: 'string', default: '/workspace/contract' },
+  _workdir: { type: 'string', default: '/workspace/contract' },
 };
 /**
  * @typedef {{
@@ -24,7 +24,7 @@ const options = {
  *   install?: string,
  *   eval?: string[],
  *   service: string,
- *   workdir: string,
+ *   _workdir: string,
  * }} DeployOptions
  */
 
@@ -38,7 +38,7 @@ Options:
                        (cf rollup.config.mjs)
   --service SVC        docker compose service to run agd (default: ${options.service.default}).
                        Use . to run agd outside docker.
-  --workdir DIR        workdir for docker service (default: ${options.workdir.default})
+  --workdir DIR        workdir for docker service (default: ${options._workdir.default})
 `;
 
 const mockExecutionContext = () => {
@@ -69,8 +69,8 @@ const main = async (bundleDir = 'bundles') => {
     progress(Usage);
     return;
   }
-  /** @type {{ workdir: string, service: string }} */
-  const { workdir, service } = flags;
+  /** @type {{ _workdir: string, service: string }} */
+  const { _workdir, service } = flags;
 
   /** @type {import('../tools/agd-lib.js').ExecSync} */
 
@@ -87,24 +87,11 @@ const main = async (bundleDir = 'bundles') => {
     return execSync(command, opts);
   };
 
-  const dockerExec2 = (file, dargs, opts = { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 2000 }) => {
-    console.log("docker exec try 3: ", file);
-    opts.verbose &&
-      console.log('exec', JSON.stringify([file, ...dargs]));
-    console.log("docker exec try 4");
-  
-    const command = `${file} ${dargs.join(' ')}`;
-    console.log("command: ", command);
-    console.log(service);
-  
-    return execSync(command, opts);
-  };
 
   const t = mockExecutionContext();
   const tools = makeE2ETools(t, bundleCache, {
     execFile,
     execFileSync: service === '.' ? execFileSync : dockerExec, // see here
-    execFileSync2: service === "." ? execFileSync : dockerExec2,
     fetch,
     setTimeout,
     writeFile,

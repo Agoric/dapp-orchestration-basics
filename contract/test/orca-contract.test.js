@@ -13,7 +13,6 @@ import { startOrcaContract } from '../src/orca.proposal.js';
 import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
-import { get } from 'http';
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
@@ -192,9 +191,6 @@ const makeTestContext = async t => {
       return E(chain).getChainInfo();
     },
   });
-
-  const chainHub = await E(cosmosInterchainService).getChainHub();
-  await setupChainsForTests(chainHub);
   
   return { 
     zoe, 
@@ -209,7 +205,7 @@ const makeTestContext = async t => {
   };
 };
 
-const makeQueryTool = () => {
+const makeQueryToolMock = () => {
   return {
     queryData: async (path) => {
       console.log(`Querying data at path: ${path}`);
@@ -233,6 +229,7 @@ const makeQueryTool = () => {
 
 
 test.before(async t => (t.context = await makeTestContext(t)));
+
 
 test('Install the contract', async t => {
   const { zoe, bundle } = t.context;
@@ -274,6 +271,7 @@ test('Start Orca contract', async t => {
 
 test('Start Orca contract using core-eval', async t => {
   const { runCoreEval, installBundles, makeQueryTool } = t.context;
+  // const { runCoreEval, installBundles } = t.context;
 
   t.log('run core-eval to start (dummy) orchestration');
   
@@ -329,24 +327,6 @@ export const chainConfigs = {
     expectedAddressPrefix: 'agoric',
   },
 };
-
-const agoricChainDetails = {
-  chainId: 'agoriclocal',
-  denom: 'ubld',
-  expectedAddressPrefix: 'agoric',
-};
-
-const osmosisChainDetails = {
-  chainId: 'osmosislocal',
-  denom: 'uosmo',
-  expectedAddressPrefix: 'osmo',
-};
-
-const setupChainsForTests = async (chainHub) => {
-  await E(chainHub).registerChain('agoric', agoricChainDetails);
-  await E(chainHub).registerChain('osmosis', osmosisChainDetails);
-};
-
 
 test('Verify chain registration', async t => {
   const { cosmosInterchainService } = t.context;
@@ -430,7 +410,7 @@ const orchestrationAccountScenario = test.macro({
     t.log('offer result:', offerResult);
     t.truthy(offerResult, 'Offer result should exist');
 
-    const qt = makeQueryTool();
+    const qt = makeQueryToolMock();
     const wallet = 'test-wallet'; 
     // log vstorage state before querying
     await logVstorageState(t, qt, 'published.agoricNames');

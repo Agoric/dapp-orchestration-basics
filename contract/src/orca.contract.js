@@ -1,5 +1,5 @@
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
-import { M, mustMatch } from '@endo/patterns';
+import { M } from '@endo/patterns';
 import { provideOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
 import { makeTracer } from '@agoric/internal';
 const trace = makeTracer('OrchDev1');

@@ -10,3 +10,5 @@ fund:
 	yarn workspace  dapp-agoric-orca-contract fund
 add-address:
 	yarn workspace  dapp-agoric-orca-contract add:address
+lint:
+	yarn workspace dapp-agoric-orca-contract lint

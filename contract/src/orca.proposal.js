@@ -4,7 +4,6 @@ import {
   installContract,
 } from './platform-goals/start-contract.js';
 import { makeTracer } from './tools/debug.js';
-import { makeStorageNodeChild } from '@agoric/internal/src/lib-chainStorage.js';
 
 
 const trace = makeTracer('OrCE');
@@ -14,12 +13,8 @@ trace('start proposal module evaluating');
 
 const { Fail } = assert;
 
-const BOARD_AUX = 'boardAux';
 const contractName = 'orca';
 
-
-const IST_UNIT = 1_000_000n;
-const CENT = IST_UNIT / 100n;
 
 /**
  * Given a record whose values may be promise, return a promise for a record with all the values resolved.

@@ -34,7 +34,7 @@ teardown: stop-forward stop clean delete
 corepack-setup:
 	corepack prepare yarn@4 --activate
 corepack-enable:
-	corepack enable 
+	corepack enable
 test:
 	yarn test test/install-contracts.test.ts
 

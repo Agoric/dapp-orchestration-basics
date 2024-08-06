@@ -1,6 +1,6 @@
 // @ts-check
 
-// import { E, Far } from '@endo/far';
+import { E, Far } from '@endo/far';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Nat } from '@endo/nat';
 import { flags, makeAgd } from './agd-lib.js';
@@ -278,7 +278,7 @@ const voteLatestProposalAndWait = async ({
   agd,
   blockTool,
   chainId = 'agoriclocal',
-  validator = 'validator',
+  _validator = 'validator',
 }) => {
   await blockTool.waitForBlock(1, { before: 'get latest proposal' });
   const proposalsData = await agd.query(['gov', 'proposals']);
@@ -381,7 +381,6 @@ const runCoreEval = async (
  * @param {import('../test/mintStable.js').BundleCache} bundleCache
  * @param {object} io
  * @param {import('./agd-lib.js').ExecSync} io.execFileSync
- * @param {import('./agd-lib.js').ExecSync} io.execFileSync2
  * @param {typeof import('child_process').execFile} io.execFile
  * @param {typeof window.fetch} io.fetch
  * @param {typeof window.setTimeout} io.setTimeout
@@ -397,7 +396,6 @@ export const makeE2ETools = (
   {
     execFile,
     execFileSync,
-    execFileSync2,
     fetch,
     setTimeout,
     writeFile,
@@ -430,7 +428,6 @@ export const makeE2ETools = (
   const runMake = async (...args) => $('make', '--silent', ...args);
 
   const vstorage = makeVStorage(lcd);
-  const qt = makeQueryKit(vstorage);
 
   const installBundles = async (bundleRoots, progress) => {
     await null;
