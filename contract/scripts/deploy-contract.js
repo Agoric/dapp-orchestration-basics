@@ -16,7 +16,7 @@ const options = {
   install: { type: 'string' },
   eval: { type: 'string', multiple: true },
   service: { type: 'string', default: 'agd' },
-  _workdir: { type: 'string', default: '/workspace/contract' },
+  workdir: { type: 'string', default: '/workspace/contract' },
 };
 /**
  * @typedef {{
@@ -24,7 +24,7 @@ const options = {
  *   install?: string,
  *   eval?: string[],
  *   service: string,
- *   _workdir: string,
+ *   workdir: string,
  * }} DeployOptions
  */
 
@@ -38,7 +38,7 @@ Options:
                        (cf rollup.config.mjs)
   --service SVC        docker compose service to run agd (default: ${options.service.default}).
                        Use . to run agd outside docker.
-  --workdir DIR        workdir for docker service (default: ${options._workdir.default})
+  --workdir DIR        workdir for docker service (default: ${options.workdir.default})
 `;
 
 const mockExecutionContext = () => {
@@ -70,7 +70,7 @@ const main = async (bundleDir = 'bundles') => {
     return;
   }
   /** @type {{ _workdir: string, service: string }} */
-  const { _workdir, service } = flags;
+  const { service } = flags;
 
   /** @type {import('../tools/agd-lib.js').ExecSync} */
 
