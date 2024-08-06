@@ -1,10 +1,9 @@
 /** @file Orchestration service */
-
 /**
- * @import {Zone} from '@agoric/zone';
- * @import {TimerService} from '@agoric/time';
- * @import {OrchestrationService} from './service.js';
- * @import {Orchestrator} from './types.js';
+ * @typedef {import('@agoric/zone').Zone} Zone
+ * @typedef {import('@agoric/time').TimerService} TimerService
+ * @typedef {import('./service.js').OrchestrationService} OrchestrationService
+ * @typedef {import('./types.js').Orchestrator} Orchestrator
  */
 
 /**
