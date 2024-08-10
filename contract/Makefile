@@ -7,7 +7,7 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1sf02axavdzgx6lndpmdt8lp4n9src0q8pe6j0q
+ADDR=agoric1mqvg26gpv6xzch2v0wpv569md3c2z4cdxq9clz
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -258,24 +258,11 @@ e2e:
 	yarn run build:deployer
 	make copy-project  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn install"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@0.1.1-upgrade-16-dev-d45b478.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-ee2126b.0"
-	
-# install orch
-# kubectl cp ../node_modules/@agoric/orchestration default/agoriclocal-genesis-0:/root/node_modules/@agoric/orchestration
-
-
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-ee2126b.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-ee2126b.0"
-# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn run build:deployer"
-
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
 	make copy-bn-js  
-# make copy-vow-js
-
-###	actually deploy
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"

@@ -8,6 +8,8 @@ import { E, Far } from '@endo/far';
 // import { makeCopyBag } from '@endo/patterns';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
+import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
+
 import { startOrcaContract } from '../src/orca.proposal.js';
 
 import { makeMockTools } from './boot-tools.js';
@@ -432,10 +434,103 @@ const orchestrationAccountScenario = test.macro({
 
     const continuingUserSeat = await E(zoe).offer(continuingInvitation, continuingOffer, undefined, { previousOffer: offerId });
     const continuingOfferResult = await E(continuingUserSeat).getOfferResult();
-
+    
     t.truthy(continuingOfferResult, 'continuing offer should produce a result');
     t.log('continuing offer result', continuingOfferResult);
   },
 });
 
+
+const orchestrationAccountAndFundScenario = test.macro({
+  title: (_, chainName) =>
+    `orchestrate - ${chainName} makeAccount and fund returns a ContinuingOfferResult`,
+  exec: async (t, chainName) => {
+    const config = chainConfigs[chainName];
+    if (!config) {
+      return t.fail(`unknown chain: ${chainName}`);
+    }
+
+    const { zoe, bundle, cosmosInterchainService, agoricNames, storageNode, marshaller } = t.context;
+    t.log('installing the contract...');
+    const installation = E(zoe).install(bundle);
+    
+    const privateArgs = harden({
+      cosmosInterchainService,
+      orchestrationService: cosmosInterchainService,
+      storageNode,
+      marshaller,
+      timer: Far('DummyTimer'),
+      timerService: Far('DummyTimer'),
+      localchain: Far('DummyLocalchain'),
+      agoricNames,
+    });
+
+
+
+    const {mint, issuer, brand} = makeIssuerKit('BLD');
+
+    const issuers = { 
+      BLDIssuer: issuer, 
+    };
+
+    t.log('starting the instance...');
+    const { instance } = await E(zoe).startInstance(installation, issuers, {}, privateArgs);
+    t.log('instance started:', instance);
+    t.truthy(instance);
+
+    t.log('getting public facet...');
+    const publicFacet = await E(zoe).getPublicFacet(instance);
+    t.log('public facet obtained:', publicFacet);
+
+    t.log('creating account invitation...');
+    const initialInvitation = await E(publicFacet).makeCreateAndFundInvitation();
+    t.log('invitation created:', initialInvitation);
+
+
+    t.log("brand", brand)
+    const amount = AmountMath.make(brand, 1n);
+    const makeAccountOffer = {
+      give: { Deposit: amount },
+      want: {},
+      exit: { onDemand: null }, 
+    };
+
+    const bldPurse = issuer.makeEmptyPurse();
+    const payment = mint.mintPayment(amount);
+    bldPurse.deposit(payment)
+    const withdrawnDeposit = await E(bldPurse).withdraw(amount);
+    t.log("withdrawnDeposit", withdrawnDeposit);
+    t.log('making offer...');
+    const offerId = 'offerId';  
+    const initialUserSeat = await E(zoe).offer(
+      initialInvitation, 
+      makeAccountOffer, 
+      {
+        Deposit: withdrawnDeposit
+      }, 
+      { 
+        id: offerId 
+      }
+    );
+    t.log('initial user seat:', initialUserSeat);
+    
+    t.log('getting offer result...');
+    const offerResult = await E(initialUserSeat).getOfferResult();
+    t.log('offer result:', offerResult);
+    t.truthy(offerResult, 'Offer result should exist');
+
+    const qt = makeQueryToolMock();
+    const wallet = 'test-wallet'; 
+    await logVstorageState(t, qt, 'published.agoricNames');
+
+    const { address, currentWalletRecord } = await queryVstorage(t, qt, wallet, offerId);
+
+    t.log('got address:', address);
+    t.regex(address, new RegExp(`^${config.expectedAddressPrefix}1`), `Address for ${chainName} is valid`);
+    t.log('current wallet record', currentWalletRecord);
+
+  },
+});
+
 test(orchestrationAccountScenario, 'osmosis');
+test(orchestrationAccountAndFundScenario, 'osmosis')

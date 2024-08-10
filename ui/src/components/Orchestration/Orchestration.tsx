@@ -7,7 +7,7 @@ import AccountList from './AccountList';
 import ChainSelector from './ChainSelector';
 import CreateAccountButton from './CreateAccountButton';
 import { fetchBalances } from './FetchBalances';
-import { makeAccountOffer } from './MakeAccountOffer';
+import { makeOffer } from './MakeOffer';
 import { initializeKeplr } from './KeplrInitializer';
 import RpcEndpoints from './RpcEndpoints';
 import { StargateClient, SigningStargateClient } from "@cosmjs/stargate";
@@ -24,7 +24,8 @@ const Orchestration = () => {
   const [loadingStake, setLoadingStake] = useState<{ [key: string]: boolean }>({});
   const [loadingUnstake, setLoadingUnstake] = useState<{ [key: string]: boolean }>({});
   const [loadingCreateAccount, setLoadingCreateAccount] = useState(false);
-  const [modalContent, setModalContent] = useState('');
+  const [loadingCreateAndFund, setLoadingCreateAndFund] = useState(false);
+    const [modalContent, setModalContent] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAddress, setModalAddress] = useState('');
   const [selectedDenom, setSelectedDenom] = useState('uist');
@@ -68,28 +69,66 @@ const Orchestration = () => {
     }
   }, [modalOpen]);
 
+
   const handleCreateAccount = () => {
-    openModal('Create Account');
     setLoadingCreateAccount(true);
     setStatusText('Submitted');
-
     if (walletConnection) {
-      makeAccountOffer(walletConnection, addNotification!, selectedChain, setLoadingCreateAccount, handleToggle, setStatusText)
-        .catch((error) => {
-          addNotification!({
-            text: `transaction failed: ${error.message}`,
-            status: 'error',
-          });
-          setLoadingCreateAccount(false); 
-          handleToggle(); 
+      makeOffer(
+        walletConnection,
+        addNotification!,
+        selectedChain,
+        'makeAccountInvitation',
+        { chainName: selectedChain },
+        setLoadingCreateAccount,
+        handleToggle,
+        setStatusText
+      ).catch((error) => {
+        addNotification!({
+          text: `Transaction failed: ${error.message}`,
+          status: 'error',
         });
+        setLoadingCreateAccount(false);
+        handleToggle();
+      });
     } else {
       addNotification!({
-        text: 'error: please connect your wallet or check your connection to RPC endpoints',
+        text: 'Error: Please connect your wallet or check your connection to RPC endpoints',
         status: 'error',
       });
-      setLoadingCreateAccount(false); 
-      handleToggle(); 
+      setLoadingCreateAccount(false);
+      handleToggle();
+    }
+  };
+
+  const handleCreateAndFund = () => {
+    setLoadingCreateAndFund(true);
+    setStatusText('Submitted');
+    if (walletConnection) {
+      makeOffer(
+        walletConnection,
+        addNotification!,
+        selectedChain,
+        'makeCreateAndFundInvitation',
+        { chainName: selectedChain }, // adjust as needed
+        setLoadingCreateAndFund,
+        handleToggle,
+        setStatusText
+      ).catch((error) => {
+        addNotification!({
+          text: `Transaction failed: ${error.message}`,
+          status: 'error',
+        });
+        setLoadingCreateAndFund(false);
+        handleToggle();
+      });
+    } else {
+      addNotification!({
+        text: 'Error: Please connect your wallet or check your connection to RPC endpoints',
+        status: 'error',
+      });
+      setLoadingCreateAndFund(false);
+      handleToggle();
     }
   };
 
@@ -193,7 +232,12 @@ const Orchestration = () => {
   
           <div className={`flex flex-col w-1/2 space-y-4 pl-4 rounded-lg p-4 border${guidelines ? "" : "-0"}`}>
             <ChainSelector setSelectedChain={setSelectedChain} />
-            <CreateAccountButton handleCreateAccount={handleCreateAccount} loadingCreateAccount={loadingCreateAccount} />
+            <CreateAccountButton 
+              handleCreateAccount={handleCreateAccount}
+              handleCreateAndFund={handleCreateAndFund}
+              loadingCreateAccount={loadingCreateAccount}
+              loadingCreateAndFund={loadingCreateAndFund}
+            />
           </div>
         </div>
       </div>

@@ -159,6 +159,9 @@ export const permit = harden({
     produce: { orca: true },
   },
   instance: { produce: { orca: true } },
+  brand: { consume: { BLD: true, IST: true }, produce: {} },
+  issuer: { consume: { BLD: true, IST: true }, produce: {} },
+
 });
 
 export const main = startOrcaContract;
