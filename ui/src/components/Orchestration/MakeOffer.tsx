@@ -41,7 +41,7 @@ export const makeOffer = async (
   }
 
   const want = {}; 
-  const give = { Deposit: { brand: bldBrand, value: BigInt(1) } };
+  const give = { Deposit: { brand: bldBrand, value: BigInt(1000) } };
 
 
 
@@ -72,6 +72,8 @@ export const makeOffer = async (
           status: 'success',
         });
         setStatusText('Offer accepted. Processing...');
+        handleToggle();
+        setLoading(false);
       }
       if (update.status === 'refunded') {
         addNotification({

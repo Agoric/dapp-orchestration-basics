@@ -25,7 +25,7 @@ const Orchestration = () => {
   const [loadingUnstake, setLoadingUnstake] = useState<{ [key: string]: boolean }>({});
   const [loadingCreateAccount, setLoadingCreateAccount] = useState(false);
   const [loadingCreateAndFund, setLoadingCreateAndFund] = useState(false);
-    const [modalContent, setModalContent] = useState('');
+  const [modalContent, setModalContent] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAddress, setModalAddress] = useState('');
   const [selectedDenom, setSelectedDenom] = useState('uist');
@@ -98,13 +98,17 @@ const Orchestration = () => {
       });
       setLoadingCreateAccount(false);
       handleToggle();
+      setLoadingCreateAccount(false);
+      handleToggle();
     }
   };
 
   const handleCreateAndFund = () => {
+    handleToggle();
     setLoadingCreateAndFund(true);
     setStatusText('Submitted');
     if (walletConnection) {
+      openModal('Create & Fund Account...', selectedChain);
       makeOffer(
         walletConnection,
         addNotification!,
@@ -238,6 +242,7 @@ const Orchestration = () => {
               loadingCreateAccount={loadingCreateAccount}
               loadingCreateAndFund={loadingCreateAndFund}
             />
+
           </div>
         </div>
       </div>

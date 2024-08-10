@@ -62,14 +62,6 @@ const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
     console.log("chainAccount")
     console.log(chainAccount)
 
-    await chainAccount.transfer(
-      {
-        denom: "ubld",
-        value: BigInt(109),
-      },
-      "osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z",
-    );
-
     return await chainAccount.asContinuingOffer();
   } catch (error) {
     console.error('Error in createAccounts:', error);
@@ -118,8 +110,10 @@ const createAndFundFn = async (orch, { localTransfer, transfer }, seat, { chainN
     trace('fund new orch account');
     trace('seat', seat);
     trace('transfer', transfer)
-    await transfer(seat, localAccount, give, amt, remoteAddress);
-    return await localAccount.asContinuingOffer();
+    // await transfer(seat, localAccount, give, amt, remoteAddress);
+    await transfer(seat, localAccount, give, amt, localAddress, remoteAddress);
+    seat.exit();
+    return await remoteAccount.asContinuingOffer();
   } catch (error) {
     console.error('Error in createAndFundFn:', error);
   }
@@ -133,6 +127,7 @@ const createAndFundFn = async (orch, { localTransfer, transfer }, seat, { chainN
  * @param {Baggage} baggage
  */
 export const start = async (zcf, privateArgs, baggage) => {
+  trace('inside start function: v1.0.95');
   trace('inside start function: v1.0.95');
   trace('privateArgs', privateArgs);
 
@@ -179,7 +174,7 @@ export const start = async (zcf, privateArgs, baggage) => {
       /**
        * @type {transfer}
        */
-      async (srcSeat, localAccount, give, amt, remoteAddress) => {
+      async (srcSeat, localAccount, give, amt, localAddress, remoteAddress) => {
         !srcSeat.hasExited() || Fail`The seat cannot have exited.`;
         const { zcfSeat: tempSeat, userSeat: userSeatP } = zcf.makeEmptySeatKit();
         trace('tempSeat:', tempSeat);
@@ -197,7 +192,7 @@ export const start = async (zcf, privateArgs, baggage) => {
         trace("amt:", amt)
         
         const watcher = zone.exo(
-          'watcher',
+          `watcher-transfer-${localAddress.value}-to-${remoteAddress.value}`, // Error: key (a string) has already been used in this zone and incarnation -- perhaps use timestamp or offerid as well?
            M.interface('watcher for transfer', {
               onFulfilled: M.call(M.any()).optional(M.any()).returns(VowShape),
             }
@@ -215,14 +210,14 @@ export const start = async (zcf, privateArgs, baggage) => {
               return watch(localAccount.transfer(
                 {
                   denom: "ubld",
-                  value: value,
+                  value: value/2n,
                 },
                 remoteAddress
               ))                    
             },
           },
         );
-        
+
         trace("about to watch transfer, watcher v0.16")
         trace("watcher", watcher)
         watch(
