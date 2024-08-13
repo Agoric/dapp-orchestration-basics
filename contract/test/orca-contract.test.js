@@ -8,13 +8,14 @@ import { E, Far } from '@endo/far';
 // import { makeCopyBag } from '@endo/patterns';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
-import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
+import { AmountMath, makeIssuerKit } from '@agoric/ertp';
 
 import { startOrcaContract } from '../src/orca.proposal.js';
 
 import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
+
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
@@ -191,8 +192,10 @@ const makeTestContext = async t => {
       const chainHub = await E(cosmosInterchainService).getChainHub();
       const chain = await E(chainHub).getChain(name);
       return E(chain).getChainInfo();
-    },
+    }
   });
+
+  
   
   return { 
     zoe, 
