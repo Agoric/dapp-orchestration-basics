@@ -14,16 +14,11 @@ jobs:
         with:
           node-version: "18"
       - run: corepack enable
-      - name: yarn install
-        run: yarn
-      - name: yarn lint
-        run: yarn lint
-      - name: yarn build
-        run: yarn build
-      - name: yarn test
-        run: yarn test
-      - name: yarn test:e2e
-        run: yarn test:e2e
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn build
+      - run: yarn test
+      - run: yarn test:e2e
   integration:
     runs-on: ubuntu-latest
     steps:
@@ -34,12 +29,9 @@ jobs:
         with:
           node-version: "18"
       - run: corepack enable
-      - name: yarn install
-        run: yarn
-      - name: yarn start:docker
-        run: yarn start:docker
-      - name: yarn build
-        run: yarn build
+      - run: yarn install
+      - run: yarn start:docker
+      - run: yarn build
       # Borrowed from https://github.com/DCFoundation/cosmos-proposal-builder/blob/main/.github/workflows/pr.yml#L43-L61
       - name: Wait for Docker container to be ready
         run: |
@@ -60,8 +52,7 @@ jobs:
               sleep $SLEEP;
             done
           '
-      - name: yarn start:contract
-        run: yarn start:contract
+      - run: yarn start:contract
       - name: verify contracts started onchain
         run: |
           curl http://localhost:1317/agoric/vstorage/data/published.agoricNames.instance | grep sellConcertTickets
