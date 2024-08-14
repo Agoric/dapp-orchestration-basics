@@ -11,4 +11,4 @@ lcov-report
 public
 
 # VS Code has its own special formatting
-tsconfig.json
+tsconfig.*
