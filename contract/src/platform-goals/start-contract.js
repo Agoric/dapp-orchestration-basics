@@ -35,6 +35,7 @@ export const installContract = async (
  *   startArgs?: StartArgs;
  *   issuerNames?: string[];
  * }} opts
+ * @param {object} [privateArgs]
  *
  * @typedef {Partial<Parameters<Awaited<BootstrapPowers['consume']['startUpgradable']>>[0]>} StartArgs
  */
