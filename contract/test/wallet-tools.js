@@ -10,12 +10,17 @@ import { makePromiseKit } from '@endo/promise-kit';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeNotifier } from '@agoric/notifier';
 
+import '@agoric/zoe/src/zoeService/types-ambient.js';
+
 import { allValues, mapValues } from '../src/objectTools.js';
 
 /**
- * @typedef {import('@agoric/smart-wallet/src/offers.js').OfferSpec} OfferSpec
- * @typedef {import('@agoric/smart-wallet/src/smartWallet.js').UpdateRecord} UpdateRecord
- * @typedef {import('@agoric/smart-wallet/src/invitations.js').InvitationSpec} InvitationSpec
+ * @import {Amount, Brand, Issuer, Payment, Purse} from '@agoric/ertp/src/types.js';
+ * @import {ERef} from '@endo/far';
+ * @import {OfferSpec} from '@agoric/smart-wallet/src/offers.js';
+ * @import {UpdateRecord} from '@agoric/smart-wallet/src/smartWallet.js';
+ * @import {InvitationSpec} from '@agoric/smart-wallet/src/invitations.js';
+ * @import {PromiseKit} from '@endo/promise-kit';
  */
 
 const { values } = Object;

@@ -7,6 +7,11 @@
 import { E } from '@endo/far';
 import { createRequire } from 'module';
 
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {Brand, Issuer, Payment} from '@agoric/ertp/src/types.js';
+ */
+
 const myRequire = createRequire(import.meta.url);
 const centralSupplyPath = myRequire.resolve(
   '@agoric/vats/src/centralSupply.js',

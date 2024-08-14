@@ -1,29 +1,21 @@
 /* eslint-disable -- FIXME */
-// @ts-check
-import { allValues } from './objectTools.js';
+// @ts-nocheck -- FIXME
 import {
-  AmountMath,
   installContract,
   startContract,
 } from './platform-goals/start-contract.js';
 
-import { E } from '@endo/far';
 import { makeTracer } from '@agoric/internal';
+import { E } from '@endo/far';
+
+/// <reference types="@agoric/vats/src/core/core-eval-env"/>
+/// <reference types="@agoric/vats/src/core/types-ambient"/>
 
 const { Fail } = assert;
 
-const pathSegmentPattern = /^[a-zA-Z0-9_-]{1,100}$/;
-
-// /** @type {(name: string) => void} */
-// const assertPathSegment = name => {
-//   pathSegmentPattern.test(name) ||
-//     Fail`Path segment names must consist of 1 to 100 characters limited to ASCII alphanumerics, underscores, and/or dashes: ${name}`;
-// };
-// harden(assertPathSegment);
-
 const contractName = 'ORCA';
 
-// const trace = makeTracer('StartOrca', true);
+const trace = makeTracer('StartOrca', true);
 
 /**
  * Core eval script to start contract
@@ -38,7 +30,7 @@ const contractName = 'ORCA';
  * }} DaoSpace
  */
 export const startDaoContract = async (powers, config) => {
-  console.log('core eval for', contractName);
+  trace('core eval for', contractName);
 
   const {
     // must be supplied by caller or template-replaced
@@ -102,7 +94,7 @@ export const startDaoContract = async (powers, config) => {
     },
   );
 
-  console.log(contractName, '(re)started');
+  trace(contractName, '(re)started');
   produceInstance.resolve(started.instance);
 };
 

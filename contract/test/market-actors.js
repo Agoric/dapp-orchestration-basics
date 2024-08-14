@@ -11,6 +11,10 @@ import {
 const { entries, fromEntries, keys } = Object;
 
 /**
+ * @import {Brand, Issuer} from '@agoric/ertp/src/types.js';
+ */
+
+/**
  * @typedef {{
  *   brand: Record<string, Promise<Brand>> & { timer: unknown }
  *   issuer: Record<string, Promise<Issuer>>
@@ -43,6 +47,7 @@ export const payerPete = async (
 ) => {
   const hub = await makeAgoricNames(queryTool);
   /** @type {WellKnown} */
+  // @ts-expect-error XXX
   const agoricNames = makeNameProxy(hub);
 
   const instance = await agoricNames.instance.postalService;

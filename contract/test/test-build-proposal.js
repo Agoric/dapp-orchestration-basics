@@ -51,6 +51,7 @@ test.before(async t => {
 });
 
 test('bundles from build:deployer meet 1MB request limit', async t => {
+  // @ts-expect-error ses-ava types
   const { runPackageScript, listBundles, compressBundle } = t.context;
   await runPackageScript('build:deployer');
 

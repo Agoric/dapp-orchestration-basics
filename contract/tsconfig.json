@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ESNext", "DOM"],
-    "strict": true,
+    "checkJs": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src", "test"],
   "exclude": ["node_modules"]
 }

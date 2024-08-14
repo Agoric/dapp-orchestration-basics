@@ -3,6 +3,12 @@
 import { E, Far } from '@endo/far';
 import { createRequire } from 'node:module';
 
+import '@agoric/vats/src/core/types-ambient.js';
+
+/**
+ * @import {ERef} from '@endo/far';
+ */
+
 const nodeRequire = createRequire(import.meta.url);
 export const assets = {
   binaryVoteCounter: nodeRequire.resolve(

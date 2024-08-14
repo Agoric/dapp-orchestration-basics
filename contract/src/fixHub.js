@@ -1,6 +1,10 @@
 // @ts-check
 import { E, Far } from '@endo/far';
 
+/**
+ * @import {ERef} from '@endo/far';
+ */
+
 const { Fail } = assert;
 
 /**

@@ -1,9 +1,12 @@
 // @ts-check
 import { E } from '@endo/far';
 
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {FromCapData} from '@endo/marshal';
+ */
+
 /** @typedef {'children' | 'data'} AgoricChainStoragePathKind */
-/** @template T @typedef {import('@endo/marshal').FromCapData<T>} FromCapData<T> */
-/** @template T @typedef {import('@endo/eventual-send').ERef<T>} ERef<T> */
 
 /**
  * @param {[kind: AgoricChainStoragePathKind, item: string]} path
@@ -34,7 +37,7 @@ async function* mapHistory(f, chunks) {
 }
 
 /**
- * @param {ERef<import('./makeHttpClient').LCD>} lcd
+ * @param {ERef<import('./makeHttpClient.js').LCD>} lcd
  */
 export const makeVStorage = lcd => {
   const getJSON = (href, options) => E(lcd).getJSON(href, options);

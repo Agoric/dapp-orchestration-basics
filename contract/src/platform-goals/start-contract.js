@@ -1,7 +1,10 @@
 /** @file utilities to start typical contracts in core eval scripts. */
-// @ts-check
+// @ts-nocheck -- FIXME
 
 import { E } from '@endo/far';
+
+/// <reference types="@agoric/vats/src/core/core-eval-env"/>
+/// <reference types="@agoric/vats/src/core/types-ambient"/>
 
 const { Fail } = assert;
 

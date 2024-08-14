@@ -1,3 +1,4 @@
+// @ts-nocheck -- FIXME
 /**
  * @file marshal tools for vstorage clients
  *
@@ -34,7 +35,7 @@ const makeTranslationTable = (makeSlot, makeVal) => {
   /** @type {(val: Val) => string} */
   const convertValToSlot = val => {
     if (valToSlot.has(val)) {
-      // @ts-expect-error https://github.com/microsoft/TypeScript/issues/13086
+      // @ts-ignore https://github.com/microsoft/TypeScript/issues/13086
       return valToSlot.get(val);
     }
     const slot = makeSlot(val, valToSlot.size);
@@ -47,7 +48,7 @@ const makeTranslationTable = (makeSlot, makeVal) => {
   const convertSlotToVal = (slot, iface) => {
     if (slot === null) return makeVal(slot, iface);
     if (slotToVal.has(slot)) {
-      // @ts-expect-error https://github.com/microsoft/TypeScript/issues/13086
+      // @ts-ignore https://github.com/microsoft/TypeScript/issues/13086
       return slotToVal.get(slot);
     }
     const val = makeVal(slot, iface);

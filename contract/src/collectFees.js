@@ -3,6 +3,10 @@
 import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
 
 /**
+ * @import {Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
+ */
+
+/**
  * Provide shared support for providing access to fees from a service contract.
  *
  * @param {ZCF} zcf

@@ -1,7 +1,13 @@
-// @ts-check
+// @ts-nocheck -- FIXME
 import { E, Far } from '@endo/far';
 
+/// <reference types="@agoric/vats/src/core/types-ambient"/>
+
 const { Fail } = assert;
+
+/**
+ * @import {ERef} from '@endo/far';
+ */
 
 // vstorage paths under published.*
 // and zone store key
@@ -90,12 +96,9 @@ export const marshalData = harden({
 export const produceBoardAuxManager = async powers => {
   const { zone } = powers;
   const { board } = powers.consume;
-  /** @type {import('../types').NonNullChainStorage['consume']} */
-  // @ts-expect-error cast
   const { chainStorage } = powers.consume;
 
   /** @type {BoardAuxPowers['produce']} */
-  // @ts-expect-error cast
   const produce = powers.produce;
 
   const mgr = makeBoardAuxManager(zone, marshalData, { board, chainStorage });

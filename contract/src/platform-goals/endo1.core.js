@@ -3,6 +3,10 @@ import * as marshal from '@endo/marshal';
 import * as patterns from '@endo/patterns';
 
 /**
+ * @import {BootstrapManifestPermit} from '@agoric/vats/src/core/lib-boot.js';
+ */
+
+/**
  * @typedef {{
  *   endo1: {
  *     marshal: typeof import('@endo/marshal');
@@ -23,7 +27,7 @@ export const produceEndoModules = permittedPowers => {
   produce.endo1.resolve(endo);
 };
 
-/** @type {import('@agoric/vats/src/core/lib-boot').BootstrapManifestPermit} */
+/** @type {BootstrapManifestPermit} */
 export const permit = {
   /** @type {Record<keyof Endo1Modules, true>} */
   produce: { endo1: true },
