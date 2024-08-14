@@ -1,6 +1,11 @@
 import { ReactNode } from 'react';
 
-const TabWrapper = (props: { tab: string; activeTab: string, handleTabClick:(tab: string)=>void, children: ReactNode }) => {
+const TabWrapper = (props: {
+  tab: string;
+  activeTab: string;
+  handleTabClick: (tab: string) => void;
+  children: ReactNode;
+}) => {
   return (
     <>
       <input
@@ -9,8 +14,10 @@ const TabWrapper = (props: { tab: string; activeTab: string, handleTabClick:(tab
         role="tab"
         className="daisyui-tab"
         aria-label={props.tab}
-        checked={(props.activeTab === props.tab)}
-        onClick={()=>{props.handleTabClick(props.tab)}}
+        checked={props.activeTab === props.tab}
+        onClick={() => {
+          props.handleTabClick(props.tab);
+        }}
       />
       <div
         role="tabpanel"
