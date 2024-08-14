@@ -1,5 +1,4 @@
 /* eslint-disable -- FIXME */
-// @ts-nocheck -- FIXME
 import {
   installContract,
   startContract,
@@ -10,6 +9,9 @@ import { E } from '@endo/far';
 
 /// <reference types="@agoric/vats/src/core/core-eval-env"/>
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
+/**
+ * @import {AssetKind, Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
+ */
 
 const { Fail } = assert;
 
@@ -47,9 +49,11 @@ export const startDaoContract = async (powers, config) => {
       chainTimerService,
     },
     installation: {
+      // @ts-expect-error ORCA not known
       consume: { [contractName]: committee },
     },
     instance: {
+      // @ts-expect-error ORCA not known
       produce: { [contractName]: produceInstance },
     },
   } = powers;
@@ -68,38 +72,28 @@ export const startDaoContract = async (powers, config) => {
   const storageNode = await E(mainNode).makeChildNode('state');
   const marshaller = await E(board).getPublishingMarshaller();
 
-  // const privateArgs = {
-  //   storageNode,
-  //   marshaller,
-  // };
+  const privateArgs = {
+    storageNode,
+    marshaller,
+    timer: await chainTimerService,
+  };
 
-  const started = await startContract(
-    powers,
-    {
-      name: contractName,
-      startArgs: {
-        installation,
-        terms,
-      },
-      issuerNames: [],
+  const started = await startContract(powers, {
+    name: contractName,
+    startArgs: {
+      installation,
+      terms,
+      privateArgs,
     },
-    // privateArgs
-    {
-      privateArgs: {
-        orchestration: await orchestration,
-        storageNode,
-        marshaller,
-        timer: await chainTimerService,
-      },
-    },
-  );
+    issuerNames: [],
+  });
 
   trace(contractName, '(re)started');
   produceInstance.resolve(started.instance);
 };
 
 // need more details on permit
-/** @type { import("@agoric/vats/src/core/lib-boot").BootstrapManifestPermit } */
+/** @type { import("@agoric/vats/src/core/lib-boot.js").BootstrapManifestPermit } */
 export const permit = harden({
   consume: {
     agoricNames: true,

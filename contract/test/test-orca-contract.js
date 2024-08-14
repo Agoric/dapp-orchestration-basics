@@ -23,8 +23,10 @@ import { createRequire } from 'module';
 const myRequire = createRequire(import.meta.url);
 const contractPath = myRequire.resolve(`../src/orca.contract.js`);
 
-/** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
-const test = anyTest;
+const test =
+  /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */ (
+    anyTest
+  );
 
 /**
  * Tests assume access to the zoe service and that contracts are bundled.

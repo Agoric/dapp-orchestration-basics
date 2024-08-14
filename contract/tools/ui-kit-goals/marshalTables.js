@@ -1,4 +1,3 @@
-// @ts-nocheck -- FIXME
 /**
  * @file marshal tools for vstorage clients
  *
@@ -77,6 +76,7 @@ export const makeClientMarshaller = valToSlot => {
   };
   const { convertValToSlot, convertSlotToVal } = makeTranslationTable(
     valToSlot || noNewSlots,
+    // @ts-expect-error null slots
     synthesizeRemotable,
   );
 

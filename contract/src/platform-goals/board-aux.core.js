@@ -1,7 +1,11 @@
-// @ts-nocheck -- FIXME
 import { E, Far } from '@endo/far';
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
+
+/**
+ * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
+ * @import {Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
+ */
 
 const { Fail } = assert;
 
@@ -99,6 +103,7 @@ export const produceBoardAuxManager = async powers => {
   const { chainStorage } = powers.consume;
 
   /** @type {BoardAuxPowers['produce']} */
+  // @ts-expect-error cast
   const produce = powers.produce;
 
   const mgr = makeBoardAuxManager(zone, marshalData, { board, chainStorage });
