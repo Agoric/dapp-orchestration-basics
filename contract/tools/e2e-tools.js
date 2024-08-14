@@ -45,7 +45,9 @@ const makeBlockTool = ({ rpc, delay }) => {
       id += 1;
       const data = await rpc
         .execute({ jsonrpc: '2.0', id, method: 'status', params: [] })
-        .catch(_err => {});
+        .catch(_err => {
+          console.log(_err);
+        });
 
       if (!data) throw Error('no data from status');
 
@@ -87,45 +89,6 @@ const makeBlockTool = ({ rpc, delay }) => {
 /** @typedef {ReturnType<makeBlockTool>} BlockTool */
 
 /**
- * @param {string} fullPath
- * @param {object} opts
- * @param {string} opts.id
- * @param {import('./agd-lib.js').Agd} opts.agd
- * @param {import('./ui-kit-goals/queryKit.js').QueryTool['follow']} opts.follow
- * @param {(ms: number) => Promise<void>} opts.delay
- * @param {typeof console.log} [opts.progress]
- * @param {string} [opts.chainId]
- * @param {string} [opts.installer]
- * @param {string} [opts.bundleId]
- */
-const installBundle = async (fullPath, opts) => {
-  const { id, agd, delay, follow, progress = console.log } = opts;
-  const { chainId = 'agoriclocal', installer = 'user1' } = opts;
-  const from = await agd.lookup(installer);
-
-  const explainDelay = (ms, info) => {
-    progress('follow', { ...info, delay: ms / 1000 }, '...');
-    return delay(ms);
-  };
-  const updates = follow('bundles', { delay: explainDelay });
-  await updates.next();
-  const tx = await agd.tx(
-    ['swingset', 'install-bundle', `@${fullPath}`, '--gas', 'auto'],
-    { from, chainId, yes: true },
-  );
-  progress({ id, installTx: tx.txhash, height: tx.height });
-
-  const { value: confirm } = await updates.next();
-  assert(!confirm.error, confirm.error);
-  assert.equal(confirm.installed, true);
-  if (opts.bundleId) {
-    assert.equal(`b1-${confirm.endoZipBase64Sha512}`, opts.bundleId);
-  }
-  // TODO: return block height at which confirm went into vstorage
-  return { tx, confirm };
-};
-
-/**
  * @param {string} address
  * @param {Record<string, number | bigint>} balances
  * @param {{
@@ -148,7 +111,8 @@ export const provisionSmartWallet = async (
     lcd,
     delay,
     chainId = 'agoriclocal',
-    whale = 'validator',
+    // whale = 'validator',
+    whale = 'alice',
     progress = console.log,
   },
 ) => {
@@ -314,7 +278,7 @@ const voteLatestProposalAndWait = async ({
   agd,
   blockTool,
   chainId = 'agoriclocal',
-  validator = 'validator',
+  _validator = 'validator',
 }) => {
   await blockTool.waitForBlock(1, { before: 'get latest proposal' });
   const proposalsData = await agd.query(['gov', 'proposals']);
@@ -327,7 +291,8 @@ const voteLatestProposalAndWait = async ({
   });
 
   const deposit = '50000000ubld';
-  const sigOpts = { from: validator, chainId, yes: true };
+  // const sigOpts = { from: validator, chainId, yes: true };
+  const sigOpts = { from: 'genesis', chainId, yes: true };
   await agd.tx(['gov', 'deposit', lastProposalId, deposit], sigOpts);
 
   await blockTool.waitForBlock(1, { before: 'vote', on: lastProposalId });
@@ -373,7 +338,8 @@ const runCoreEval = async (
     agd,
     blockTool,
     chainId = 'agoriclocal',
-    proposer = 'validator',
+    // proposer = 'validator',
+    proposer = 'alice',
     deposit = `10${BLD}`,
   },
 ) => {
@@ -462,12 +428,7 @@ export const makeE2ETools = (
   const runMake = async (...args) => $('make', '--silent', ...args);
 
   const vstorage = makeVStorage(lcd);
-  const qt = makeQueryKit(vstorage);
 
-  /**
-   * @param {Record<string, string>} bundleRoots
-   * @param {typeof console.log} progress
-   */
   const installBundles = async (bundleRoots, progress) => {
     await null;
     /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
@@ -489,21 +450,63 @@ export const makeE2ETools = (
       await writeFile(fullPath, bundleJSON);
       const shortId = getBundleId(bundle).slice(0, 8);
 
-      if (Object.keys(bundles).length === 1) {
-        progress('mint 100 IST');
-        await runPackageScript('docker:make', 'mint100');
-      }
-
       const bundleSizeMb = (bundleJSON.length / 1_000_000).toFixed(3);
       progress('installing', name, shortId, bundleSizeMb, 'Mb');
-      const { tx, confirm } = await installBundle(fullPath, {
-        id: shortId,
-        agd,
-        follow: qt.query.follow,
-        progress,
-        delay,
-        bundleId: getBundleId(bundle),
-      });
+
+      const installer = 'alice';
+      const chainId = 'agoriclocal';
+
+      //TODO: MAY NOT NEED
+      // copy the bundle JSON file to the container
+      // const containerPath = `/root/bundles/bundle-${name}.json`;
+      // const cpArgs = ["cp", fullPath, `default/agoriclocal-genesis-0:${containerPath}`];
+      // console.log('cp', cpArgs)
+      // // execFileSync2('cp', cpArgs, { stdio: 'inherit' });
+      // execFileSync2('kubectl', cpArgs, { stdio: 'inherit' });
+      // console.log("after execFileSync")
+
+      // maybe cause delay
+      // const containerPathBoard = `/root/bundles/deploy-board-aux-permit.json`;
+      // const cpArgsBoard = ["bundles/deploy-board-aux-permit.json", `default/agoriclocal-genesis-0:${containerPathBoard}`];
+      // console.log('cp', cpArgsBoard)
+      // execFileSync2('cp', cpArgsBoard, { stdio: 'inherit' });
+      // console.log("after execFileSync cpArgsBoard")
+
+      // Verify the file is present in the container
+      // const verifyArgs = ['-lah', `${containerPath}`];
+      // try {
+      //   console.log(verifyArgs)
+      //   console.log('exec', verifyArgs, { stdio: 'inherit' })
+      //   execFileSync('ls', verifyArgs, { stdio: 'inherit' });
+      // } catch (err) {
+      //   console.log(err)
+      //   throw new Error(`File ${containerPath} not found in container`);
+      // }
+
+      ////////
+
+      // install the bundle using the copied JSON file
+      const execArgs = [
+        'tx',
+        'swingset',
+        'install-bundle',
+        `@/root/bundles/bundle-${name}.json`,
+        '--gas',
+        'auto',
+        '--from',
+        `${installer}`,
+        '--chain-id',
+        `${chainId}`,
+        '--yes',
+        '--output',
+        'json',
+      ];
+      const output = execFileSync('agd', execArgs, { encoding: 'utf-8' });
+      const tx = JSON.parse(output);
+
+      progress({ id: shortId, installTx: tx.txhash, height: tx.height });
+      const confirm = { installed: true };
+
       progress({
         name,
         id: shortId,

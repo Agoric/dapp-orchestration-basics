@@ -1,118 +1,165 @@
-/* eslint-disable -- FIXME */
-import {
-  installContract,
-  startContract,
-} from './platform-goals/start-contract.js';
-
-import { makeTracer } from '@agoric/internal';
 import { E } from '@endo/far';
+import { installContract } from './platform-goals/start-contract.js';
+import { makeTracer } from './tools/debug.js';
 
-/// <reference types="@agoric/vats/src/core/core-eval-env"/>
-/// <reference types="@agoric/vats/src/core/types-ambient"/>
 /**
- * @import {AssetKind, Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
+ * @import {ERef} from '@endo/far';
+ * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
+ * @import {OrcaSF} from './orca.contract.js';
  */
+
+const trace = makeTracer('OrCE');
+const { entries, fromEntries } = Object;
+
+trace('start proposal module evaluating');
 
 const { Fail } = assert;
 
-const contractName = 'ORCA';
-
-const trace = makeTracer('StartOrca', true);
+const contractName = 'orca';
 
 /**
- * Core eval script to start contract
+ * Given a record whose values may be promise, return a promise for a record with all the values resolved.
  *
- * @param {BootstrapPowers } powers
- * @param {*} config
- *
- * @typedef {{
- *   brand: PromiseSpaceOf<{ DaoToken: Brand }>;
- *   issuer: PromiseSpaceOf<{ DaoToken: Issuer }>;
- *   instance: PromiseSpaceOf<{ Dao: Instance }>
- * }} DaoSpace
+ * @type { <T extends Record<string, ERef<any>>>(obj: T) => Promise<{ [K in keyof T]: Awaited<T[K]>}> }
  */
-export const startDaoContract = async (powers, config) => {
-  trace('core eval for', contractName);
+export const allValues = async obj => {
+  const es = await Promise.all(
+    entries(obj).map(([k, vp]) => E.when(vp, v => [k, v])),
+  );
+  return fromEntries(es);
+};
 
-  const {
-    // must be supplied by caller or template-replaced
-    bundleID = Fail`no bundleID`,
-  } = config?.options?.[contractName] ?? {};
+/**
+ * @param {BootstrapPowers & {installation: {consume: {orca: Installation<import('./orca.contract.js').start>}}}} permittedPowers
+ * @param config
+ */
+export const startOrcaContract = async (permittedPowers, config) => {
+  trace('startOrcaContract()... 0.0.93');
+  console.log(permittedPowers);
 
   const {
     consume: {
       agoricNames,
       board,
-      chainStorage,
-      startUpgradable,
-      // orchestration,
       chainTimerService,
-    },
-    installation: {
-      // @ts-expect-error ORCA not known
-      consume: { [contractName]: committee },
+      localchain,
+      chainStorage,
+      cosmosInterchainService,
+      startUpgradable,
     },
     instance: {
-      // @ts-expect-error ORCA not known
-      produce: { [contractName]: produceInstance },
+      // @ts-expect-error not a WellKnownName
+      produce: { orca: produceInstance },
     },
-  } = powers;
+  } = permittedPowers;
 
-  // trace('start Orca', {});
+  trace('config', config);
+  trace('permittedPowers', permittedPowers);
+  const {
+    // must be supplied by caller or template-replaced
+    bundleID = Fail`no bundleID`,
+  } = config?.options?.[contractName] ?? {};
 
-  const installation = await installContract(powers, {
+  // agoricNames gets updated each time; the promise space only once XXXXXXX
+
+  const installation = await installContract(permittedPowers, {
     name: contractName,
     bundleID,
   });
 
-  //basic terms
-  const terms = {};
+  console.log('permittedPowers');
+  console.log(permittedPowers);
+  console.log('from inside startOrcaContract:', installation);
 
-  const mainNode = await E(chainStorage).makeChildNode('orca');
-  const storageNode = await E(mainNode).makeChildNode('state');
+  console.log(cosmosInterchainService);
+  console.log(agoricNames); // make storage node
+  console.log('chainStorage');
+  console.log(chainStorage);
+  const storageNode = await E(chainStorage).makeChildNode('orca');
+
+  console.log(storageNode);
+  console.log('DONE MAKING NODES v0.3');
   const marshaller = await E(board).getPublishingMarshaller();
+  console.log(marshaller);
 
-  const privateArgs = {
-    storageNode,
-    marshaller,
-    timer: await chainTimerService,
+  /** @type {StartUpgradableOpts<OrcaSF>} */
+  const startOpts = {
+    label: 'orca',
+    installation,
+    terms: undefined,
+    privateArgs: {
+      storageNode,
+      marshaller,
+      orchestrationService: await cosmosInterchainService,
+      timerService: await chainTimerService,
+      localchain: await localchain,
+      agoricNames: await agoricNames,
+    },
   };
 
-  const started = await startContract(powers, {
-    name: contractName,
-    startArgs: {
-      installation,
-      terms,
-      privateArgs,
-    },
-    issuerNames: [],
-  });
+  trace('startOpts', startOpts);
+  const { instance } = await E(startUpgradable)(startOpts);
 
-  trace(contractName, '(re)started');
-  produceInstance.resolve(started.instance);
+  trace(contractName, '(re)started WITH RESET');
+  produceInstance.reset();
+  produceInstance.resolve(instance);
 };
 
-// need more details on permit
-/** @type { import("@agoric/vats/src/core/lib-boot.js").BootstrapManifestPermit } */
+/** @type {BootstrapManifest} */
+const orcaManifest = {
+  [startOrcaContract.name]: {
+    consume: {
+      agoricNames: true,
+      // brandAuxPublisher: true,
+      board: true,
+      chainStorage: true,
+      startUpgradable: true,
+      zoe: true,
+      localchain: true,
+      chainTimerService: true,
+      cosmosInterchainService: true,
+    },
+    installation: {
+      produce: { orca: true },
+      consume: { orca: true },
+    },
+    instance: {
+      produce: { orca: true },
+    },
+  },
+};
+harden(orcaManifest);
+
+export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
+  trace('getting manifest for orca');
+  trace('installKeys');
+  trace(installKeys);
+  return harden({
+    manifest: orcaManifest,
+    installations: {
+      orca: restoreRef(installKeys),
+    },
+  });
+};
+
 export const permit = harden({
   consume: {
     agoricNames: true,
-    brandAuxPublisher: true,
-    startUpgradable: true,
-    zoe: true,
     board: true,
     chainStorage: true,
-    orchestration: true,
+    startUpgradable: true,
+    zoe: true,
+    localchain: true,
     chainTimerService: true,
+    cosmosInterchainService: true,
   },
   installation: {
-    consume: { [contractName]: true },
-    produce: { [contractName]: true },
+    consume: { orca: true },
+    produce: { orca: true },
   },
-  instance: { produce: { [contractName]: true } },
-  // permitting brands
-  issuer: { consume: { IST: true }, produce: {} },
-  brand: { consume: { IST: true }, produce: {} },
+  instance: { produce: { orca: true } },
+  brand: { consume: { BLD: true, IST: true }, produce: {} },
+  issuer: { consume: { BLD: true, IST: true }, produce: {} },
 });
 
-export const main = startDaoContract;
+export const main = startOrcaContract;

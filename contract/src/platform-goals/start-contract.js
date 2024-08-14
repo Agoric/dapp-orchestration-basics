@@ -1,9 +1,8 @@
 /** @file utilities to start typical contracts in core eval scripts. */
+// @ts-check
 
 import { E } from '@endo/far';
 
-/// <reference types="@agoric/vats/src/core/core-eval-env"/>
-/// <reference types="@agoric/vats/src/core/types-ambient"/>
 /**
  * @import {AssetKind, Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
  */
@@ -46,9 +45,11 @@ export const installContract = async (
 export const startContract = async (
   powers,
   { name, startArgs, issuerNames },
+  privateArgs,
 ) => {
   console.log('POWERS');
   console.log(powers);
+  console.log(privateArgs);
   const {
     consume: { startUpgradable },
     installation: { consume: consumeInstallation },
@@ -63,6 +64,7 @@ export const startContract = async (
     ...startArgs,
     installation,
     label: name,
+    privateArgs,
   });
 
   const { instance } = started;

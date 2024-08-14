@@ -10,9 +10,12 @@
     "docker:bash": "docker compose exec agd bash",
     "docker:make": "docker compose exec agd make -C /workspace/contract",
     "make:help": "make list",
-    "start": "make clean start-contract",
-    "build": "yarn build:deployer",
+    "start": "make clean start",
+    "start2": "make clean start2",
+    "build2": "yarn build:deployer2",
     "build:deployer": "rollup -c rollup.config.mjs",
+    "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
+    "deploy": "make dev-working",
     "test": "ava",
     "lint": "tsc && eslint '**/*.js'",
     "lint:fix": "eslint --fix '**/*.js'"
@@ -95,14 +98,14 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agoric/dapp-agoric-basics"
+    "url": "git+https://github.com/Agoric/dapp-orchestration-basics"
   },
   "author": "Agoric",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Agoric/dapp-agoric-basics/issues"
+    "url": "https://github.com/Agoric/dapp-orchestration-basics/issues"
   },
-  "homepage": "https://github.com/Agoric/dapp-agoric-basics#readme",
+  "homepage": "https://github.com/Agoric/dapp-orchestration-basics#readme",
   "eslintConfig": {
     "parserOptions": {
       "sourceType": "module",

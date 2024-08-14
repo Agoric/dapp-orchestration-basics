@@ -25,11 +25,11 @@ import { permit as orcaPermit } from './src/orca.proposal.js';
 import { permit as boardAuxPermit } from './src/platform-goals/board-aux.core.js';
 
 // symlinks
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
-import replace from '@rollup/plugin-replace';
-import typescript from '@rollup/plugin-typescript';
+// import { nodeResolve } from '@rollup/plugin-node-resolve';
+// import commonjs from '@rollup/plugin-commonjs';
+// import json from '@rollup/plugin-json';
+// import replace from '@rollup/plugin-replace';
+// import typescript from '@rollup/plugin-typescript';
 
 /**
  * @param {*} opts
@@ -62,28 +62,28 @@ const config1 = ({
           }),
         ]
       : []),
-    ...(coreScriptOptions
-      ? [configureOptions({ options: coreScriptOptions })]
-      : []),
+    // ...(coreScriptOptions
+    //   ? [configureOptions({ options: coreScriptOptions })]
+    //   : []),
     moduleToScript(),
     emitPermit({ permit, file: permitFile }),
-    nodeResolve({
-      preferBuiltins: true,
-      mainFields: ['module', 'main'],
-      // moduleDirectories: ['node_modules'],
-      moduleDirectories: ['node_modules'],
-      // modulePaths: ['../../agoric-sdk/packages'],
-      dedupe: ['@agoric/vow', '@agoric/orchestration', '@agoric/vats'],
-    }),
-    commonjs(),
+    // nodeResolve({
+    //   preferBuiltins: true,
+    //   mainFields: ['module', 'main'],
+    //   // moduleDirectories: ['node_modules'],
+    //   moduleDirectories: ['node_modules'],
+    //   // modulePaths: ['../../agoric-sdk/packages'],
+    //   dedupe: ['@agoric/vow', '@agoric/orchestration', '@agoric/vats'],
+    // }),
+    // commonjs(),
     // json(),
     // replace({
     //   'process.env.NODE_ENV': JSON.stringify('production'),
     //   preventAssignment: true,
     // }),
-    typescript({
-      tsconfig: './tsconfig.json', // Ensure you have a tsconfig.json file in your project root
-    }),
+    // typescript({
+    //   tsconfig: './tsconfig.json',  // Ensure you have a tsconfig.json file in your project root
+    // }),
   ],
 });
 
@@ -91,12 +91,12 @@ const { env } = process;
 
 /** @type {import('rollup').RollupOptions[]} */
 const config = [
-  config1({
-    name: 'board-aux',
-    permit: boardAuxPermit,
-    coreEntry: `./src/platform-goals/board-aux.core.js`,
-    contractEntry: null,
-  }),
+  // config1({
+  //   name: 'board-aux',
+  //   permit: boardAuxPermit,
+  //   coreEntry: `./src/platform-goals/board-aux.core.js`,
+  //   contractEntry: null,
+  // }),
   config1({
     name: 'orca',
     permit: orcaPermit,
