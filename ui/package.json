@@ -18,7 +18,7 @@
     "@agoric/web-components": "0.15.1-dev-8fc28e8.0",
     "buffer": "^6.0.3",
     "chain-registry": "^1.28.1",
-    "cosmos-kit": "^2.9.0",
+    "cosmos-kit": "^2.19.0",
     "daisyui": "^4.7.2",
     "react": "^18.2.0",
     "react-daisyui": "^5.0.0",
