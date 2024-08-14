@@ -12,8 +12,8 @@
     "make:help": "make list",
     "start": "make clean start-contract",
     "build": "yarn build:deployer",
-    "build:deployer": "node --preserve-symlinks ./node_modules/.bin/rollup -c rollup.config.mjs",
-    "test": "node --preserve-symlinks ./node_modules/.bin/ava --verbose",
+    "build:deployer": "rollup -c rollup.config.mjs",
+    "test": "ava",
     "lint": "eslint '**/*.js'",
     "lint:types": "tsc -p jsconfig.json",
     "lint:fix": "eslint --fix '**/*.js'"

@@ -10,8 +10,7 @@ import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 test.before(async t => {
   const bundleCache = await makeNodeBundleCache('bundles', {}, s => import(s));
 
-  console.log("running..")
-
+  console.log('running..');
 
   /**
    * @param {string} name of an _already cached_ bundle
@@ -26,7 +25,7 @@ test.before(async t => {
   };
 
   const $ = (file, ...args) => {
-    console.error(cmd);
+    // console.error(cmd);
 
     return new Promise((resolve, reject) => {
       execFile(file, args, { encoding: 'utf8' }, (err, out) => {
@@ -51,25 +50,25 @@ test.before(async t => {
   t.context = { compressBundle, $, runPackageScript, listBundles };
 });
 
-// test('bundles from build:deployer meet 1MB request limit', async t => {
-//   const { runPackageScript, listBundles, compressBundle } = t.context;
-//   await runPackageScript('build:deployer');
+test('bundles from build:deployer meet 1MB request limit', async t => {
+  const { runPackageScript, listBundles, compressBundle } = t.context;
+  await runPackageScript('build:deployer');
 
-//   const bundles = await listBundles();
-//   t.assert(bundles.length, 'Found bundles');
+  const bundles = await listBundles();
+  t.assert(bundles.length, 'Found bundles');
 
-//   const MB = 1024 * 1024;
-//   for (const bundleName of bundles) {
-//     // eslint-disable-next-line @jessie.js/safe-await-separator
-//     const { bundle, compressed: buffer } = await compressBundle(bundleName);
-//     t.assert(buffer);
-//     const sizeInMb = buffer.length / MB;
-//     // JSON RPC hex encoding doubles the size
-//     t.assert(sizeInMb * 2 < 1, 'Compressed bundle is less than 0.5MB');
-//     t.log({
-//       bundleName,
-//       compressedSize: `${sizeInMb.toFixed(3)} MB`,
-//       originallySize: `${(JSON.stringify(bundle).length / MB).toFixed(3)} MB`,
-//     });
-//   }
-// });
+  const MB = 1024 * 1024;
+  for (const bundleName of bundles) {
+    // eslint-disable-next-line @jessie.js/safe-await-separator
+    const { bundle, compressed: buffer } = await compressBundle(bundleName);
+    t.assert(buffer);
+    const sizeInMb = buffer.length / MB;
+    // JSON RPC hex encoding doubles the size
+    t.assert(sizeInMb * 2 < 1, 'Compressed bundle is less than 0.5MB');
+    t.log({
+      bundleName,
+      compressedSize: `${sizeInMb.toFixed(3)} MB`,
+      originallySize: `${(JSON.stringify(bundle).length / MB).toFixed(3)} MB`,
+    });
+  }
+});
