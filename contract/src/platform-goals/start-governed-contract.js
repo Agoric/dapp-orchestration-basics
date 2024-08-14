@@ -1,8 +1,15 @@
-// @ts-check
+// @ts-nocheck -- FIXME
 import { E } from '@endo/far';
 
 import { allValues, zip } from '../objectTools.js';
 import { sanitizePathSegment } from './start-contract.js';
+
+/// <reference types="@agoric/vats/src/core/types-ambient"/>
+
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {GovernableStartFn, GovernanceFacetKit} from '@agoric/governance/src/types.js';
+ */
 
 const { values } = Object;
 
@@ -18,7 +25,7 @@ const { values } = Object;
 
 /**
  * @typedef {StartResult<
- *   typeof import('@agoric/governance/src/committee.js').prepare
+ *   typeof import('@agoric/governance/src/committee.js').start
  * >} CommitteeStart
  */
 

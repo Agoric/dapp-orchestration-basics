@@ -16,6 +16,8 @@ import { makeMockChainStorageRoot } from '@agoric/internal/src/storage-test-util
 import { mockWalletFactory } from './wallet-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 
+import '@agoric/vats/src/core/types-ambient.js';
+
 const { entries } = Object;
 
 /**
@@ -98,7 +100,7 @@ export const mockBootstrapPowers = async (
   produce.priceAuthority.resolve(Far('NullPriceAuthority', {}));
 
   /**
-   * @type {BootstrapPowers & import('../src/types').NonNullChainStorage}
+   * @type {BootstrapPowers}
    */
   // @ts-expect-error mock
   const powers = { produce, consume, ...spaces, zone };

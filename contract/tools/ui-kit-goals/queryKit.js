@@ -5,6 +5,11 @@ import { batchVstorageQuery } from './batchQuery.js';
 import { makeClientMarshaller } from './marshalTables.js';
 
 /**
+ * @import {ERef} from '@endo/far';
+ * @import {UpdateRecord} from '@agoric/smart-wallet/src/smartWallet.js';
+ */
+
+/**
  * Iter tools...
  *
  * @template {Promise} PT
@@ -83,7 +88,7 @@ export const makeWalletView = (addr, { query, vstorage }) => {
     current: () => query.queryData(`published.wallet.${addr}.current`),
     /**
      * TODO: visit in chunks by block
-     * @param {ERef<{visit: (r: import('@agoric/smart-wallet/src/smartWallet.js').UpdateRecord) => void}>} visitor
+     * @param {ERef<{visit: (r: UpdateRecord) => void}>} visitor
      * @param {number} [minHeight]
      */
     history: async (visitor, minHeight) => {

@@ -1,4 +1,3 @@
-/* eslint-disable -- FIXME */
 import { M } from '@endo/patterns';
 
 import { makeTracer, StorageNodeShape } from '@agoric/internal';
@@ -22,10 +21,13 @@ export const meta = harden({
     timer: M.remotable('TimerService'),
   },
 });
+harden(meta);
 
 export const privateArgsShape = meta.privateArgsShape;
+harden(privateArgsShape);
 
 export const terms = harden({});
+harden(terms);
 
 /**
  *
