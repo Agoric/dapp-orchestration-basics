@@ -1,10 +1,12 @@
 /** @file utilities to start typical contracts in core eval scripts. */
-// @ts-nocheck -- FIXME
 
 import { E } from '@endo/far';
 
 /// <reference types="@agoric/vats/src/core/core-eval-env"/>
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
+/**
+ * @import {AssetKind, Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
+ */
 
 const { Fail } = assert;
 
@@ -38,18 +40,15 @@ export const installContract = async (
  *   startArgs?: StartArgs;
  *   issuerNames?: string[];
  * }} opts
- * @param {object} [privateArgs]
  *
  * @typedef {Partial<Parameters<Awaited<BootstrapPowers['consume']['startUpgradable']>>[0]>} StartArgs
  */
 export const startContract = async (
   powers,
   { name, startArgs, issuerNames },
-  privateArgs,
 ) => {
   console.log('POWERS');
   console.log(powers);
-  console.log(privateArgs);
   const {
     consume: { startUpgradable },
     installation: { consume: consumeInstallation },
@@ -64,7 +63,6 @@ export const startContract = async (
     ...startArgs,
     installation,
     label: name,
-    privateArgs,
   });
 
   const { instance } = started;
@@ -74,7 +72,7 @@ export const startContract = async (
   console.log(name, 'started');
 
   if (issuerNames) {
-    /** @type {BootstrapPowers & import('./board-aux.core').BoardAuxPowers} */
+    /** @type {BootstrapPowers & import('./board-aux.core.js').BoardAuxPowers} */
     // @ts-expect-error cast
     const auxPowers = powers;
 

@@ -16,8 +16,7 @@ test.before(async t => {
    * @param {string} name of an _already cached_ bundle
    */
   const compressBundle = async name => {
-    const rootPath = undefined; // not needed since bundle is already cached
-    const bundle = await bundleCache.load(rootPath, name);
+    const bundle = await bundleCache.load('', name);
     const fileContents = JSON.stringify(bundle);
     const buffer = Buffer.from(fileContents, 'utf-8');
     const compressed = await promisify(gzip)(buffer);

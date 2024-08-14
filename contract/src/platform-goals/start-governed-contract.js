@@ -1,4 +1,3 @@
-// @ts-nocheck -- FIXME
 import { E } from '@endo/far';
 
 import { allValues, zip } from '../objectTools.js';
@@ -9,19 +8,10 @@ import { sanitizePathSegment } from './start-contract.js';
 /**
  * @import {ERef} from '@endo/far';
  * @import {GovernableStartFn, GovernanceFacetKit} from '@agoric/governance/src/types.js';
+ * @import {StartParams, StartResult} from '@agoric/zoe/src/zoeService/utils.js';
  */
 
 const { values } = Object;
-
-/**
- * @template SF
- * @typedef {import('@agoric/zoe/src/zoeService/utils').StartResult<SF>} StartResult<SF>
- */
-
-/**
- * @template SF
- * @typedef {import('@agoric/zoe/src/zoeService/utils').StartParams<SF>} StartParams<SF>
- */
 
 /**
  * @typedef {StartResult<
@@ -62,12 +52,12 @@ export const ParamTypes = /** @type {const} */ ({
  *   governedContractInstallation: ERef<Installation<SF>>;
  *   issuerKeywordRecord?: IssuerKeywordRecord;
  *   terms: Record<string, unknown>;
- *   privateArgs: StartParams<SF>['privateArgs'];
+ *   privateArgs: Parameters<SF>[1];
  *   label: string;
  * }} zoeArgs
  * @param {{
  *   governedParams: Record<string, unknown>;
- *   timer: ERef<import('@agoric/time/src/types').TimerService>;
+ *   timer: ERef<import('@agoric/time').TimerService>;
  *   contractGovernor: ERef<Installation>;
  *   governorTerms: Record<string, unknown>;
  *   committeeCreatorFacet: CommitteeStart['creatorFacet'];
@@ -152,7 +142,7 @@ export const startMyGovernedInstance = async (
 
 /**
  * @param {*} creatorFacet
- * @param {ERef<NameHub>} namesByAddress
+ * @param {ERef<import('@agoric/vats').NameHub>} namesByAddress
  * @param {Record<string, string>} voterAddresses
  */
 export const inviteToMyCharter = async (
@@ -183,11 +173,13 @@ export const startMyCharter = async (contractName, powers, config) => {
 
   const {
     consume: { namesByAddress, zoe },
+    // @ts-expect-error space
     produce: { [`${charterName}Kit`]: produceKit },
     installation: {
       consume: { binaryVoteCounter: counterP, econCommitteeCharter: installP },
     },
     instance: {
+      // @ts-expect-error space
       produce: { [charterName]: instanceP },
     },
   } = powers;
@@ -232,11 +224,13 @@ export const startMyCommittee = async (contractName, powers, config) => {
   const committeeName = `${contractName}Committee`;
   const {
     consume: { board, chainStorage, namesByAddress, startUpgradable },
+    // @ts-expect-error space
     produce: { [`${committeeName}Kit`]: produceKit },
     installation: {
       consume: { committee },
     },
     instance: {
+      // @ts-expect-error space
       produce: { [committeeName]: produceInstance },
     },
   } = powers;
