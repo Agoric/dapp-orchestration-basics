@@ -41,12 +41,11 @@ export const installContract = async (
 export const startContract = async (
   powers,
   { name, startArgs, issuerNames },
-  privateArgs
+  privateArgs,
 ) => {
-
-  console.log("POWERS")
-  console.log(powers)
-  console.log(privateArgs)
+  console.log('POWERS');
+  console.log(powers);
+  console.log(privateArgs);
   const {
     consume: { startUpgradable },
     installation: { consume: consumeInstallation },
@@ -56,7 +55,7 @@ export const startContract = async (
   const installation = await consumeInstallation[name];
 
   console.log(name, 'start args:', startArgs);
-  
+
   const started = await E(startUpgradable)({
     ...startArgs,
     installation,

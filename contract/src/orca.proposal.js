@@ -1,3 +1,4 @@
+/* eslint-disable -- FIXME */
 // @ts-check
 import { allValues } from './objectTools.js';
 import {
@@ -8,7 +9,6 @@ import {
 
 import { E } from '@endo/far';
 import { makeTracer } from '@agoric/internal';
-
 
 const { Fail } = assert;
 
@@ -23,10 +23,7 @@ const pathSegmentPattern = /^[a-zA-Z0-9_-]{1,100}$/;
 
 const contractName = 'ORCA';
 
-
-
 // const trace = makeTracer('StartOrca', true);
-
 
 /**
  * Core eval script to start contract
@@ -40,10 +37,7 @@ const contractName = 'ORCA';
  *   instance: PromiseSpaceOf<{ Dao: Instance }>
  * }} DaoSpace
  */
-export const startDaoContract = async (
-  powers,
-  config,
-) => {
+export const startDaoContract = async (powers, config) => {
   console.log('core eval for', contractName);
 
   const {
@@ -51,12 +45,11 @@ export const startDaoContract = async (
     bundleID = Fail`no bundleID`,
   } = config?.options?.[contractName] ?? {};
 
-  
   const {
-    consume: { 
+    consume: {
       agoricNames,
-      board, 
-      chainStorage, 
+      board,
+      chainStorage,
       startUpgradable,
       // orchestration,
       chainTimerService,
@@ -76,37 +69,37 @@ export const startDaoContract = async (
     bundleID,
   });
 
-
   //basic terms
   const terms = {};
 
-  const mainNode = await E(chainStorage).makeChildNode("orca");
-  const storageNode = await E(mainNode).makeChildNode("state");
+  const mainNode = await E(chainStorage).makeChildNode('orca');
+  const storageNode = await E(mainNode).makeChildNode('state');
   const marshaller = await E(board).getPublishingMarshaller();
-  
-  
+
   // const privateArgs = {
   //   storageNode,
   //   marshaller,
   // };
 
-  const started = await startContract(powers, {
-    name: contractName,
-    startArgs: {
-      installation,
-      terms,
+  const started = await startContract(
+    powers,
+    {
+      name: contractName,
+      startArgs: {
+        installation,
+        terms,
+      },
+      issuerNames: [],
     },
-    issuerNames: [],
-  }, 
-  // privateArgs
-  { 
-    privateArgs: {
-    orchestration: await orchestration,
-    storageNode,
-    marshaller,
-    timer: await chainTimerService,
-    }
-  }
+    // privateArgs
+    {
+      privateArgs: {
+        orchestration: await orchestration,
+        storageNode,
+        marshaller,
+        timer: await chainTimerService,
+      },
+    },
   );
 
   console.log(contractName, '(re)started');
@@ -119,12 +112,12 @@ export const permit = harden({
   consume: {
     agoricNames: true,
     brandAuxPublisher: true,
-    startUpgradable: true, 
+    startUpgradable: true,
     zoe: true,
     board: true,
     chainStorage: true,
     orchestration: true,
-    chainTimerService: true
+    chainTimerService: true,
   },
   installation: {
     consume: { [contractName]: true },
@@ -132,8 +125,8 @@ export const permit = harden({
   },
   instance: { produce: { [contractName]: true } },
   // permitting brands
-  issuer: { consume: { IST: true }, produce: { } },
-  brand: { consume: { IST: true  }, produce: { } },
+  issuer: { consume: { IST: true }, produce: {} },
+  brand: { consume: { IST: true }, produce: {} },
 });
 
 export const main = startDaoContract;

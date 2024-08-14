@@ -31,7 +31,6 @@ import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 
-
 /**
  * @param {*} opts
  * @returns {import('rollup').RollupOptions}
@@ -83,7 +82,7 @@ const config1 = ({
     //   preventAssignment: true,
     // }),
     typescript({
-      tsconfig: './tsconfig.json',  // Ensure you have a tsconfig.json file in your project root
+      tsconfig: './tsconfig.json', // Ensure you have a tsconfig.json file in your project root
     }),
   ],
 });

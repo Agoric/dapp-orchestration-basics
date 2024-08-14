@@ -8,6 +8,7 @@ import '@agoric/react-components/dist/style.css';
 function App() {
   return (
     <AgoricProvider
+      // @ts-expect-error XXX typedef _chainWalletMap is protected
       wallets={wallets.extension}
       defaultNetworkConfig={{
         testChain: {

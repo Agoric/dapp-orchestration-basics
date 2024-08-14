@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { Mint } from './mint/Mint';
 import { TabWrapper } from './TabWrapper';
-import { NotificationContext } from '../context/NotificationContext';
-import { Proposals } from './Proposals'
+import { Proposals } from './Proposals';
 
 // notification related types
 const dynamicToastChildStatuses = [
@@ -25,24 +23,20 @@ const Tabs = () => {
     setActiveTab(tab);
   };
 
-  // notification related functions
-  const [notifications, setNotifications] = useState<DynamicToastChild[]>([]);
-
-
   return (
     <div className="my-4 flex w-full flex-row justify-center">
-        <div
-          role="tablist"
-          className="daisyui-tabs daisyui-tabs-lifted daisyui-tabs-lg"
+      <div
+        role="tablist"
+        className="daisyui-tabs daisyui-tabs-lifted daisyui-tabs-lg"
+      >
+        <TabWrapper
+          tab="DAO Proposals"
+          activeTab={activeTab}
+          handleTabClick={handleTabClick}
         >
-          <TabWrapper
-            tab="DAO Proposals"
-            activeTab={activeTab}
-            handleTabClick={handleTabClick}
-          >
-            <Proposals />
-          </TabWrapper>
-        </div>
+          <Proposals />
+        </TabWrapper>
+      </div>
     </div>
   );
 };

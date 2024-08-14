@@ -18,7 +18,7 @@
     "@agoric/web-components": "0.15.1-dev-8fc28e8.0",
     "buffer": "^6.0.3",
     "chain-registry": "^1.28.1",
-    "cosmos-kit": "^2.9.0",
+    "cosmos-kit": "^2.19.0",
     "daisyui": "^4.7.2",
     "react": "^18.2.0",
     "react-daisyui": "^5.0.0",
@@ -36,19 +36,8 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
-    "prettier": "^3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.4"
-  },
-  "prettier": {
-    "trailingComma": "all",
-    "arrowParens": "avoid",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ]
   }
 }
