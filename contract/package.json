@@ -33,7 +33,7 @@
     "@endo/eslint-plugin": "^0.5.2",
     "@endo/nat": "^4.1.27",
     "@endo/promise-kit": "^0.2.56",
-    "@endo/ses-ava": "^1.4.0",
+    "@endo/ses-ava": "^1.2.4",
     "@jessie.js/eslint-plugin": "^0.4.0",
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-json": "^6.1.0",
