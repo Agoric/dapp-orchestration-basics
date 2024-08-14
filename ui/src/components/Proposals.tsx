@@ -8,8 +8,6 @@ import { stringifyAmountValue } from '@agoric/web-components';
 import type { CopyBag } from '../types';
 import { useContractStore } from '../store/contract';
 import { makeCopyBag } from '@endo/patterns';
-import { E } from '@endo/far';
-
 
 const joinDao = (
     wallet: AgoricWalletConnection,
@@ -101,7 +99,7 @@ const Proposals = () => {
                 },
                 createProposalOffer,
                 {title: newTitle, details: newDetails},
-                (update: any) => {
+                (update) => {
                     if (update.status === 'accepted') {
                         console.log('Proposal creation accepted:', update);
                     } else {
@@ -115,7 +113,7 @@ const Proposals = () => {
         }
     };
 
-    const voteOnProposal = async (proposalId: any, voteFor: any) => {
+    const voteOnProposal = async (proposalId, voteFor) => {
         if (!walletConnection) {
             alert("Please connect your wallet.");
             return;
@@ -146,7 +144,7 @@ const Proposals = () => {
             },
             voteOffer,
             {proposalId: proposalId, ...voteDetails},
-            (update: any) => {
+            (update) => {
                 console.log('Vote update:', update);
             }
         );
@@ -167,6 +165,7 @@ const Proposals = () => {
                                 {daoPurse ? (
                                     stringifyAmountValue(
                                         AmountMath.make(
+                                            // @ts-expect-error XXX
                                             daoPurse?.currentAmount.brand,
                                             daoPurse?.currentAmount.value,
                                         ),
@@ -201,7 +200,7 @@ const Proposals = () => {
                     <h2 className="daisyui-card-title">Proposals</h2>
                     
                     {
-                    proposals?.map((proposal: any) => (
+                    proposals?.map((proposal) => (
 
                         <div key={proposal.id} className="mb-4 p-2 border-b">
                             <h3>{proposal.title.title}</h3>

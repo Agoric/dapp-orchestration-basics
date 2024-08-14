@@ -4,6 +4,8 @@
 import { test } from './prepare-test-env-ava.js';
 
 import * as agoricGovernance from '@agoric/governance';
+
+// eslint-disable-next-line import/no-extraneous-dependencies -- FIXME, its a devDep
 import * as charter from '@agoric/inter-protocol/src/econCommitteeCharter.js';
 import { DisplayInfoShape } from '@agoric/ertp/src/typeGuards.js';
 import * as agoricERTP from '@agoric/ertp';

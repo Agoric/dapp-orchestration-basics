@@ -1,34 +1,10 @@
-// @ts-check
-
-// import { Far, E } from '@endo/far';
-// import { V as E } from '@agoric/vow/vat.js';
-// import V from '@agoric/vow/src/E.js';
-// import { V as _E } from "../../../../agoric-sdk/packages/vow/vat.js"
-
-// import { M, getCopyBagEntries, makeCopyBag } from '@endo/patterns';
+/* eslint-disable -- FIXME */
 import { M } from '@endo/patterns';
-import { makeCopyBag, getCopyBagEntries } from '@agoric/store';
-import { AssetKind } from '@agoric/ertp/src/amountMath.js';
-import '@agoric/zoe/exported.js';
-import { AmountShape, AmountMath, PaymentShape } from '@agoric/ertp';
-import { atomicRearrange } from '@agoric/zoe/src/contractSupport/atomicTransfer.js';
-import { makeMyAddressNameAdminKit } from '@agoric/vats/src/core/utils.js';
-// import { makeOnewayPriceAuthorityKit } from '@agoric/zoe/src/contractSupport';
-import {
-  defineERecorderKit,
-  prepareRecorderKitMakers,
-  provideAll,
-} from '@agoric/zoe/src/contractSupport/index.js';
-import { handleParamGovernance } from '@agoric/governance/src/contractHelper.js';
-import { ParamTypes } from '@agoric/governance/src/constants.js';
 
 import { makeTracer, StorageNodeShape } from '@agoric/internal';
 import { makeDurableZone } from '@agoric/zone/durable.js';
 
-const { Fail } = assert;
-
-import { makeOrchestrationFacade } from './facade.js';
-import { orcUtils } from './orc.js';
+/// <reference types="@agoric/zoe/src/contractFacet/types-ambient" />
 
 const trace = makeTracer('OrchDev1');
 
@@ -36,7 +12,6 @@ const trace = makeTracer('OrchDev1');
  * @import { Baggage } from '@agoric/vat-data';
  * @import { IBCConnectionID } from '@agoric/vats';
  * @import { TimerService } from '@agoric/time';
- * @import { ICQConnection, OrchestrationService } from '../types.js';
  */
 
 export const meta = harden({
@@ -54,17 +29,13 @@ export const terms = harden({});
 
 /**
  *
- * @param {ZCF<StakeAtomTerms>} zcf
+ * @param {ZCF<{}>} zcf
  * @param {{
- *  orchestration: OrchestrationService;
- *  storageNode: StorageNode;
- *  marshaller: Marshaller;
- *  timer: TimerService;
  * }} privateArgs
  * @param {Baggage} baggage
  */
 export const start = async (zcf, privateArgs, baggage) => {
-  console.log('===== CONTRACT STARTING :) ======');
+  trace('===== CONTRACT STARTING :) ======');
   const zone = makeDurableZone(baggage);
 
   const publicFacet = zone.exo(

@@ -1,3 +1,4 @@
+/* eslint-disable -- FIXME */
 // @ts-check
 import { allValues } from './objectTools.js';
 import {

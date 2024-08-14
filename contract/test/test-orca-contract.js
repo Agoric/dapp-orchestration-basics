@@ -3,12 +3,10 @@
 /* eslint-disable import/order -- https://github.com/endojs/endo/issues/1235 */
 import { test as anyTest } from './prepare-test-env-ava.js';
 
-import { createRequire } from 'module';
-import { E } from '@endo/far';
-import { makeCopyBag } from '@endo/patterns';
-import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
-import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
+import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
+import { E } from '@endo/far';
+import { createRequire } from 'module';
 // import { prepareOrchestrationTools } from '@agoric/orchestration'
 
 // import { reincarnate } from '@agoric/swingset-liveslots/tools/setup-vat-data.js';
@@ -20,7 +18,7 @@ import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
 //   return incarnation.fakeVomKit.cm.provideBaggage();
 // };
 
-/** @typedef {typeof import('../src/orca.contract.js/index.js').start} AssetContractFn */
+/** @typedef {typeof import('../src/orca.contract.js').start} AssetContractFn */
 
 const myRequire = createRequire(import.meta.url);
 const contractPath = myRequire.resolve(`../src/orca.contract.js`);
@@ -52,37 +50,31 @@ test('Install the contract', async t => {
   t.is(typeof installation, 'object');
 });
 
-test.skip('Start Orca contract and test joining', async t => {
-  const { zoe, bundle } = t.context;
-  const installation = E(zoe).install(bundle);
-
-  const terms = {};
-
+test.failing('Start Orca contract and test joining', async t => {
+  t.fail();
+  // const { zoe, bundle } = t.context;
+  // const installation = E(zoe).install(bundle);
+  // const terms = {};
   // let privateArgs = {
   //   orchestration: await orchestration,
   //   storageNode,
   //   marshaller,
   //   timer: await chainTimerService,
   // }
-
   // const zone = makeDurableZone(baggage);
-
   // const { makeOrchestrationKit } = prepareOrchestrationTools(
   //   zone.subZone('orchestration'),
   // );
-
   // const {
   //   buildProposal,
   //   evalProposal,
   //   runUtils: { EV },
   // } = t.context;
-
   // const { instance } = await E(zoe).startInstance(
   //   installation,
   //   {},
   //   terms,
   //   {
-
   //   }
   // );
 });

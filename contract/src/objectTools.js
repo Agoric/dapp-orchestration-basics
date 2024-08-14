@@ -1,6 +1,8 @@
 // @ts-check
 import { E } from '@endo/far';
 
+/** @import {ERef} from '@endo/far'; */
+
 const { entries, fromEntries } = Object;
 
 /**
