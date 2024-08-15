@@ -6,6 +6,7 @@ import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { Fail } from '@endo/errors';
 import { E } from '@endo/far';
 import { M } from '@endo/patterns';
+import * as flows from './orca.flows.js';
 
 import '@agoric/zoe/src/zoeService/types-ambient.js';
 
@@ -21,7 +22,6 @@ import '@agoric/zoe/src/zoeService/types-ambient.js';
  */
 
 const trace = makeTracer('OrchDev1');
-const { entries } = Object;
 
 const SingleAmountRecord = M.and(
   M.recordOf(M.string(), AmountShape, {
@@ -29,39 +29,6 @@ const SingleAmountRecord = M.and(
   }),
   M.not(harden({})),
 );
-
-/**
- * Create an account on a Cosmos chain and return a continuing offer with
- * invitations makers for Delegate, WithdrawRewards, Transfer, etc.
- *
- * @param {Orchestrator} orch
- * @param {undefined} _ctx
- * @param {ZCFSeat} seat
- * @param {{ chainName: string }} offerArgs
- */
-const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
-  const { give } = seat.getProposal();
-  trace('version 0.1.36');
-  trace('give');
-  trace(give);
-  trace('inside createAccounts');
-  trace('orch');
-  trace(orch);
-  trace('seat');
-  trace(seat);
-  trace(chainName);
-  seat.exit();
-  const chain = await orch.getChain(chainName);
-  trace('chain object');
-  trace(chain);
-  const info = await chain.getChainInfo();
-  trace('chain info', info);
-  const chainAccount = await chain.makeAccount();
-  console.log('chainAccount');
-  console.log(chainAccount);
-
-  return chainAccount.asContinuingOffer();
-};
 
 /**
  * @typedef {(
@@ -76,82 +43,6 @@ const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
  */
 
 /**
- * Create an account on a Cosmos chain and return a continuing offer with
- * invitations makers for Delegate, WithdrawRewards, Transfer, etc.
- *
- * @param {Orchestrator} orch
- * @param {object} ctx
- * @param {Transfer} ctx.transfer
- * @param {StorageNode['setValue']} ctx.setValue
- * @param {ZCFSeat} seat
- * @param {{ chainName: string }} offerArgs
- */
-const createAndFundFn = async (
-  orch,
-  {
-    transfer,
-    // write,
-    // makeChildNode,
-    setValue,
-  },
-  seat,
-  { chainName },
-) => {
-  const { give } = seat.getProposal();
-  const [[_kw, amt]] = entries(give);
-  trace('orch', orch);
-  trace('_kw', _kw);
-  trace('amt', amt);
-  trace('give:', give);
-  // trace("write:", write);
-  // trace("makeChildNode:", makeChildNode);
-  trace('setValue:', setValue);
-
-  const [agoric, chain] = await Promise.all([
-    orch.getChain('agoric'),
-    orch.getChain(chainName),
-  ]);
-
-  const info = await chain.getChainInfo();
-  trace('chain info', info);
-
-  const assets = await agoric.getVBankAssetInfo();
-  trace('fetched assets:', assets);
-
-  const localAccount = await agoric.makeAccount();
-  trace('localAccount', localAccount);
-
-  const remoteAccount = await chain.makeAccount();
-  trace('remoteAccount', remoteAccount);
-  const [localAddress, remoteAddress] = await Promise.all([
-    localAccount.getAddress(),
-    remoteAccount.getAddress(),
-  ]);
-
-  // vstorage tests
-  trace('writing');
-  // setValue(`status x`)
-  // const node1 = await makeChildNode(`orca-createAndFund-${localAddress.value}-${localAddress.value}`);
-
-  trace('localAddress', localAddress);
-  trace('remoteAddress', remoteAddress);
-  trace('fund new orch account');
-  trace('seat', seat);
-  trace('transfer', transfer);
-  await transfer(
-    seat,
-    localAccount,
-    remoteAccount,
-    give,
-    amt,
-    localAddress,
-    remoteAddress,
-  );
-  seat.exit();
-  return remoteAccount.asContinuingOffer();
-};
-
-/**
  * @param {ZCF} zcf
  * @param {OrchestrationPowers & {
  *   marshaller: Marshaller;
@@ -163,7 +54,7 @@ const contract = async (
   zcf,
   privateArgs,
   zone,
-  { orchestrate, vowTools, zoeTools },
+  { orchestrateAll, vowTools, zoeTools },
 ) => {
   trace('inside start function: v1.1.95');
   trace('privateArgs', privateArgs);
@@ -263,24 +154,15 @@ const contract = async (
   const wrap = wrapper();
   trace('wrapper.transfer', wrapper);
 
-  /** @type {OfferHandler} */
-  // @ts-expect-error ZCFSeat not Passable
-  const makeAccount = orchestrate('makeAccount', undefined, createAccountsFn);
-
-  /** @type {OfferHandler} */
-  const makeCreateAndFund = orchestrate(
-    'makeCreateAndFund',
-    {
-      localTransfer: zoeTools.localTransfer,
-      transfer: wrap.transfer,
-      // write: E(storageNode).write),
-      // makeChildNode: E(storageNode).makeChildNode,
-      // setValue: E(storageNode).setValue,
-      setValue: privateArgs.storageNode.setValue,
-    },
-    // @ts-expect-error ZCFSeat not Passable
-    createAndFundFn,
-  );
+  // @ts-expect-error XXX ZCFSeat not Passable
+  const { makeAccount, makeCreateAndFund } = orchestrateAll(flows, {
+    localTransfer: zoeTools.localTransfer,
+    transfer: wrap.transfer,
+    // write: E(storageNode).write),
+    // makeChildNode: E(storageNode).makeChildNode,
+    // setValue: E(storageNode).setValue,
+    setValue: privateArgs.storageNode.setValue,
+  });
 
   const publicFacet = zone.exo(
     'Orca Public Facet',
