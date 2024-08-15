@@ -1,12 +1,11 @@
-import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
-import { M } from '@endo/patterns';
-import { provideOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
-import { makeTracer } from '@agoric/internal';
 import { AmountShape } from '@agoric/ertp';
+import { makeTracer } from '@agoric/internal';
+import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
 import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
-import { E } from '@endo/far';
-// import { VowShape } from '@agoric/vow';
+import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { Fail } from '@endo/errors';
+import { E } from '@endo/far';
+import { M } from '@endo/patterns';
 
 import '@agoric/zoe/src/zoeService/types-ambient.js';
 
@@ -15,9 +14,10 @@ import '@agoric/zoe/src/zoeService/types-ambient.js';
  * @import {Amount} from '@agoric/ertp/src/types.js';
  * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
  * @import {ChainAddress, Orchestrator} from '@agoric/orchestration';
- * @import {OrchestrationPowers} from '@agoric/orchestration/src/utils/start-helper.js';
+ * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Baggage} from '@agoric/vat-data';
+ * @import {Zone} from '@agoric/zone';
  */
 
 const trace = makeTracer('OrchDev1');
@@ -156,46 +156,17 @@ const createAndFundFn = async (
  * @param {OrchestrationPowers & {
  *   marshaller: Marshaller;
  * }} privateArgs
- * @param {Baggage} baggage
+ * @param {Zone} zone
+ * @param {OrchestrationTools} tools
  */
-export const start = async (zcf, privateArgs, baggage) => {
-  trace('inside start function: v1.0.95');
+const contract = async (
+  zcf,
+  privateArgs,
+  zone,
+  { orchestrate, vowTools, zoeTools },
+) => {
+  trace('inside start function: v1.1.95');
   trace('privateArgs', privateArgs);
-
-  // destructure privateArgs to extract necessary services
-  const {
-    orchestrationService: orchestration,
-    marshaller,
-    storageNode,
-    timerService: timer,
-    localchain,
-    agoricNames,
-  } = privateArgs;
-  trace('orchestration: ', orchestration);
-  trace('marshaller: ', marshaller);
-  trace('storageNode: ', storageNode);
-  trace('timer: ', timer);
-  trace('localchain: ', localchain);
-  trace('agoricNames: ', agoricNames);
-  const orchestrationProvided = provideOrchestration(
-    zcf,
-    baggage,
-    privateArgs,
-    privateArgs.marshaller,
-  );
-
-  trace('orchestrationProvided', orchestrationProvided);
-  const { orchestrate, zone, vowTools, zoeTools, asyncFlowTools } =
-    orchestrationProvided;
-
-  const { asVow, watch } = vowTools;
-  trace('orchestrate: ', orchestrate);
-  trace('zone: ', zone);
-  trace('vowTools: ', vowTools);
-  trace('asVow: ', asVow);
-  trace('watch: ', watch);
-  trace('zoeTools: ', zoeTools);
-  trace('asyncFlowTools: ', asyncFlowTools);
 
   const wrapper = () => {
     const transfer = vowTools.retriable(
@@ -219,7 +190,7 @@ export const start = async (zcf, privateArgs, baggage) => {
         trace('tempSeat:', tempSeat);
         const userSeat = await userSeatP;
         trace('userSeat:', userSeat);
-        trace('storageNode', storageNode);
+        trace('storageNode', privateArgs.storageNode);
         atomicTransfer(zcf, srcSeat, tempSeat, give);
         tempSeat.exit();
 
@@ -305,7 +276,7 @@ export const start = async (zcf, privateArgs, baggage) => {
       // write: E(storageNode).write),
       // makeChildNode: E(storageNode).makeChildNode,
       // setValue: E(storageNode).setValue,
-      setValue: storageNode.setValue,
+      setValue: privateArgs.storageNode.setValue,
     },
     // @ts-expect-error ZCFSeat not Passable
     createAndFundFn,
@@ -334,5 +305,7 @@ export const start = async (zcf, privateArgs, baggage) => {
 
   return { publicFacet };
 };
+
+export const start = withOrchestration(contract);
 harden(start);
 /** @typedef {typeof start} OrcaSF */
