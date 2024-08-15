@@ -8,10 +8,13 @@ import { E } from '@endo/far';
 // import { VowShape } from '@agoric/vow';
 import { Fail } from '@endo/errors';
 
+import '@agoric/zoe/src/zoeService/types-ambient.js';
+
 /**
  * @import {GuestOf} from '@agoric/async-flow';
+ * @import {Amount} from '@agoric/ertp/src/types.js';
  * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
- * @import {Orchestrator} from '@agoric/orchestration';
+ * @import {ChainAddress, Orchestrator} from '@agoric/orchestration';
  * @import {OrchestrationPowers} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Baggage} from '@agoric/vat-data';
@@ -61,13 +64,25 @@ const createAccountsFn = async (orch, _ctx, seat, { chainName }) => {
 };
 
 /**
+ * @typedef {(
+ * srcSeat: ZCFSeat,
+ * localAccount,
+ * remoteAccount,
+ * give: AmountKeywordRecord,
+ * amt: Amount<'nat'>,
+ * localAddress: ChainAddress,
+ * remoteAddress: ChainAddress,
+ * ) => Promise<void>} Transfer
+ */
+
+/**
  * Create an account on a Cosmos chain and return a continuing offer with
  * invitations makers for Delegate, WithdrawRewards, Transfer, etc.
  *
  * @param {Orchestrator} orch
  * @param {object} ctx
- * @param { GuestOf<Wrapper['transfer']>} ctx.transfer
- * @param { StorageNode['setValue']} ctx.setValue
+ * @param {Transfer} ctx.transfer
+ * @param {StorageNode['setValue']} ctx.setValue
  * @param {ZCFSeat} seat
  * @param {{ chainName: string }} offerArgs
  */
@@ -145,7 +160,6 @@ const createAndFundFn = async (
  */
 export const start = async (zcf, privateArgs, baggage) => {
   trace('inside start function: v1.0.95');
-  trace('inside start function: v1.0.95');
   trace('privateArgs', privateArgs);
 
   // destructure privateArgs to extract necessary services
@@ -153,14 +167,13 @@ export const start = async (zcf, privateArgs, baggage) => {
     orchestrationService: orchestration,
     marshaller,
     storageNode,
-    timer,
+    timerService: timer,
     localchain,
     agoricNames,
   } = privateArgs;
   trace('orchestration: ', orchestration);
   trace('marshaller: ', marshaller);
   trace('storageNode: ', storageNode);
-  trace('storageNode await : ', await storageNode);
   trace('timer: ', timer);
   trace('localchain: ', localchain);
   trace('agoricNames: ', agoricNames);
@@ -184,15 +197,12 @@ export const start = async (zcf, privateArgs, baggage) => {
   trace('zoeTools: ', zoeTools);
   trace('asyncFlowTools: ', asyncFlowTools);
 
-  // /**
-  //  * @param {{ zcf: ZCF; vowTools: VowTools, storageNode: ChainStorageNode }} io
-  //  */
   const wrapper = () => {
     const transfer = vowTools.retriable(
       zone,
       'transfer',
       /**
-       * @type {transfer}
+       * @type {Transfer}
        */
       async (
         srcSeat,
@@ -279,10 +289,11 @@ export const start = async (zcf, privateArgs, baggage) => {
     });
   };
 
-  const wrap = wrapper(zone, { zcf, vowTools, storageNode });
+  const wrap = wrapper();
   trace('wrapper.transfer', wrapper);
 
   /** @type {OfferHandler} */
+  // @ts-expect-error ZCFSeat not Passable
   const makeAccount = orchestrate('makeAccount', undefined, createAccountsFn);
 
   /** @type {OfferHandler} */
@@ -296,6 +307,7 @@ export const start = async (zcf, privateArgs, baggage) => {
       // setValue: E(storageNode).setValue,
       setValue: storageNode.setValue,
     },
+    // @ts-expect-error ZCFSeat not Passable
     createAndFundFn,
   );
 

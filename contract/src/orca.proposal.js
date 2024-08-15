@@ -31,7 +31,7 @@ export const allValues = async obj => {
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {orca: Installation<import('./orca.contract.js').start>}}}} permittedPowers
- * @param config
+ * @param {{options: {[contractName]: {bundleID: string}}}} config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
   trace('startOrcaContract()... 0.0.93');

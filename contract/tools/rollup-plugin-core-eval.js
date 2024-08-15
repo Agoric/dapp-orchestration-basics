@@ -53,7 +53,7 @@ export const configureBundleID = ({ name, rootModule, cache }) => {
       console.log(bundle.endoZipBase64Sha512);
       console.log('rootModule: ', rootModule);
       console.log('name: ', name);
-      const test = JSON.stringify('z' + bundle.endoZipBase64Sha512);
+      const test = JSON.stringify(`z${bundle.endoZipBase64Sha512}`);
       console.log(test);
       const revised = code.replace(
         pattern,

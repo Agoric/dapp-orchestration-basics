@@ -204,7 +204,7 @@ export const provisionSmartWallet = async (
       const brand = await E(payment).getAllegedBrand();
       const asset = vbankEntries.find(([_denom, a]) => a.brand === brand);
       if (!asset) throw Error(`unknown brand`);
-      /** @type {Issuer} */
+      /** @type {Issuer<'nat'>} */
       const issuer = asset.issuer;
       const amt = await E(issuer).getAmountOf(payment);
       await sendFromWhale(asset.denom, amt.value);
@@ -456,7 +456,7 @@ export const makeE2ETools = (
       const installer = 'alice';
       const chainId = 'agoriclocal';
 
-      //TODO: MAY NOT NEED
+      // TODO: MAY NOT NEED
       // copy the bundle JSON file to the container
       // const containerPath = `/root/bundles/bundle-${name}.json`;
       // const cpArgs = ["cp", fullPath, `default/agoriclocal-genesis-0:${containerPath}`];
@@ -482,8 +482,6 @@ export const makeE2ETools = (
       //   console.log(err)
       //   throw new Error(`File ${containerPath} not found in container`);
       // }
-
-      ////////
 
       // install the bundle using the copied JSON file
       const execArgs = [
