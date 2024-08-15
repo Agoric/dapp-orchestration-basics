@@ -1,9 +1,8 @@
 /** @file utilities to start typical contracts in core eval scripts. */
+// @ts-check
 
 import { E } from '@endo/far';
 
-/// <reference types="@agoric/vats/src/core/core-eval-env"/>
-/// <reference types="@agoric/vats/src/core/types-ambient"/>
 /**
  * @import {AssetKind, Brand, Issuer, Purse} from '@agoric/ertp/src/types.js';
  */

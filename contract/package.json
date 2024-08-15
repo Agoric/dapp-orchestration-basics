@@ -10,9 +10,12 @@
     "docker:bash": "docker compose exec agd bash",
     "docker:make": "docker compose exec agd make -C /workspace/contract",
     "make:help": "make list",
-    "start": "make clean start-contract",
-    "build": "yarn build:deployer",
+    "start": "make clean start",
+    "start2": "make clean start2",
+    "build2": "yarn build:deployer2",
     "build:deployer": "rollup -c rollup.config.mjs",
+    "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
+    "deploy": "make dev-working",
     "test": "ava",
     "lint": "tsc && eslint '**/*.js'",
     "lint:fix": "eslint --fix '**/*.js'"
@@ -20,6 +23,7 @@
   "devDependencies": {
     "@agoric/deploy-script-support": "dev",
     "@agoric/eslint-config": "dev",
+    "@agoric/inter-protocol": "dev",
     "@agoric/smart-wallet": "dev",
     "@agoric/store": "dev",
     "@agoric/swingset-liveslots": "dev",
@@ -30,10 +34,10 @@
     "@cosmjs/amino": "^0.32.3",
     "@cosmjs/proto-signing": "^0.32.3",
     "@endo/eslint-plugin": "^2.2.0",
-    "@endo/nat": "^4.1.27",
-    "@endo/promise-kit": "^0.2.56",
+    "@endo/nat": "^5.0.9",
+    "@endo/promise-kit": "^1.1.4",
     "@endo/ses-ava": "^1.2.4",
-    "@jessie.js/eslint-plugin": "^0.4.0",
+    "@jessie.js/eslint-plugin": "^0.4.1",
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -41,7 +45,7 @@
     "@rollup/plugin-typescript": "^11.1.6",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.15.0",
-    "agoric": "^0.21.2-u12.0",
+    "agoric": "^0.21.2-upgrade-16-fi-dev-8879538.0",
     "ava": "^5.3.1",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -68,11 +72,12 @@
     "@agoric/vow": "dev",
     "@agoric/zoe": "dev",
     "@agoric/zone": "dev",
-    "@endo/bundle-source": "^3.2.3",
-    "@endo/far": "^1.1.2",
-    "@endo/init": "^0.5.60",
-    "@endo/marshal": "^1.5.0",
-    "@endo/patterns": "^1.4.0"
+    "@endo/bundle-source": "^3.3.0",
+    "@endo/errors": "^1.2.4",
+    "@endo/far": "^1.1.4",
+    "@endo/init": "^1.1.3",
+    "@endo/marshal": "^1.5.2",
+    "@endo/patterns": "^1.4.2"
   },
   "ava": {
     "extensions": {
@@ -93,14 +98,14 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agoric/dapp-agoric-basics"
+    "url": "git+https://github.com/Agoric/dapp-orchestration-basics"
   },
   "author": "Agoric",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Agoric/dapp-agoric-basics/issues"
+    "url": "https://github.com/Agoric/dapp-orchestration-basics/issues"
   },
-  "homepage": "https://github.com/Agoric/dapp-agoric-basics#readme",
+  "homepage": "https://github.com/Agoric/dapp-orchestration-basics#readme",
   "eslintConfig": {
     "parserOptions": {
       "sourceType": "module",
