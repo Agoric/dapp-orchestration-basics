@@ -7,13 +7,14 @@ import { useAgoric } from '@agoric/react-components';
 import { useContractStore } from '../store/contract';
 
 const { fromEntries } = Object;
+
 const watchContract = (watcher: ChainStorageWatcher) => {
   watcher.watchLatest<Array<[string, unknown]>>(
     [Kind.Data, 'published.agoricNames.instance'],
     instances => {
       console.log('Got instances', instances);
       useContractStore.setState({
-        instance: instances.find(([name]) => name === 'simpleDAO')!.at(1),
+        instances: fromEntries(instances),
       });
     },
   );
@@ -28,27 +29,15 @@ const watchContract = (watcher: ChainStorageWatcher) => {
     },
   );
 
-  watcher.watchLatest<
-    Array<{
-      id: string;
-      title: { title: string; details: string };
-      description: string;
-    }>
-  >([Kind.Data, 'published.dao-proposals.proposal'], proposals => {
-    if (proposals != undefined && String(proposals) != '') {
+  watcher.watchLatest<Array<string>>(
+    [Kind.Children, 'published.orca'],
+    icas => {
+      console.log('Got ICAs', icas);
       useContractStore.setState({
-        proposals: proposals,
+        icas: icas,
       });
-    } else {
-      useContractStore.setState({
-        proposals: [] as {
-          id: string;
-          title: { title: string; details: string };
-          description: string;
-        }[],
-      });
-    }
-  });
+    },
+  );
 };
 
 export const ContractProvider = ({ children }: PropsWithChildren) => {
