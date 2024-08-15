@@ -1,13 +1,10 @@
-import { useContext, useState, useEffect, useRef } from 'react';
 import { AgoricWalletConnection, useAgoric } from '@agoric/react-components';
-import { DynamicToastChild } from '../Tabs';
-import { useContractStore } from '../../store/contract';
+import { SigningStargateClient, StargateClient } from '@cosmjs/stargate';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { Button } from 'react-daisyui';
 import { NotificationContext } from '../../context/NotificationContext';
-import { Button, Modal } from 'react-daisyui';
-import { StargateClient, SigningStargateClient } from '@cosmjs/stargate';
-import ProposalAmountsBox from '../ProposalAmountsBox';
-import RecipientInput from '../RecipientInput';
-import { useDisplayInfo } from '../../store/displayInfo';
+import { useContractStore } from '../../store/contract';
+import { DynamicToastChild } from '../Tabs';
 
 const rpcEndpoints = {
   osmosis: 'http://127.0.0.1:26655',
@@ -114,7 +111,7 @@ const makeAccountOffer = async (
     });
     return;
   }
-  const { instances, brands } = useContractStore.getState();
+  const { instances } = useContractStore.getState();
   // const instance = instances?.['basicFlows'];
   const instance = instances?.['orca'];
 
@@ -160,7 +157,6 @@ const makeAccountOffer = async (
 const MakeAccount = () => {
   const { walletConnection } = useAgoric();
   const { addNotification } = useContext(NotificationContext);
-  const [offerId, setOfferId] = useState('');
 
   const icas = useContractStore(state => state.icas);
   console.log('ica from inside makeaccount', icas);
