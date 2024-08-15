@@ -1,21 +1,19 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useAgoric } from '@agoric/react-components';
-import { useContractStore } from '../../store/contract';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { NotificationContext } from '../../context/NotificationContext';
-import { Button } from 'react-daisyui';
+import { useContractStore } from '../../store/contract';
 import AccountList from './AccountList';
 import ChainSelector from './ChainSelector';
 import CreateAccountButton from './CreateAccountButton';
 import { fetchBalances } from './FetchBalances';
-import { makeOffer } from './MakeOffer';
 import { initializeKeplr } from './KeplrInitializer';
+import { makeOffer } from './MakeOffer';
 import RpcEndpoints from './RpcEndpoints';
-import { StargateClient, SigningStargateClient } from '@cosmjs/stargate';
 
 const Orchestration = () => {
   const { walletConnection } = useAgoric();
   const { addNotification } = useContext(NotificationContext);
-  const [offerId, setOfferId] = useState('');
   const icas = useContractStore(state => state.icas);
   const [balances, setBalances] = useState([]);
   const [selectedChain, setSelectedChain] = useState('');

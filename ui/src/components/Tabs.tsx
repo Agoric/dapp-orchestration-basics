@@ -1,12 +1,8 @@
 import { useState } from 'react';
-import { Mint } from './mint/Mint';
-import { TabWrapper } from './TabWrapper';
-import { Notifications } from './Notifications';
 import { NotificationContext } from '../context/NotificationContext';
-import Swap from './swap/Swap';
-import Pay from './pay/Pay';
-import { MakeAccount } from './Orchestration/MakeAccount';
+import { Notifications } from './Notifications';
 import Orchestration from './Orchestration';
+import { TabWrapper } from './TabWrapper';
 
 // notification related types
 const dynamicToastChildStatuses = [
