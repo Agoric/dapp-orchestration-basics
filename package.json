@@ -11,6 +11,9 @@
   ],
   "resolutions-note": "work-around for https://github.com/Agoric/agoric-sdk/issues/8621",
   "resolutions": {
+    "agoric": "dev",
+    "@agoric/cosmic-proto": "dev",
+    "@agoric/inter-protocol": "dev",
     "@noble/hashes": "github:paulmillr/noble-hashes#ae060daa6252f3ff2aa2f84e887de0aab491281d"
   },
   "scripts": {
