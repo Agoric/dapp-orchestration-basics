@@ -66,7 +66,7 @@
     "@agoric/ertp": "dev",
     "@agoric/governance": "dev",
     "@agoric/internal": "dev",
-    "@agoric/orchestration": "dev",
+    "@agoric/orchestration": "patch:@agoric/orchestration@npm%3A0.1.1-dev-13c10cc.0#~/.yarn/patches/@agoric-orchestration-npm-0.1.1-dev-13c10cc.0-9f4638b38d.patch",
     "@agoric/store": "dev",
     "@agoric/vats": "dev",
     "@agoric/vow": "dev",
