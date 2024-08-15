@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaUserPlus, FaWallet } from 'react-icons/fa'; // Importing icons from react-icons
 
 const CreateAccountButton = ({

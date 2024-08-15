@@ -14,6 +14,7 @@ function App() {
     <ThemeProvider>
       <div className={themeClass}>
         <AgoricProvider
+          // @ts-expect-error XXX _chainWalletMap' is protected but type 'MainWalletBase' is not a class derived from 'MainWalletBase
           wallets={wallets.extension}
           agoricNetworkConfigs={[
             {
