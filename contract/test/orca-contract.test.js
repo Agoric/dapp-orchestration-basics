@@ -226,9 +226,12 @@ test('Start Orca contract', async t => {
   const installation = E(zoe).install(bundle);
 
   const privateArgs = harden({
-    orchestrationService: Far('DummyOrchestration'),
+    localchain: Far('DummyLocalChain'),
     storageNode: Far('DummyStorageNode'),
+    orchestrationService: Far('DummyOrchestration'),
     timerService: Far('DummyTimer'),
+    agoricNames: Far('DummyAgoricNames'),
+    marshaller: Far('DummyMarshaller'),
   });
 
   const { instance } = await E(zoe).startInstance(
