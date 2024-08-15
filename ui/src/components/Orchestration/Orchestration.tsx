@@ -47,7 +47,7 @@ const Orchestration = () => {
   useEffect(() => {
     const loadBalances = async () => {
       try {
-        const fetchedBalances = await fetchBalances(icas, selectedChain);
+        const fetchedBalances = await fetchBalances(icas);
         setBalances(fetchedBalances);
       } catch (error) {
         console.error('failed to fetch balances:', error);
@@ -183,7 +183,7 @@ const Orchestration = () => {
           '',
         );
         if (result.code !== undefined && result.code !== 0) {
-          throw new Error(`failed to send message: ${result.log}`);
+          throw new Error(`failed to send message: ${result}`);
         }
         console.log('message sent successfully');
       } else {
@@ -220,7 +220,7 @@ const Orchestration = () => {
         );
         console.log(result);
         if (result.code !== undefined && result.code !== 0) {
-          throw new Error(`Failed to send IBC transfer: ${result.log}`);
+          throw new Error(`Failed to send IBC transfer: ${result}`);
         }
         console.log('IBC transfer sent successfully');
       }

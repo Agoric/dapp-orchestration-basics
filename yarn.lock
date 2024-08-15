@@ -6280,7 +6280,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keplr-wallet/types@npm:0.12.121, @keplr-wallet/types@npm:^0.12.90, @keplr-wallet/types@npm:^0.12.95":
+"@keplr-wallet/types@npm:0.12.121, @keplr-wallet/types@npm:^0.12.121, @keplr-wallet/types@npm:^0.12.90, @keplr-wallet/types@npm:^0.12.95":
   version: 0.12.121
   resolution: "@keplr-wallet/types@npm:0.12.121"
   dependencies:
@@ -13877,6 +13877,7 @@ __metadata:
     "@agoric/ui-components": "npm:^0.3.9-u13.0"
     "@agoric/web-components": "npm:0.15.1-dev-8fc28e8.0"
     "@interchain-ui/react": "npm:^1.23.24"
+    "@keplr-wallet/types": "npm:^0.12.121"
     "@types/react": "npm:^18.2.56"
     "@types/react-dom": "npm:^18.2.19"
     "@typescript-eslint/eslint-plugin": "npm:^7.0.2"
