@@ -14,7 +14,9 @@
     "agoric": "dev",
     "@agoric/cosmic-proto": "dev",
     "@agoric/inter-protocol": "dev",
-    "@noble/hashes": "github:paulmillr/noble-hashes#ae060daa6252f3ff2aa2f84e887de0aab491281d"
+    "@noble/hashes": "github:paulmillr/noble-hashes#ae060daa6252f3ff2aa2f84e887de0aab491281d",
+    "@agoric/cosmic-proto@npm:0.4.1-dev-13c10cc.0+13c10cc": "patch:@agoric/cosmic-proto@npm%3A0.4.1-dev-7f12e80.0#~/.yarn/patches/@agoric-cosmic-proto-npm-0.4.1-dev-7f12e80.0-3df4988c7d.patch",
+    "@agoric/cosmic-proto@npm:0.4.1-dev-7f12e80.0+7f12e80": "patch:@agoric/cosmic-proto@npm%3A0.4.1-dev-7f12e80.0#~/.yarn/patches/@agoric-cosmic-proto-npm-0.4.1-dev-7f12e80.0-3df4988c7d.patch"
   },
   "scripts": {
     "start:docker": "cd contract && docker compose up -d",

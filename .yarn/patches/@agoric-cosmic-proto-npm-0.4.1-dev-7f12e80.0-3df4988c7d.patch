@@ -1,0 +1,79 @@
+diff --git a/dist/codegen/cosmos/base/abci/v1beta1/abci.d.ts b/dist/codegen/cosmos/base/abci/v1beta1/abci.d.ts
+index ae6c5bc2022b221fad01fd08aee2a5ae68b62b06..962dcacac78f7bb2af9bb672c4836f116d213b0e 100644
+--- a/dist/codegen/cosmos/base/abci/v1beta1/abci.d.ts
++++ b/dist/codegen/cosmos/base/abci/v1beta1/abci.d.ts
+@@ -1,5 +1,5 @@
+ import { Any, AnySDKType } from '../../../../google/protobuf/any.js';
+-import { Event, EventSDKType } from '../../../../tendermint/abci/types.js';
++
+ import { BinaryReader, BinaryWriter } from '../../../../binary.js';
+ import { JsonSafe } from '../../../../json-safe.js';
+ /**
+diff --git a/dist/codegen/cosmos/base/abci/v1beta1/abci.js b/dist/codegen/cosmos/base/abci/v1beta1/abci.js
+index ca41100043deae4dd6010998c6771a574af75b68..ecb2e9108f55bbe363f179aa0bc1e87657e7ee78 100644
+--- a/dist/codegen/cosmos/base/abci/v1beta1/abci.js
++++ b/dist/codegen/cosmos/base/abci/v1beta1/abci.js
+@@ -1,6 +1,6 @@
+ //@ts-nocheck
+ import { Any } from '../../../../google/protobuf/any.js';
+-import { Event } from '../../../../tendermint/abci/types.js';
++
+ import { BinaryReader, BinaryWriter } from '../../../../binary.js';
+ import { isSet, bytesFromBase64, base64FromBytes, } from '../../../../helpers.js';
+ function createBaseTxResponse() {
+diff --git a/dist/codegen/icq/v1/packet.js b/dist/codegen/icq/v1/packet.js
+index 89438a4f801c3b14656c30124b0825909b168b4e..c4c33db652d829968fd77ed4ef08e36bde6b35a9 100644
+--- a/dist/codegen/icq/v1/packet.js
++++ b/dist/codegen/icq/v1/packet.js
+@@ -1,5 +1,5 @@
+ //@ts-nocheck
+-import { RequestQuery, ResponseQuery, } from '../../tendermint/abci/types.js';
++
+ import { BinaryReader, BinaryWriter } from '../../binary.js';
+ import { isSet, bytesFromBase64, base64FromBytes } from '../../helpers.js';
+ function createBaseInterchainQueryPacketData() {
+diff --git a/dist/helpers.d.ts b/dist/helpers.d.ts
+index 7634856e745e81a0776c334d82ce18b3b22fa0a1..c0dd3a24a3e9ddea4d85302b9b4477fc4ae864d6 100644
+--- a/dist/helpers.d.ts
++++ b/dist/helpers.d.ts
+@@ -1,4 +1,4 @@
+-import { RequestQuery } from './codegen/tendermint/abci/types.js';
++
+ import type { Bech32PrefixRequest, Bech32PrefixResponse } from './codegen/cosmos/auth/v1beta1/query.js';
+ import type { QueryAllBalancesRequest, QueryAllBalancesResponse, QueryBalanceRequestProtoMsg } from './codegen/cosmos/bank/v1beta1/query.js';
+ import type { MsgSend, MsgSendResponse } from './codegen/cosmos/bank/v1beta1/tx.js';
+@@ -44,6 +44,6 @@ type TxMessageTypeUrl<Package extends string, Name extends Capitalize<string>> =
+ export type ResponseTo<T extends TypedJson> = T['@type'] extends RequestTypeUrl<infer Base> ? TypedJson<`/${Base}Response`> : T['@type'] extends TxMessageTypeUrl<infer Package, infer Name> ? TypedJson<`/${Package}.Msg${Name}Response`> : TypedJson;
+ export declare const typedJson: <T extends keyof Proto3Shape>(typeStr: T, obj: Proto3Shape[T]) => TypedJson<T>;
+ export declare const typeUrlToGrpcPath: (typeUrl: Any["typeUrl"]) => string;
+-type RequestQueryOpts = Partial<Omit<RequestQuery, 'path' | 'data'>>;
+-export declare const toRequestQueryJson: (msg: Any | QueryBalanceRequestProtoMsg, opts?: RequestQueryOpts) => JsonSafe<RequestQuery>;
++
++
+ export {};
+diff --git a/dist/helpers.js b/dist/helpers.js
+index b3bd1b2e6f13bc64656cc7ff1af1284f3423b582..5d6e0a814fc39b2468ddc0b221416763cfa981f1 100644
+--- a/dist/helpers.js
++++ b/dist/helpers.js
+@@ -1,4 +1,4 @@
+-import { RequestQuery } from './codegen/tendermint/abci/types.js';
++
+ export const typedJson = (typeStr, obj) => {
+     return {
+         '@type': typeStr,
+@@ -14,9 +14,9 @@ export const typeUrlToGrpcPath = (typeUrl) => {
+     const { serviceName, methodName } = match.groups;
+     return `/${serviceName}.Query/${methodName}`;
+ };
+-export const toRequestQueryJson = (msg, opts = {}) => RequestQuery.toJSON(RequestQuery.fromPartial({
+-    path: typeUrlToGrpcPath(msg.typeUrl),
+-    data: msg.value,
+-    ...opts,
+-}));
++
++
++
++
++
+ //# sourceMappingURL=helpers.js.map
+\ No newline at end of file
