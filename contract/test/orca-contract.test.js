@@ -7,12 +7,12 @@ import { createRequire } from 'module';
 import { E, Far } from '@endo/far';
 // import { makeCopyBag } from '@endo/patterns';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
-import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
 import { AmountMath, makeIssuerKit } from '@agoric/ertp';
+import { registerChain } from '@agoric/orchestration/src/chain-info.js';
 
 import { startOrcaContract } from '../src/orca.proposal.js';
 
-import { makeMockTools } from './boot-tools.js';
+import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
 
@@ -29,6 +29,81 @@ const scriptRoot = {
 const test = anyTest;
 
 /**
+ * @import {ChainInfo, IBCConnectionInfo} from '@agoric/orchestration';
+ * @import {NameAdmin} from '@agoric/vats';
+ * @import {ERef} from '@endo/eventual-send';
+ */
+
+/** @type {IBCConnectionInfo} */
+const arbConnectionInfo = harden({
+  transferChannel: harden({
+    version: '1',
+    state: 3, // open
+    portId: 'transfer',
+    ordering: 0, // ordered
+    counterPartyPortId: 'transfer',
+    counterPartyChannelId: 'channel-1',
+    channelId: 'channel-0',
+  }),
+  state: 3, // OPEN
+  id: 'connection-0',
+  counterparty: harden({
+    client_id: 'client-0',
+    connection_id: 'connection-0',
+    prefix: {
+      key_prefix: 'key-prefix-0',
+    },
+  }),
+  client_id: 'client-0',
+  connectionDetails: `XXX connection details`,
+});
+const testConfig = harden({
+  /** @type {Record<string, ChainInfo>} */
+  chainInfo: {
+    agoric: {
+      chainId: `agoriclocal`,
+      stakingTokens: [{ denom: 'ubld' }],
+      connections: {
+        osmosislocal: arbConnectionInfo,
+      },
+    },
+
+    osmosis: {
+      chainId: `osmosislocal`,
+      stakingTokens: [{ denom: 'uosmo' }],
+      connections: {
+        agoriclocal: arbConnectionInfo,
+      },
+    },
+  },
+});
+
+/**
+ *
+ * @param {ERef<NameAdmin>} agoricNamesAdmin
+ */
+const publishChainInfo = async agoricNamesAdmin => {
+  await null;
+  for (const [name, info] of Object.entries(testConfig.chainInfo)) {
+    await registerChain(agoricNamesAdmin, name, info);
+  }
+};
+
+// return harden({
+//   ...state,
+//   makeAccount: Far('Account', {
+//     getChainId: () => state.chainId,
+//     getAccountAddress: () => `${state.name}AccountAddress`,
+//     getBalance: () => `1000${state.denom}`,
+//   }),
+//   getChainInfo: Far('ChainInfo', {
+//     getChainId: () => state.chainId,
+//     getDenom: () => state.denom,
+//     getExpectedAddressPrefix: () => state.expectedAddressPrefix,
+//   }),
+// });
+
+/**
  * Tests assume access to the zoe service and that contracts are bundled.
  *
  * See test-bundle-source.js for basic use of bundleSource().
@@ -37,108 +112,12 @@ const test = anyTest;
  * @param {import('ava').ExecutionContext} t
  */
 const makeTestContext = async t => {
-  const { zoeService: zoe, feeMintAccess } = makeZoeKitForTest();
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
+
+  const { powers } = await mockBootstrapPowers(t.log);
+  // await publishChainInfo(powers.consume.agoricNamesAdmin);
   const tools = await makeMockTools(t, bundleCache);
-
-  const makeDummyStorageNode = (nodeName = 'rootNode') => {
-    return Far('DummyStorageNode', {
-      makeChildNode: async childName => {
-        console.log(`makeChildNode called with name: ${childName}`);
-        return makeDummyStorageNode(childName);
-      },
-      getPath: () => {
-        console.log(`getPath called on node: ${nodeName}`);
-        return `/${nodeName}`;
-      },
-      toCapData: () => {
-        console.log(`toCapData called on node: ${nodeName}`);
-        return {};
-      },
-      setValue: value => {
-        console.log(
-          `setValue called on node: ${nodeName} with value: ${value}`,
-        );
-        return value;
-      },
-    });
-  };
-
-  const makeDummyMarshaller = () => {
-    return Far('DummyMarshaller', {
-      toCapData: data => {
-        console.log('toCapData called with data:', data);
-        return {};
-      },
-      fromCapData: capData => {
-        console.log('fromCapData called with capData:', capData);
-        return {};
-      },
-    });
-  };
-
-  const agoricNames = Far('DummyAgoricNames', {
-    lookup: async (key, name) => {
-      t.log('inside fake agoriname lookup');
-      console.log('inside fake 2', key, name);
-      if (key === 'chain' && (name === 'agoric' || name === 'osmosis')) {
-        const state = harden({
-          name,
-          chainId: `${name}local`,
-          denom: name === 'agoric' ? 'ubld' : 'uosmo',
-          expectedAddressPrefix: name === 'agoric' ? 'agoric' : 'osmo',
-          details: `${name} chain details`,
-          stakingTokens: [{ denom: name === 'agoric' ? 'ubld' : 'uosmo' }],
-        });
-
-        return harden({
-          ...state,
-          makeAccount: Far('Account', {
-            getChainId: () => state.chainId,
-            getAccountAddress: () => `${state.name}AccountAddress`,
-            getBalance: () => `1000${state.denom}`,
-          }),
-          getChainInfo: Far('ChainInfo', {
-            getChainId: () => state.chainId,
-            getDenom: () => state.denom,
-            getExpectedAddressPrefix: () => state.expectedAddressPrefix,
-          }),
-        });
-      } else if (
-        key === 'chainConnection' &&
-        (name === 'agoriclocal_osmosislocal' ||
-          name === 'osmosislocal_agoriclocal')
-      ) {
-        return harden({
-          connectionName: name,
-          sourceChain: name.split('_')[0],
-          destinationChain: name.split('_')[1],
-          transferChannel: harden({
-            version: '1',
-            state: 'open',
-            portId: 'transfer',
-            ordering: 'ordered',
-            counterPartyPortId: 'transfer',
-            counterPartyChannelId: 'channel-1',
-            channelId: 'channel-0',
-          }),
-          state: 'active',
-          id: 'connection-0',
-          counterparty: harden({
-            client_id: 'client-0',
-            connection_id: 'connection-0',
-            prefix: {
-              key_prefix: 'key-prefix-0',
-            },
-          }),
-          client_id: 'client-0',
-          connectionDetails: `${name} connection details`,
-        });
-      }
-      throw Error(`Chain or connection not found: ${name}`);
-    },
-  });
 
   const cosmosInterchainService = Far('DummyCosmosInterchainService', {
     getChainHub: async () => {
@@ -202,14 +181,10 @@ const makeTestContext = async t => {
   });
 
   return {
-    zoe,
     bundle,
     bundleCache,
-    feeMintAccess,
+    powers,
     cosmosInterchainService,
-    agoricNames,
-    storageNode: makeDummyStorageNode(),
-    marshaller: makeDummyMarshaller(),
     ...tools,
   };
 };
@@ -237,21 +212,17 @@ const makeQueryToolMock = () => {
 test.before(async t => (t.context = await makeTestContext(t)));
 
 test('Install the contract', async t => {
-  const { zoe, bundle } = t.context;
+  const { powers, bundle } = t.context;
+  const { zoe } = powers.consume;
   const installation = await E(zoe).install(bundle);
   t.log('installed:', installation);
   t.is(typeof installation, 'object');
 });
 
 test('Start Orca contract', async t => {
-  const {
-    zoe,
-    bundle,
-    cosmosInterchainService,
-    agoricNames,
-    storageNode,
-    marshaller,
-  } = t.context;
+  const { bundle, cosmosInterchainService, powers } = t.context;
+  const { zoe, agoricNames, chainStorage, board } = powers.consume;
+
   const installation = E(zoe).install(bundle);
 
   const privateArgs = harden({
@@ -260,9 +231,9 @@ test('Start Orca contract', async t => {
     cosmosInterchainService,
     orchestrationService: cosmosInterchainService,
     // storageNode: Far('DummyStorageNode'),
-    storageNode,
+    storageNode: chainStorage,
     // marshaller: Far('DummyMarshaller'),
-    marshaller,
+    marshaller: E(board).getPublishingMarshaller(),
     timer: Far('DummyTimer'),
     timerService: Far('DummyTimer'),
     localchain: Far('Dumm'),
@@ -377,22 +348,16 @@ const orchestrationAccountScenario = test.macro({
       return t.fail(`unknown chain: ${chainName}`);
     }
 
-    const {
-      zoe,
-      bundle,
-      cosmosInterchainService,
-      agoricNames,
-      storageNode,
-      marshaller,
-    } = t.context;
+    const { bundle, cosmosInterchainService, powers } = t.context;
+    const { agoricNames, board, chainStorage, zoe } = powers.consume;
     t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
 
     const privateArgs = harden({
       cosmosInterchainService,
       orchestrationService: cosmosInterchainService,
-      storageNode,
-      marshaller,
+      storageNode: chainStorage,
+      marshaller: E(board).getPublishingMarshaller(),
       timer: Far('DummyTimer'),
       timerService: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
@@ -438,6 +403,7 @@ const orchestrationAccountScenario = test.macro({
     t.log('offer result:', offerResult);
     t.truthy(offerResult, 'Offer result should exist');
 
+    const { makeQueryTool } = t.context;
     const qt = makeQueryToolMock();
     const wallet = 'test-wallet';
     // log vstorage state before querying
@@ -489,22 +455,16 @@ const orchestrationAccountAndFundScenario = test.macro({
       return t.fail(`unknown chain: ${chainName}`);
     }
 
-    const {
-      zoe,
-      bundle,
-      cosmosInterchainService,
-      agoricNames,
-      storageNode,
-      marshaller,
-    } = t.context;
+    const { bundle, cosmosInterchainService, powers } = t.context;
+    const { agoricNames, board, chainStorage, zoe } = powers.consume;
     t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
 
     const privateArgs = harden({
       cosmosInterchainService,
       orchestrationService: cosmosInterchainService,
-      storageNode,
-      marshaller,
+      storageNode: chainStorage,
+      marshaller: E(board).getPublishingMarshaller(),
       timer: Far('DummyTimer'),
       timerService: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
