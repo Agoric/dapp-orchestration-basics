@@ -220,25 +220,18 @@ test('Install the contract', async t => {
 });
 
 test('Start Orca contract', async t => {
-  const { bundle, cosmosInterchainService, powers } = t.context;
-  const { zoe, agoricNames, chainStorage, board } = powers.consume;
+  const { bundle, powers } = t.context;
+  const { zoe } = powers.consume;
 
   const installation = E(zoe).install(bundle);
 
   const privateArgs = harden({
-    // orchestration: Far('DummyOrchestration'),
-    // cosmosInterchainService: Far('DummyOrchestration'),
-    cosmosInterchainService,
-    orchestrationService: cosmosInterchainService,
-    // storageNode: Far('DummyStorageNode'),
-    storageNode: chainStorage,
-    // marshaller: Far('DummyMarshaller'),
-    marshaller: E(board).getPublishingMarshaller(),
-    timer: Far('DummyTimer'),
+    localchain: Far('DummyLocalChain'),
+    storageNode: Far('DummyStorageNode'),
+    orchestrationService: Far('DummyOrchestration'),
     timerService: Far('DummyTimer'),
-    localchain: Far('Dumm'),
-    // agoricNames: Far('agoricNames')
-    agoricNames,
+    agoricNames: Far('DummyAgoricNames'),
+    marshaller: Far('DummyMarshaller'),
   });
 
   const { instance } = await E(zoe).startInstance(
