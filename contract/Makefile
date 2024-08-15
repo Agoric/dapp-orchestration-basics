@@ -71,7 +71,8 @@ instance-q:
 
 start: start-contract-orca
 
-
+start-contract-orca:
+	yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js
 
 # bundle-X.json.installed show that bundle-X.json was installed
 # see also e2e-tools.js
