@@ -42,6 +42,24 @@ const SingleAmountRecord = M.and(
  * ) => Promise<void>} Transfer
  */
 
+const OrchestrationPowersShape = M.splitRecord({
+  localchain: M.remotable('localchain'),
+  orchestrationService: M.remotable('orchestrationService'),
+  storageNode: M.remotable('storageNode'),
+  timerService: M.remotable('timerService'),
+  agoricNames: M.remotable('localchagoricNamesain'),
+});
+
+/** @type {ContractMeta} */
+export const meta = {
+  privateArgsShape: M.and(
+    OrchestrationPowersShape,
+    M.splitRecord({
+      marshaller: M.remotable('marshaller'),
+    }),
+  ),
+};
+
 /**
  * @param {ZCF} zcf
  * @param {OrchestrationPowers & {
