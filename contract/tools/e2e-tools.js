@@ -453,7 +453,7 @@ export const makeE2ETools = (
       const bundleSizeMb = (bundleJSON.length / 1_000_000).toFixed(3);
       progress('installing', name, shortId, bundleSizeMb, 'Mb');
 
-      const installer = 'alice';
+      const installer = 'user1'; 
       const chainId = 'agoriclocal';
 
       // TODO: MAY NOT NEED
@@ -488,7 +488,8 @@ export const makeE2ETools = (
         'tx',
         'swingset',
         'install-bundle',
-        `@/root/bundles/bundle-${name}.json`,
+        // `@/root/bundles/bundle-${name}.json`,
+        `/bundles/bundle-${name}.json`,
         '--gas',
         'auto',
         '--from',
@@ -499,7 +500,15 @@ export const makeE2ETools = (
         '--output',
         'json',
       ];
+      // const execArgs = [
+      //   'keys', 'list'
+      // ];
+      // const execArgs = [
+      //   'status'
+      // ];
+
       const output = execFileSync('agd', execArgs, { encoding: 'utf-8' });
+      console.log(output)
       const tx = JSON.parse(output);
 
       progress({ id: shortId, installTx: tx.txhash, height: tx.height });

@@ -1,5 +1,5 @@
 CHAINID=agoriclocal
-USER1ADDR=$(shell agd keys show alice -a --keyring-backend="test")
+USER1ADDR=$(shell agd keys show user1 -a --keyring-backend="test")
 ACCT_ADDR=$(USER1ADDR)
 BLD=000000ubld
 
@@ -7,7 +7,7 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1mqvg26gpv6xzch2v0wpv569md3c2z4cdxq9clz
+ADDR=agoric1hsyy7rqjkfu327nmekts6gvpg7cy289t4rs9lm
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -23,7 +23,7 @@ list:
 		awk -v RS= -F: '$$1 ~ /^[^#%]+$$/ { print $$1 }'
 
 balance-q:
-	agd keys show alice -a --keyring-backend="test"
+	agd keys show user1 -a --keyring-backend="test"
 	agd query bank balances $(ACCT_ADDR)
 
 GAS_ADJUSTMENT=1.2
@@ -42,11 +42,11 @@ mint4k:
 	make FUNDS=1000$(ATOM) fund-acct
 	cd /usr/src/agoric-sdk && \
 		yarn --silent agops vaults open --wantMinted 4000 --giveCollateral 1000 >/tmp/want4k.json && \
-		yarn --silent agops perf satisfaction --executeOffer /tmp/want4k.json --from alice --keyring-backend=test
+		yarn --silent agops perf satisfaction --executeOffer /tmp/want4k.json --from user1 --keyring-backend=test
 
 FUNDS=321$(BLD)
 fund-acct:
-	agd tx bank send alice $(ACCT_ADDR) $(FUNDS) \
+	agd tx bank send user1 $(ACCT_ADDR) $(FUNDS) \
 	  $(SIGN_BROADCAST_OPTS) \
 	  -o json >,tx.json
 	jq '{code: .code, height: .height}' ,tx.json
@@ -61,7 +61,7 @@ gov-voting-q:
 
 vote:
 # agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=validator 
-	agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=alice \
+	agd tx gov vote $(PROPOSAL) $(VOTE_OPTION) --from=user1 \
 	  $(SIGN_BROADCAST_OPTS) \
 	  -o json >,tx.json
 	jq '{code: .code, height: .height}' ,tx.json
@@ -169,14 +169,14 @@ local-provision-smart-wallet:
 	agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from $(ADDR) -y -b block  --chain-id agoriclocal
 
 fund-dev:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000ubld -y
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send alice agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000uist -y
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send user1 agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000ubld -y
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send user1 agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk 100000000uist -y
 local-fund:
 	agd tx bank send faucet $(ADDR) 999999999ubld -y
 	agd tx bank send faucet $(ADDR) 999999999uist -y
 # add address
 add-address:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add alice || true
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add user1 || true
 
 
 exec:
@@ -263,7 +263,7 @@ e2e:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
-	make copy-bn-js  
+	# make copy-bn-js  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
