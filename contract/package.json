@@ -11,8 +11,6 @@
     "docker:make": "docker compose exec agd make -C /workspace/contract",
     "make:help": "make list",
     "start": "make clean start",
-    "start2": "make clean start2",
-    "build2": "yarn build:deployer2",
     "build:deployer": "rollup -c rollup.config.mjs",
     "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
     "deploy": "make dev-working",

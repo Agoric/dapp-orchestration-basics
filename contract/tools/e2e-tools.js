@@ -112,7 +112,7 @@ export const provisionSmartWallet = async (
     delay,
     chainId = 'agoriclocal',
     // whale = 'validator',
-    whale = 'alice',
+    whale = 'user1',
     progress = console.log,
   },
 ) => {
@@ -291,8 +291,9 @@ const voteLatestProposalAndWait = async ({
   });
 
   const deposit = '50000000ubld';
-  // const sigOpts = { from: validator, chainId, yes: true };
-  const sigOpts = { from: 'genesis', chainId, yes: true };
+  console.log("_validator:", _validator)
+  const sigOpts = { from: _validator, chainId, yes: true };
+  // const sigOpts = { from: 'genesis', chainId, yes: true };
   await agd.tx(['gov', 'deposit', lastProposalId, deposit], sigOpts);
 
   await blockTool.waitForBlock(1, { before: 'vote', on: lastProposalId });
@@ -339,7 +340,7 @@ const runCoreEval = async (
     blockTool,
     chainId = 'agoriclocal',
     // proposer = 'validator',
-    proposer = 'alice',
+    proposer = 'user1',
     deposit = `10${BLD}`,
   },
 ) => {
@@ -429,6 +430,9 @@ export const makeE2ETools = (
 
   const vstorage = makeVStorage(lcd);
 
+
+
+
   const installBundles = async (bundleRoots, progress) => {
     await null;
     /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
@@ -485,6 +489,10 @@ export const makeE2ETools = (
 
       // install the bundle using the copied JSON file
       const execArgs = [
+        'compose',
+        'exec',
+        'agd',
+        'agd',
         'tx',
         'swingset',
         'install-bundle',
@@ -499,7 +507,22 @@ export const makeE2ETools = (
         '--yes',
         '--output',
         'json',
+        '--keyring-backend="test"'
       ];
+
+      const execArgs2 = [
+        'compose',
+        'exec',
+        'agd',
+        'agd',
+        'keys',
+        'list',
+        '--keyring-backend="test"'
+      ];
+      const output2 = execFileSync('docker', execArgs2, { encoding: 'utf-8' });
+      console.log(output2)
+
+      
       // const execArgs = [
       //   'keys', 'list'
       // ];
@@ -507,10 +530,16 @@ export const makeE2ETools = (
       //   'status'
       // ];
 
-      const output = execFileSync('agd', execArgs, { encoding: 'utf-8' });
+      const output = execFileSync('docker', execArgs, { encoding: 'utf-8' });
       console.log(output)
       const tx = JSON.parse(output);
 
+      // const tx = await agd.tx(
+      //   ['swingset', 'install-bundle', `@bundles/bundle-${name}.json`, '--gas', 'auto'],
+      //   { from: installer, chainId, yes: true },
+      // );
+
+      // console.log("tx: ", tx)
       progress({ id: shortId, installTx: tx.txhash, height: tx.height });
       const confirm = { installed: true };
 
@@ -539,6 +568,11 @@ export const makeE2ETools = (
     }
     return harden(bundles);
   };
+
+
+
+
+
 
   /**
    * @param {{
