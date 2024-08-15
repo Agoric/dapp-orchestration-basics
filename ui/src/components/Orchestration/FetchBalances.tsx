@@ -5,7 +5,7 @@ const rpcEndpoints = {
   agoric: 'http://127.0.0.1:26657',
 };
 
-export const fetchBalances = async addresses => {
+export const fetchBalances = async (addresses: string[]) => {
   return Promise.all(
     addresses.map(async address => {
       console.log('address', address);

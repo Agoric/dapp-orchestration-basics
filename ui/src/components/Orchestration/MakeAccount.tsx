@@ -47,6 +47,7 @@ const initializeKeplr = async () => {
       coinMinimalDenom: 'uosmo',
       coinDecimals: 6,
     },
+    // @ts-expect-error XXX typedefs
     coinType: 118,
     gasPriceStep: {
       low: 0.01,
@@ -192,7 +193,7 @@ const MakeAccount = () => {
   useEffect(() => {
     const loadBalances = async () => {
       try {
-        const fetchedBalances = await fetchBalances(icas, selectedChain);
+        const fetchedBalances = await fetchBalances(icas);
         console.log('fetchedBalances');
         console.log(fetchedBalances);
         setBalances(fetchedBalances);
@@ -209,9 +210,11 @@ const MakeAccount = () => {
 
   // //spinners
   useEffect(() => {
-    document.querySelectorAll('.loading-spinner').forEach(spinner => {
-      spinner.style.display = 'inline-block';
-    });
+    document
+      .querySelectorAll('.loading-spinner')
+      .forEach((spinner: HTMLElement) => {
+        spinner.style.display = 'inline-block';
+      });
   }, []);
 
   //modal
@@ -278,7 +281,7 @@ const MakeAccount = () => {
         );
         console.log(result);
         if (result.code !== undefined && result.code !== 0) {
-          throw new Error(`failed to send message: ${result.log}`);
+          throw new Error(`failed to send message: ${result}`);
         }
         console.log('message sent successfully');
       } else {
@@ -321,7 +324,7 @@ const MakeAccount = () => {
         );
         console.log(result);
         if (result.code !== undefined && result.code !== 0) {
-          throw new Error(`Failed to send IBC transfer: ${result.log}`);
+          throw new Error(`Failed to send IBC transfer: ${result}`);
         }
         console.log('ibc transfer sent successfully');
       }
@@ -419,7 +422,7 @@ const MakeAccount = () => {
                         <svg
                           aria-hidden="true"
                           role="status"
-                          class="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
+                          className="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
                           viewBox="0 0 100 101"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -447,7 +450,7 @@ const MakeAccount = () => {
                         <svg
                           aria-hidden="true"
                           role="status"
-                          class="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
+                          className="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
                           viewBox="0 0 100 101"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -475,7 +478,7 @@ const MakeAccount = () => {
                         <svg
                           aria-hidden="true"
                           role="status"
-                          class="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
+                          className="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
                           viewBox="0 0 100 101"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -522,7 +525,7 @@ const MakeAccount = () => {
                 <svg
                   aria-hidden="true"
                   role="status"
-                  class="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
+                  className="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

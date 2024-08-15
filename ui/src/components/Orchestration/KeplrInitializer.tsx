@@ -34,6 +34,7 @@ export const initializeKeplr = async () => {
       coinMinimalDenom: 'uosmo',
       coinDecimals: 6,
     },
+    // @ts-expect-error XXX typedefs
     coinType: 118,
     gasPriceStep: {
       low: 0.01,
