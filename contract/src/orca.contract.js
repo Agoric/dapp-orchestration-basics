@@ -1,10 +1,7 @@
 import { AmountShape } from '@agoric/ertp';
 import { makeTracer } from '@agoric/internal';
 import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
-import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
-import { Fail } from '@endo/errors';
-import { E } from '@endo/far';
 import { M } from '@endo/patterns';
 import * as flows from './orca.flows.js';
 
@@ -73,7 +70,7 @@ const contract = async (
   zcf,
   privateArgs,
   zone,
-  { orchestrateAll, vowTools, zoeTools },
+  { orchestrateAll, zoeTools },
 ) => {
   trace('inside start function: v1.1.95');
   trace('privateArgs', privateArgs);

@@ -103,7 +103,7 @@ export const makeCreateAndFund = async (
   await localTransfer(seat, localAccount, give);
   await localAccount.transfer(
     {
-      denom: "ubld",
+      denom: 'ubld',
       value: amt.value / 2n,
     },
     remoteAddress,
