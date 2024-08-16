@@ -21,17 +21,12 @@
     "lint:fix": "eslint --fix '**/*.js'"
   },
   "devDependencies": {
-    "@agoric/deploy-script-support": "dev",
     "@agoric/eslint-config": "dev",
     "@agoric/inter-protocol": "dev",
     "@agoric/smart-wallet": "dev",
-    "@agoric/store": "dev",
     "@agoric/swingset-liveslots": "dev",
     "@agoric/time": "dev",
     "@agoric/vat-data": "dev",
-    "@agoric/xsnap": "dev",
-    "@agoric/zone": "^0.2.2",
-    "@cosmjs/amino": "^0.32.3",
     "@cosmjs/proto-signing": "^0.32.3",
     "@endo/eslint-plugin": "^2.2.0",
     "@endo/nat": "^5.0.9",
