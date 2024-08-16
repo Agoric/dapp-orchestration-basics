@@ -53,8 +53,6 @@ export const startOrcaContract = async (permittedPowers, config) => {
     },
   } = permittedPowers;
 
-  trace('config', config);
-  trace('permittedPowers', permittedPowers);
   const {
     // must be supplied by caller or template-replaced
     bundleID = Fail`no bundleID`,
@@ -67,20 +65,8 @@ export const startOrcaContract = async (permittedPowers, config) => {
     bundleID,
   });
 
-  console.log('permittedPowers');
-  console.log(permittedPowers);
-  console.log('from inside startOrcaContract:', installation);
-
-  console.log(cosmosInterchainService);
-  console.log(agoricNames); // make storage node
-  console.log('chainStorage');
-  console.log(chainStorage);
   const storageNode = await E(chainStorage).makeChildNode('orca');
-
-  console.log(storageNode);
-  console.log('DONE MAKING NODES v0.3');
   const marshaller = await E(board).getPublishingMarshaller();
-  console.log(marshaller);
 
   /** @type {StartUpgradableOpts<OrcaSF>} */
   const startOpts = {
@@ -97,12 +83,11 @@ export const startOrcaContract = async (permittedPowers, config) => {
     },
   };
 
-  trace('startOpts', startOpts);
   const { instance } = await E(startUpgradable)(startOpts);
 
-  trace(contractName, '(re)started WITH RESET');
   produceInstance.reset();
   produceInstance.resolve(instance);
+  trace(contractName, '(re)started WITH RESET');
 };
 
 /** @type {BootstrapManifest} */
