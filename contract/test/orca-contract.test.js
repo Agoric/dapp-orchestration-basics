@@ -13,6 +13,7 @@ import { registerChain } from '@agoric/orchestration/src/chain-info.js';
 import { startOrcaContract } from '../src/orca.proposal.js';
 
 import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
+import { startOrchCoreEval } from '../tools/startOrch.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
@@ -246,7 +247,7 @@ test('Start Orca contract', async t => {
 test('Start Orca contract using core-eval', async t => {
   const { runCoreEval, installBundles, makeQueryTool } = t.context;
 
-  t.log('before core eval');
+  t.log('BLD stakers start orchestration');
   await runCoreEval({
     name: 'start-orchestration',
     behavior: startOrchCoreEval,
