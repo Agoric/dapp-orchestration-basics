@@ -44,7 +44,7 @@ harden(makeAccount);
  *
  * @param {Orchestrator} orch
  * @param {object} ctx
- * @param {Transfer} ctx.transfer
+ * @param {ZoeTools['localTransfer']} ctx.localTransfer
  * @param {StorageNode['setValue']} ctx.setValue
  * @param {ZCFSeat} seat
  * @param {{ chainName: string }} offerArgs
@@ -52,7 +52,7 @@ harden(makeAccount);
 export const makeCreateAndFund = async (
   orch,
   {
-    transfer,
+    localTransfer,
     // write,
     // makeChildNode,
     setValue,
@@ -100,14 +100,12 @@ export const makeCreateAndFund = async (
   trace('remoteAddress', remoteAddress);
   trace('fund new orch account');
   trace('seat', seat);
-  trace('transfer', transfer);
-  await transfer(
-    seat,
-    localAccount,
-    remoteAccount,
-    give,
-    amt,
-    localAddress,
+  await localTransfer(seat, localAccount, give);
+  await localAccount.transfer(
+    {
+      denom: 'ubld',
+      value: amt.value / 2n,
+    },
     remoteAddress,
   );
   seat.exit();
