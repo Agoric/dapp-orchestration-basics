@@ -13,15 +13,15 @@ import { registerChain } from '@agoric/orchestration/src/chain-info.js';
 import { startOrcaContract } from '../src/orca.proposal.js';
 
 import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
-import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
+import { getBundleId } from '../tools/bundle-tools.js';
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
-const myRequire = createRequire(import.meta.url);
-const contractPath = myRequire.resolve(`../src/orca.contract.js`);
+const nodeRequire = createRequire(import.meta.url);
+const contractPath = nodeRequire.resolve(`../src/orca.contract.js`);
 const scriptRoot = {
-  orca: myRequire.resolve('../src/orca.proposal.js'),
+  orca: nodeRequire.resolve('../src/orca.proposal.js'),
 };
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
@@ -246,11 +246,8 @@ test('Start Orca contract', async t => {
 
 test('Start Orca contract using core-eval', async t => {
   const { runCoreEval, installBundles, makeQueryTool } = t.context;
-  // const { runCoreEval, installBundles } = t.context;
 
-  t.log('run core-eval to start (dummy) orchestration');
-
-  t.log('before core eval');
+  t.log('BLD stakers start orchestration');
   await runCoreEval({
     name: 'start-orchestration',
     behavior: startOrchCoreEval,
@@ -258,20 +255,17 @@ test('Start Orca contract using core-eval', async t => {
     config: {},
   });
 
-  t.log('before install');
-  const bundles = await installBundles({ orca: contractPath });
-
-  t.log('run orca core-eval');
-  t.log(`${bundles.orca}`);
-  const bundleID = getBundleId(bundles.orca);
-  t.log('bundleID');
-  t.log(bundleID);
   const name = 'orca';
+  t.log('developer installs bundles');
+  const bundles = await installBundles({ [name]: contractPath });
+
+  t.log('run core-eval for', name);
+  const bundleID = getBundleId(bundles[name]);
   const { status } = await runCoreEval({
     name,
     behavior: startOrcaContract,
-    entryFile: scriptRoot.orca,
-    config: { options: { orca: { bundleID } } },
+    entryFile: scriptRoot[name],
+    config: { options: { [name]: { bundleID } } },
   });
   console.log(status);
   t.is(status, 'PROPOSAL_STATUS_PASSED');
@@ -283,7 +277,7 @@ test('Start Orca contract using core-eval', async t => {
   t.log(instance[name]);
 });
 
-export const chainConfigs = {
+const chainConfigs = {
   cosmoshub: {
     chainId: 'gaialocal',
     denom: 'uatom',
