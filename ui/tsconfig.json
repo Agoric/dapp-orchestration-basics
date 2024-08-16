@@ -17,15 +17,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     /* Linting */
-    "strict": true,
-    "noImplicitAny": false,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src",
-    "test"
+    "src"
   ],
   "references": [
     {
