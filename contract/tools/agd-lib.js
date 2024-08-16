@@ -52,8 +52,11 @@ export const makeAgd = ({ execFileSync }) => {
      * @param {string[]} args
      * @param {*} [opts]
      */
+    // const exec = (args, opts = { encoding: 'utf-8' }) =>
+    //   execFileSync(agdBinary, args, opts);
     const exec = (args, opts = { encoding: 'utf-8' }) =>
-      execFileSync(agdBinary, args, opts);
+      execFileSync("docker", args, opts);
+    
 
     const outJson = flags({ output: 'json' });
 
@@ -66,7 +69,8 @@ export const makeAgd = ({ execFileSync }) => {
        * } qArgs
        */
       query: async qArgs => {
-        const out = exec(['query', ...qArgs, ...nodeArgs, ...outJson], {
+        // const out = exec(['query', ...qArgs, ...nodeArgs, ...outJson], {
+          const out = exec(['compose', 'exec', 'agd', 'agd', 'query', ...qArgs, ...nodeArgs, ...outJson], {
           encoding: 'utf-8',
           stdio: ['ignore', 'pipe', 'ignore'],
         });
@@ -94,7 +98,9 @@ export const makeAgd = ({ execFileSync }) => {
           throw Error(`path length limited to 1: ${path.length}`);
         }
         const [name] = path;
-        const txt = exec(['keys', 'show', `--address`, name, ...keyringArgs]);
+        // const txt = exec(['keys', 'show', `--address`, name, ...keyringArgs]);
+        console.log("LOOKUP")
+        const txt = exec(['compose', 'exec', 'agd', 'agd', 'keys', 'show', `--address`, name, ...keyringArgs]);
         return txt.trim();
       },
     });
@@ -106,6 +112,10 @@ export const makeAgd = ({ execFileSync }) => {
        */
       tx: async (txArgs, { chainId, from, yes }) => {
         const args = [
+          'compose',
+          'exec',
+          'agd',
+          'agd',
           'tx',
           ...txArgs,
           ...nodeArgs,
@@ -119,7 +129,8 @@ export const makeAgd = ({ execFileSync }) => {
           ...(yes ? ['--yes'] : []),
           ...outJson,
         ];
-        console.log('$$$', agdBinary, ...args);
+        // console.log('$$$', agdBinary, ...args);
+        console.log('$$$', "docker", ...args);
         const out = exec(args);
         try {
           const detail = JSON.parse(out);

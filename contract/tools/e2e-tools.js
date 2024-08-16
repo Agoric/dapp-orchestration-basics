@@ -350,9 +350,12 @@ const runCoreEval = async (
 
   // TODO? double-check that bundles are loaded
 
-  const evalPaths = evals.map(e => [e.permit, e.code]).flat();
-  t.log(evalPaths);
+  const evalPaths = evals.map(e => [`/workspace/contract/${e.permit}`, `/workspace/contract/${e.code}`]).flat();
+  t.log("evalPaths:", evalPaths);
   console.log('await tx', evalPaths);
+  
+  
+  
   const result = await agd.tx(
     [
       'gov',
@@ -363,15 +366,21 @@ const runCoreEval = async (
     ],
     { from, chainId, yes: true },
   );
+
+  
+
   t.log(txAbbr(result));
   t.is(result.code, 0);
 
   console.log('await voteLatestProposalAndWait', evalPaths);
   const detail = await voteLatestProposalAndWait({ agd, blockTool });
+  t.log("detail", Object.keys(detail))
   t.log(detail.proposal_id, detail.voting_end_time, detail.status);
-
+  t.log(detail.id, detail.voting_end_time, detail.status);
+  t.log("detail", detail)
   // TODO: how long is long enough? poll?
-  await blockTool.waitForBlock(5, { step: 'run', propsal: detail.proposal_id });
+  // await blockTool.waitForBlock(5, { step: 'run', propsal: detail.proposal_id });
+  await blockTool.waitForBlock(5, { step: 'run', propsal: detail.id });
 
   t.is(detail.status, 'PROPOSAL_STATUS_PASSED');
   return detail;
@@ -510,17 +519,17 @@ export const makeE2ETools = (
         '--keyring-backend="test"'
       ];
 
-      const execArgs2 = [
-        'compose',
-        'exec',
-        'agd',
-        'agd',
-        'keys',
-        'list',
-        '--keyring-backend="test"'
-      ];
-      const output2 = execFileSync('docker', execArgs2, { encoding: 'utf-8' });
-      console.log(output2)
+      // const execArgs2 = [
+      //   'compose',
+      //   'exec',
+      //   'agd',
+      //   'agd',
+      //   'keys',
+      //   'list',
+      //   '--keyring-backend="test"'
+      // ];
+      // const output2 = execFileSync('docker', execArgs2, { encoding: 'utf-8' });
+      // console.log(output2)
 
       
       // const execArgs = [
@@ -549,6 +558,9 @@ export const makeE2ETools = (
         installHeight: tx.height,
         installed: confirm.installed,
       });
+
+
+      
 
       await writeFile(
         `${fullPath}.installed`,

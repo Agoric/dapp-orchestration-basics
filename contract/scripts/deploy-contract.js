@@ -105,11 +105,13 @@ const main = async (bundleDir = 'bundles') => {
   if (flags.install) {
     const name = stem(flags.install);
     console.log('installing bundle from deploy-contract.js ....');
+    console.log(name)
     await tools.installBundles({ [name]: flags.install }, progress);
   }
 
   if (flags.eval) {
     for await (const entryFile of flags.eval) {
+      console.log(`core eval for .... ${entryFile}`);
       const result = await tools.runCoreEval({
         name: stem(entryFile),
         entryFile,

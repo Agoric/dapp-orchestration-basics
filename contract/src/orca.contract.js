@@ -132,6 +132,7 @@ const contract = async (
 
         // NOTE: without watcher
         await E(localAccount).deposit(pmt);
+        
         await localAccount.transfer(
           {
             denom: 'ubld',
