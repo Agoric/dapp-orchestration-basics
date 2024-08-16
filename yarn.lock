@@ -302,29 +302,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/deploy-script-support@npm:dev":
-  version: 0.10.4-dev-13c10cc.0
-  resolution: "@agoric/deploy-script-support@npm:0.10.4-dev-13c10cc.0"
-  dependencies:
-    "@agoric/ertp": "npm:0.16.3-dev-13c10cc.0+13c10cc"
-    "@agoric/import-manager": "npm:0.3.12-dev-13c10cc.0+13c10cc"
-    "@agoric/internal": "npm:0.3.3-dev-13c10cc.0+13c10cc"
-    "@agoric/notifier": "npm:0.6.3-dev-13c10cc.0+13c10cc"
-    "@agoric/store": "npm:0.9.3-dev-13c10cc.0+13c10cc"
-    "@agoric/time": "npm:0.3.3-dev-13c10cc.0+13c10cc"
-    "@agoric/zoe": "npm:0.26.3-dev-13c10cc.0+13c10cc"
-    "@endo/base64": "npm:^1.0.6"
-    "@endo/bundle-source": "npm:^3.3.0"
-    "@endo/errors": "npm:^1.2.4"
-    "@endo/far": "npm:^1.1.4"
-    "@endo/marshal": "npm:^1.5.2"
-    "@endo/nat": "npm:^5.0.9"
-    "@endo/promise-kit": "npm:^1.1.4"
-    "@endo/zip": "npm:^1.0.6"
-  checksum: 10c0/f0089b10582c76da529c7593241454318af1726d734f00662347aca6a889a7071e4698891cc519f460073adab225ece36a3a72f6f0a16ac6039b4121832d1786
-  languageName: node
-  linkType: hard
-
 "@agoric/ertp@npm:0.16.3-dev-13c10cc.0+13c10cc, @agoric/ertp@npm:dev":
   version: 0.16.3-dev-13c10cc.0
   resolution: "@agoric/ertp@npm:0.16.3-dev-13c10cc.0"
@@ -532,13 +509,6 @@ __metadata:
     "@endo/nat": "npm:^4.1.27"
     "@endo/promise-kit": "npm:^0.2.56"
   checksum: 10c0/5389cb9613cdad30c2630f5d1b15fccdb83c176e2f676e7f0403498b4561283138fadd7f4ceb4800464398642ec0086df6956e43d4a5543ac7bb66da03116ac0
-  languageName: node
-  linkType: hard
-
-"@agoric/import-manager@npm:0.3.12-dev-13c10cc.0+13c10cc":
-  version: 0.3.12-dev-13c10cc.0
-  resolution: "@agoric/import-manager@npm:0.3.12-dev-13c10cc.0"
-  checksum: 10c0/bb9e959f14548ce1ae43f70c3d0406cf614fe85e995b259b9966d23ba6dfc66672fd8519b52d47bfd4f6a661061c4772fde46d940259f5bb6768570614a72486
   languageName: node
   linkType: hard
 
@@ -1863,7 +1833,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/xsnap@npm:0.14.3-dev-13c10cc.0+13c10cc, @agoric/xsnap@npm:dev":
+"@agoric/xsnap@npm:0.14.3-dev-13c10cc.0+13c10cc":
   version: 0.14.3-dev-13c10cc.0
   resolution: "@agoric/xsnap@npm:0.14.3-dev-13c10cc.0"
   dependencies:
@@ -2090,7 +2060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/zone@npm:0.2.3-dev-7f12e80.0+7f12e80":
+"@agoric/zone@npm:0.2.3-dev-7f12e80.0+7f12e80, @agoric/zone@npm:dev":
   version: 0.2.3-dev-7f12e80.0
   resolution: "@agoric/zone@npm:0.2.3-dev-7f12e80.0"
   dependencies:
@@ -10861,7 +10831,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dapp-agoric-orca-contract@workspace:contract"
   dependencies:
-    "@agoric/deploy-script-support": "npm:dev"
     "@agoric/ertp": "npm:dev"
     "@agoric/eslint-config": "npm:dev"
     "@agoric/governance": "npm:dev"
@@ -10875,10 +10844,8 @@ __metadata:
     "@agoric/vat-data": "npm:dev"
     "@agoric/vats": "npm:dev"
     "@agoric/vow": "npm:dev"
-    "@agoric/xsnap": "npm:dev"
     "@agoric/zoe": "npm:dev"
-    "@agoric/zone": "npm:^0.2.2"
-    "@cosmjs/amino": "npm:^0.32.3"
+    "@agoric/zone": "npm:dev"
     "@cosmjs/proto-signing": "npm:^0.32.3"
     "@endo/bundle-source": "npm:^3.3.0"
     "@endo/errors": "npm:^1.2.4"
