@@ -8,6 +8,7 @@
  * @import {Transfer} from './orca.contract.js';
  */
 
+import { M, mustMatch } from '@endo/patterns';
 import { makeTracer } from './debug.js';
 
 const trace = makeTracer('OrchFlows');
@@ -21,26 +22,17 @@ const trace = makeTracer('OrchFlows');
  * @param {ZCFSeat} seat
  * @param {{ chainName: string }} offerArgs
  */
-export const makeAccount = async (orch, _ctx, seat, { chainName }) => {
-  const { give } = seat.getProposal();
+export const makeAccount = async (orch, _ctx, seat, offerArgs) => {
   trace('version 0.1.36');
-  trace('give');
-  trace(give);
-  trace('inside createAccounts');
-  trace('orch');
-  trace(orch);
-  trace('seat');
-  trace(seat);
-  trace(chainName);
+  mustMatch(offerArgs, M.splitRecord({ chainName: M.string() }));
+  const { chainName } = offerArgs;
+  trace('chainName', chainName);
   seat.exit();
   const chain = await orch.getChain(chainName);
   trace('chain object');
   trace(chain);
-  const info = await chain.getChainInfo();
-  trace('chain info', info);
   const chainAccount = await chain.makeAccount();
-  console.log('chainAccount');
-  console.log(chainAccount);
+  trace('chainAccount', chainAccount);
 
   return chainAccount.asContinuingOffer();
 };
