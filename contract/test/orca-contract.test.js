@@ -15,6 +15,8 @@ import { startOrcaContract } from '../src/orca.proposal.js';
 import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
+import { makeHeapZone } from '@agoric/zone';
+import { prepareSwingsetVowTools } from '@agoric/vow/vat.js';
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
@@ -41,6 +43,9 @@ const makeTestContext = async t => {
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
   const tools = await makeMockTools(t, bundleCache);
+
+  const rootZone = makeHeapZone();
+  const vowTools = prepareSwingsetVowTools(rootZone.subZone('vows'));
 
   const makeDummyStorageNode = (nodeName = 'rootNode') => {
     return Far('DummyStorageNode', {
@@ -135,6 +140,30 @@ const makeTestContext = async t => {
           client_id: 'client-0',
           connectionDetails: `${name} connection details`,
         });
+      } else if (key === 'vbankAsset') {
+        return harden({
+          blockHeight: '1',
+          values: () => [
+            {
+              body: [
+                [
+                  'ubld',
+                  {
+                    brand: '$0.Alleged: BLD brand',
+                    denom: 'ubld',
+                    displayInfo: {
+                      assetKind: 'nat',
+                      decimalPlaces: 6,
+                    },
+                    issuer: '$1.Alleged: BLD issuer',
+                    issuerName: 'BLD',
+                    proposedName: 'Agoric token',
+                  },
+                ],
+              ],
+            },
+          ],
+        });
       }
       throw Error(`Chain or connection not found: ${name}`);
     },
@@ -172,7 +201,7 @@ const makeTestContext = async t => {
                     harden({
                       chainId: state.chainId,
                       value: `${state.name}AccountAddress`,
-                      encoding: 'bech32', // or 'ethereum', based on your requirements
+                      encoding: 'bech32',
                     }),
                   getBalance: () => `1000${state.denom}`,
                 }),
@@ -201,6 +230,55 @@ const makeTestContext = async t => {
     },
   });
 
+  const localchain = Far('DummyLocalchain', {
+    getChainHub: async () => {
+      const chainHub = {
+        registerChain: async (name, details) => {
+          console.log(`chain registered: ${name}`, details);
+        },
+        getChain: async () => {
+          const state = harden({
+            name: 'agoric',
+            chainId: `agoriclocal`,
+            denom: 'agoric',
+            expectedAddressPrefix: 'agoric',
+            details: `agoric chain details`,
+            stakingTokens: [{ denom: 'agoric' }],
+          });
+
+          return harden({
+            ...state,
+            makeAccount: () =>
+              Far('Account', {
+                getChainId: () => state.chainId,
+                getAccountAddress: () => `${state.name}AccountAddress`,
+                getAddress: () => `${state.name}AccountAddress`,
+                getBalance: () => `1000${state.denom}`,
+                monitorTransfers: () => ``,
+              }),
+            getChainInfo: () =>
+              Far('ChainInfo', {
+                getChainId: () => state.chainId,
+                getDenom: () => state.denom,
+                getExpectedAddressPrefix: () => state.expectedAddressPrefix,
+              }),
+          });
+        },
+      };
+      return chainHub;
+    },
+    makeAccount: async name => {
+      const chainHub = await E(localchain).getChainHub();
+      const chain = await E(chainHub).getChain(name);
+      return E(chain).makeAccount();
+    },
+    getChainInfo: async name => {
+      const chainHub = await E(localchain).getChainHub();
+      const chain = await E(chainHub).getChain(name);
+      return E(chain).getChainInfo();
+    },
+  });
+
   return {
     zoe,
     bundle,
@@ -210,6 +288,8 @@ const makeTestContext = async t => {
     agoricNames,
     storageNode: makeDummyStorageNode(),
     marshaller: makeDummyMarshaller(),
+    vowTools,
+    localchain,
     ...tools,
   };
 };
@@ -384,6 +464,7 @@ const orchestrationAccountScenario = test.macro({
       agoricNames,
       storageNode,
       marshaller,
+      vowTools: vt,
     } = t.context;
     t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
@@ -429,12 +510,13 @@ const orchestrationAccountScenario = test.macro({
       initialInvitation,
       makeAccountOffer,
       undefined,
-      { id: offerId },
+      { chainName: 'osmosis' },
     );
     t.log('initial user seat:', initialUserSeat);
 
     t.log('getting offer result...');
-    const offerResult = await E(initialUserSeat).getOfferResult();
+    const offerResult = await vt.when(E(initialUserSeat).getOfferResult());
+
     t.log('offer result:', offerResult);
     t.truthy(offerResult, 'Offer result should exist');
 
@@ -471,9 +553,14 @@ const orchestrationAccountScenario = test.macro({
       continuingInvitation,
       continuingOffer,
       undefined,
-      { previousOffer: offerId },
+      {
+        chainName: 'osmosis',
+        previousOffer: offerId,
+      },
     );
-    const continuingOfferResult = await E(continuingUserSeat).getOfferResult();
+    const continuingOfferResult = await vt.when(
+      continuingUserSeat.getOfferResult(),
+    );
 
     t.truthy(continuingOfferResult, 'continuing offer should produce a result');
     t.log('continuing offer result', continuingOfferResult);
@@ -496,6 +583,8 @@ const orchestrationAccountAndFundScenario = test.macro({
       agoricNames,
       storageNode,
       marshaller,
+      vowTools: vt,
+      localchain,
     } = t.context;
     t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
@@ -507,7 +596,7 @@ const orchestrationAccountAndFundScenario = test.macro({
       marshaller,
       timer: Far('DummyTimer'),
       timerService: Far('DummyTimer'),
-      localchain: Far('DummyLocalchain'),
+      localchain,
       agoricNames,
     });
 
@@ -558,13 +647,14 @@ const orchestrationAccountAndFundScenario = test.macro({
         Deposit: withdrawnDeposit,
       },
       {
-        id: offerId,
+        chainName: 'osmosis',
       },
     );
     t.log('initial user seat:', initialUserSeat);
 
     t.log('getting offer result...');
-    const offerResult = await E(initialUserSeat).getOfferResult();
+    const offerResult = await vt.when(E(initialUserSeat).getOfferResult());
+
     t.log('offer result:', offerResult);
     t.truthy(offerResult, 'Offer result should exist');
 

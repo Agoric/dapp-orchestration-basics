@@ -81,7 +81,7 @@ export const makeCreateAndFund = async (
   trace('chain info', info);
   const assets = await agoric.getVBankAssetInfo();
   trace('fetched assets:', assets);
-  
+
   const localAccount = await agoric.makeAccount();
   trace('localAccount', localAccount);
 
