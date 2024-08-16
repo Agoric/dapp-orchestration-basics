@@ -345,7 +345,6 @@ const orchestrationAccountScenario = test.macro({
       orchestrationService: cosmosInterchainService,
       storageNode: chainStorage,
       marshaller: E(board).getPublishingMarshaller(),
-      timer: Far('DummyTimer'),
       timerService: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
       agoricNames,
