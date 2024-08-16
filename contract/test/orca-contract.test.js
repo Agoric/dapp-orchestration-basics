@@ -5,7 +5,6 @@ import { test as anyTest } from './prepare-test-env-ava.js';
 
 import { createRequire } from 'module';
 import { E, Far } from '@endo/far';
-// import { makeCopyBag } from '@endo/patterns';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { AmountMath, makeIssuerKit } from '@agoric/ertp';
 import { registerChain } from '@agoric/orchestration/src/chain-info.js';
@@ -15,6 +14,7 @@ import { startOrcaContract } from '../src/orca.proposal.js';
 import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
 import { getBundleId } from '../tools/bundle-tools.js';
+import { Fail } from '@endo/errors';
 
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
@@ -115,75 +115,38 @@ const makeTestContext = async t => {
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
 
-  const { powers } = await mockBootstrapPowers(t.log);
-  // await publishChainInfo(powers.consume.agoricNamesAdmin);
+  const { powers, vowTools: vt } = await mockBootstrapPowers(t.log);
+  await publishChainInfo(powers.consume.agoricNamesAdmin);
   const tools = await makeMockTools(t, bundleCache);
 
-  const cosmosInterchainService = Far('DummyCosmosInterchainService', {
-    getChainHub: async () => {
-      const chainHub = {
-        registerChain: async (name, details) => {
-          console.log(`chain registered: ${name}`, details);
+  const sent = [];
+  const cosmosInterchainService = Far('MockCosmosInterchainService', {
+    makeAccount(chainId, hostConnectionId, controllerConnectionId, opts) {
+      return Far('IcaAccount', {
+        getAddress: () =>
+          harden({
+            chainId,
+            value: `agoric123`,
+            encoding: 'bech32', // or 'ethereum', based on your requirements
+          }),
+        getLocalAddress: () => '/ibc-port/LOCAL',
+        getRemoteAddress: () => '/ibc-port/REMOTE',
+        getPort: () => Fail`not implemented`,
+        executeTx: () => Fail`not implemented`,
+        executeEncodedTx: (msgs, opts) => {
+          sent.push({ msgs, opts });
+          return vt.asVow(() => Fail`TODO`);
         },
-        getChain: async name => {
-          if (
-            name === 'agoric' ||
-            name === 'osmosis' ||
-            name === 'agoriclocal' ||
-            name === 'osmosislocal'
-          ) {
-            const state = harden({
-              name,
-              chainId: `${name}local`,
-              denom: name === 'agoric' ? 'ubld' : 'uosmo',
-              expectedAddressPrefix: name === 'agoric' ? 'agoric' : 'osmo',
-              details: `${name} chain details`,
-              stakingTokens: [{ denom: name === 'agoric' ? 'ubld' : 'uosmo' }],
-            });
-
-            return harden({
-              ...state,
-              makeAccount: () =>
-                Far('Account', {
-                  getChainId: () => state.chainId,
-                  getAccountAddress: () => `${state.name}AccountAddress`,
-                  getAddress: () =>
-                    harden({
-                      chainId: state.chainId,
-                      value: `${state.name}AccountAddress`,
-                      encoding: 'bech32', // or 'ethereum', based on your requirements
-                    }),
-                  getBalance: () => `1000${state.denom}`,
-                }),
-              getChainInfo: () =>
-                Far('ChainInfo', {
-                  getChainId: () => state.chainId,
-                  getDenom: () => state.denom,
-                  getExpectedAddressPrefix: () => state.expectedAddressPrefix,
-                }),
-            });
-          }
-          throw Error(`chain not found: ${name}`);
-        },
-      };
-      return chainHub;
+      });
     },
-    makeAccount: async name => {
-      const chainHub = await E(cosmosInterchainService).getChainHub();
-      const chain = await E(chainHub).getChain(name);
-      return E(chain).makeAccount();
-    },
-    getChainInfo: async name => {
-      const chainHub = await E(cosmosInterchainService).getChainHub();
-      const chain = await E(chainHub).getChain(name);
-      return E(chain).getChainInfo();
-    },
+    provideICQConnection: () => Fail`not implemented`,
   });
 
   return {
     bundle,
     bundleCache,
     powers,
+    vowTools: vt,
     cosmosInterchainService,
     ...tools,
   };
@@ -295,17 +258,6 @@ const chainConfigs = {
   },
 };
 
-test('Verify chain registration', async t => {
-  const { cosmosInterchainService } = t.context;
-  const chainHub = await E(cosmosInterchainService).getChainHub();
-
-  const agoricChain = await E(chainHub).getChain('agoric');
-  t.truthy(agoricChain, 'Agoric chain should be registered');
-
-  const osmosisChain = await E(chainHub).getChain('osmosis');
-  t.truthy(osmosisChain, 'Osmosis chain should be registered');
-});
-
 const queryVstorage = async (t, qt, wallet, offerId) => {
   t.log(`querying vstorage for wallet: ${wallet}, offerId: ${offerId}`);
   const currentWalletRecord = await qt.queryData(
@@ -331,26 +283,25 @@ const orchestrationAccountScenario = test.macro({
     `orchestrate - ${chainName} makeAccount returns a ContinuingOfferResult`,
   exec: async (t, chainName) => {
     const config = chainConfigs[chainName];
-    if (!config) {
-      return t.fail(`unknown chain: ${chainName}`);
-    }
+    assert(config);
 
-    const { bundle, cosmosInterchainService, powers } = t.context;
+    const { bundle, cosmosInterchainService, powers, vowTools: vt } = t.context;
     const { agoricNames, board, chainStorage, zoe } = powers.consume;
     t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
 
+    await null;
     const privateArgs = harden({
       cosmosInterchainService,
-      orchestrationService: cosmosInterchainService,
-      storageNode: chainStorage,
-      marshaller: E(board).getPublishingMarshaller(),
+      orchestrationService: await cosmosInterchainService,
+      storageNode: await chainStorage,
+      marshaller: await E(board).getPublishingMarshaller(),
       timerService: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
-      agoricNames,
+      agoricNames: await agoricNames,
     });
 
-    t.log('starting the instance...');
+    t.log('starting the instance...', privateArgs);
     const { instance } = await E(zoe).startInstance(
       installation,
       {},
@@ -360,36 +311,24 @@ const orchestrationAccountScenario = test.macro({
     t.log('instance started:', instance);
     t.truthy(instance);
 
-    t.log('getting public facet...');
     const publicFacet = await E(zoe).getPublicFacet(instance);
-    t.log('public facet obtained:', publicFacet);
-
-    t.log('creating account invitation...');
     const initialInvitation = await E(publicFacet).makeAccountInvitation();
-    t.log('invitation created:', initialInvitation);
-
-    const makeAccountOffer = {
-      give: {},
-      want: {},
-      exit: { onDemand: null },
-    };
 
     t.log('making offer...');
     const offerId = 'offerId';
     const initialUserSeat = await E(zoe).offer(
       initialInvitation,
-      makeAccountOffer,
+      {},
       undefined,
-      { id: offerId },
+      { chainName },
     );
     t.log('initial user seat:', initialUserSeat);
 
     t.log('getting offer result...');
-    const offerResult = await E(initialUserSeat).getOfferResult();
+    const offerResult = await vt.when(E(initialUserSeat).getOfferResult());
     t.log('offer result:', offerResult);
     t.truthy(offerResult, 'Offer result should exist');
 
-    const { makeQueryTool } = t.context;
     const qt = makeQueryToolMock();
     const wallet = 'test-wallet';
     // log vstorage state before querying
@@ -410,22 +349,15 @@ const orchestrationAccountScenario = test.macro({
     );
     t.log('current wallet record', currentWalletRecord);
 
-    const continuingInvitation = await E(publicFacet).makeAccountInvitation();
-    t.truthy(continuingInvitation, 'continuing invitation should be created');
+    const toClose = await E(offerResult.invitationMakers).Undelegate([]);
+    t.truthy(toClose, 'continuing invitation should be created');
 
-    const continuingOffer = {
-      give: {},
-      want: {},
-      exit: { onDemand: null },
-    };
-
-    const continuingUserSeat = await E(zoe).offer(
-      continuingInvitation,
-      continuingOffer,
-      undefined,
-      { previousOffer: offerId },
+    const continuingUserSeat = await E(zoe).offer(toClose, {}, undefined, {
+      chainName,
+    });
+    const continuingOfferResult = await vt.when(
+      E(continuingUserSeat).getOfferResult(),
     );
-    const continuingOfferResult = await E(continuingUserSeat).getOfferResult();
 
     t.truthy(continuingOfferResult, 'continuing offer should produce a result');
     t.log('continuing offer result', continuingOfferResult);
@@ -446,15 +378,16 @@ const orchestrationAccountAndFundScenario = test.macro({
     t.log('installing the contract...');
     const installation = E(zoe).install(bundle);
 
+    await null;
     const privateArgs = harden({
       cosmosInterchainService,
-      orchestrationService: cosmosInterchainService,
-      storageNode: chainStorage,
-      marshaller: E(board).getPublishingMarshaller(),
+      orchestrationService: await cosmosInterchainService,
+      storageNode: await chainStorage,
+      marshaller: await E(board).getPublishingMarshaller(),
       timer: Far('DummyTimer'),
       timerService: Far('DummyTimer'),
       localchain: Far('DummyLocalchain'),
-      agoricNames,
+      agoricNames: await agoricNames,
     });
 
     const { mint, issuer, brand } = makeIssuerKit('BLD');
