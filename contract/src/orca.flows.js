@@ -58,8 +58,10 @@ export const makeCreateAndFund = async (
     setValue,
   },
   seat,
-  { chainName },
+  offerArgs,
 ) => {
+  mustMatch(offerArgs, M.splitRecord({ chainName: M.string() }));
+  const { chainName } = offerArgs;
   const { give } = seat.getProposal();
   const [[_kw, amt]] = Object.entries(give);
   trace('orch', orch);
@@ -77,14 +79,14 @@ export const makeCreateAndFund = async (
 
   const info = await chain.getChainInfo();
   trace('chain info', info);
-
   const assets = await agoric.getVBankAssetInfo();
   trace('fetched assets:', assets);
-
+  
   const localAccount = await agoric.makeAccount();
   trace('localAccount', localAccount);
 
   const remoteAccount = await chain.makeAccount();
+
   trace('remoteAccount', remoteAccount);
   const [localAddress, remoteAddress] = await Promise.all([
     localAccount.getAddress(),
