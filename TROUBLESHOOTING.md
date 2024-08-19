@@ -25,15 +25,7 @@ src/orchdev.proposal.js
 */
 ```
 
-5) possible import rejection SES
-check for `bn.js` containing `while (j-- > 0) {`
-
-we can check for this from outside the container:
-```
-kubectl exec -it agoriclocal-genesis-0 -- cat ./node_modules/bn.js/lib/bn.js | grep "j\-\-"
-```
-
-If the file is there, we can do `make copy-bn-js `
+5) obsolete, left to not reset serial numbering
 
 6) 
 ```

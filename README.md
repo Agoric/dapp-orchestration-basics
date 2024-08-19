@@ -73,13 +73,13 @@ make fund
 # Build & Deploy the dapp
 From the top level directory, run:
 ```
-make
+yarn build
 ```
 
 # Tests
 From top-level directory:
 ```
-make test-orca
+yarn test
 ```
 
 # tests from root directory
