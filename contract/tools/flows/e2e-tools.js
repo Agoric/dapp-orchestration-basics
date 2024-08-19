@@ -4,9 +4,9 @@ import { E, Far } from '@endo/far';
 import { Nat } from '@endo/nat';
 import { makePromiseKit } from '@endo/promise-kit';
 import { flags, makeAgd, makeCopyFiles } from './agd-lib.js';
-import { makeHttpClient, makeAPI } from './ui-kit-goals/makeHttpClient.js';
-import { dedup, makeQueryKit, poll } from './ui-kit-goals/queryKit.js';
-import { makeVStorage } from './ui-kit-goals/batchQuery.js';
+import { makeHttpClient, makeAPI } from '../ui-kit-goals/makeHttpClient.js';
+import { dedup, makeQueryKit, poll } from '../ui-kit-goals/queryKit.js';
+import { makeVStorage } from '../ui-kit-goals/batchQuery.js';
 
 /** @import { EnglishMnemonic } from '@cosmjs/crypto'; */
 

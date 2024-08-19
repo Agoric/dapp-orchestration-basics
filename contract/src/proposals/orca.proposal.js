@@ -1,34 +1,12 @@
-
 import { E } from '@endo/far';
-import {
-  installContract,
-} from './platform-goals/start-contract.js';
-import { makeTracer } from './tools/debug.js';
+import { makeTracer } from '@agoric/internal';
 
 
 const trace = makeTracer('OrCE');
-const { entries, fromEntries } = Object;
-
 trace('start proposal module evaluating');
 
-const { Fail } = assert;
 
 const contractName = 'orca';
-
-
-/**
- * Given a record whose values may be promise, return a promise for a record with all the values resolved.
- *
- * @type { <T extends Record<string, ERef<any>>>(obj: T) => Promise<{ [K in keyof T]: Awaited<T[K]>}> }
- */
-export const allValues = async obj => {
-  const es = await Promise.all(
-    entries(obj).map(([k, vp]) => E.when(vp, v => [k, v])),
-  );
-  return fromEntries(es);
-};
-
-
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {orca: Installation<import('./orca.contract.js').start>}}}} permittedPowers
@@ -48,6 +26,11 @@ export const startOrcaContract = async (permittedPowers, config) => {
       cosmosInterchainService,
       startUpgradable,
     },
+    installation: {
+      consume: {
+        orca: orcaInstallation,
+      }
+    },
     instance: {
       // @ts-expect-error not a WellKnownName
       produce: { orca: produceInstance },
@@ -56,17 +39,8 @@ export const startOrcaContract = async (permittedPowers, config) => {
 
   trace('config', config);
   trace('permittedPowers', permittedPowers)
-  const {
-    // must be supplied by caller or template-replaced
-    bundleID = Fail`no bundleID`,
-  } = config?.options?.[contractName] ?? {};
 
-  // agoricNames gets updated each time; the promise space only once XXXXXXX
-
-  const installation = await installContract(permittedPowers, {
-    name: contractName,
-    bundleID,
-  });
+  const installation = await orcaInstallation;
 
   console.log("permittedPowers")
   console.log(permittedPowers)
@@ -121,7 +95,6 @@ const orcaManifest = {
       cosmosInterchainService: true,
     },
     installation: {
-      produce: { orca: true },
       consume: { orca: true },
     },
     instance: {
@@ -138,30 +111,7 @@ export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
   return harden({
     manifest: orcaManifest,
     installations: {
-      orca: restoreRef(installKeys),
+      [contractName]: restoreRef(installKeys[contractName]),
     },
   });
 };
-
-export const permit = harden({
-  consume: {
-    agoricNames: true,
-    board: true,
-    chainStorage: true,
-    startUpgradable: true,
-    zoe: true,
-    localchain: true,
-    chainTimerService: true,
-    cosmosInterchainService: true,
-  },
-  installation: {
-    consume: { orca: true },
-    produce: { orca: true },
-  },
-  instance: { produce: { orca: true } },
-  brand: { consume: { BLD: true, IST: true }, produce: {} },
-  issuer: { consume: { BLD: true, IST: true }, produce: {} },
-
-});
-
-export const main = startOrcaContract;

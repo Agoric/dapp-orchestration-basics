@@ -7,7 +7,8 @@ import { commonSetup } from './tools/supports.js';
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const contractName = 'basic-flows';
-const contractFile = `${dirname}/../src/${contractName}.contract.js`;
+console.log({ dirname })
+const contractFile = `${dirname}/../../src/flows/${contractName}.contract.js`;
 
 const test = anyTest;
 

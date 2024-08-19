@@ -1,17 +1,17 @@
 import { makeHelpers } from '@agoric/deploy-script-support';
-import { startBasicFlows } from '../src/proposals/start-basic-flows.js';
+import { startOrcaContract } from '../src/proposals/orca.proposal.js';
 
 /** @type {import('@agoric/deploy-script-support/src/externalTypes.js').CoreEvalBuilder} */
 export const defaultProposalBuilder = async ({ publishRef, install }) => {
   return harden({
-    sourceSpec: '../src/proposals/start-basic-flows.js',
+    sourceSpec: '../src/proposals/orca.proposal.js',
     getManifestCall: [
-      'getManifestForContract',
+      'getManifestForOrca',
       {
         installKeys: {
-          basicFlows: publishRef(
+          orca: publishRef(
             install(
-              '../src/basic-flows.contract.js',
+              '../src/orca.contract.js',
             ),
           ),
         },
@@ -22,5 +22,5 @@ export const defaultProposalBuilder = async ({ publishRef, install }) => {
 
 export default async (homeP, endowments) => {
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
-  await writeCoreEval(startBasicFlows.name, defaultProposalBuilder);
+  await writeCoreEval(startOrcaContract.name, defaultProposalBuilder);
 };
