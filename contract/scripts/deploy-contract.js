@@ -1,28 +1,30 @@
 #!/usr/bin/env node
 /* global process, fetch, setTimeout */
 // @ts-check
-import '@endo/init';
-import fsp from 'node:fs/promises';
-import { execFile, execFileSync, execSync } from 'node:child_process';
-import { basename } from 'node:path';
+import '@endo/init/debug.js';
+import { createRequire } from 'module';
+import { execa } from 'execa';
+import fse from 'fs-extra';
+import { execFile, execFileSync } from 'node:child_process';
 
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { parseArgs } from 'node:util';
-import { makeE2ETools } from '../tools/e2e-tools.js';
+import { makeE2ETools } from '../tools/flows/e2e-tools.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const { readJSON } = fse;
 
 /** @type {import('node:util').ParseArgsConfig['options']} */
 const options = {
   help: { type: 'boolean' },
-  install: { type: 'string' },
-  eval: { type: 'string', multiple: true },
+  builder: { type: 'string' },
   service: { type: 'string', default: 'agd' },
   workdir: { type: 'string', default: '/workspace/contract' },
 };
 /**
  * @typedef {{
  *   help: boolean,
- *   install?: string,
- *   eval?: string[],
+ *   builder: string, 
  *   service: string,
  *   workdir: string,
  * }} DeployOptions
@@ -33,30 +35,15 @@ deploy-contract [options] [--install <contract>] [--eval <proposal>]...
 
 Options:
   --help               print usage
-  --install            entry module of contract to install
-  --eval               entry module of core evals to run
-                       (cf rollup.config.mjs)
+  --builder            proposal builder
   --service SVC        docker compose service to run agd (default: ${options.service.default}).
                        Use . to run agd outside docker.
   --workdir DIR        workdir for docker service (default: ${options.workdir.default})
 `;
 
-const mockExecutionContext = () => {
-  const withSkip = o =>
-    Object.assign(o, {
-      skip: (..._xs) => {},
-    });
-  return {
-    log: withSkip((...args) => console.log(...args)),
-    is: withSkip((actual, expected, message) =>
-      assert.equal(actual, expected, message),
-    ),
-  };
-};
-
 const main = async (bundleDir = 'bundles') => {
   const { argv } = process;
-  const { writeFile } = fsp;
+  // const { writeFile } = fsp;
 
   const progress = (...args) => console.warn(...args); // stderr
 
@@ -69,52 +56,47 @@ const main = async (bundleDir = 'bundles') => {
     progress(Usage);
     return;
   }
-  /** @type {{ _workdir: string, service: string }} */
-  const { service } = flags;
 
-  /** @type {import('../tools/agd-lib.js').ExecSync} */
+  const { builder } = flags;
 
-  const dockerExec = (file, dargs, opts = { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 2000 }) => {
-    console.log("docker exec try 1: ", file);
-    opts.verbose &&
-      console.log('exec', JSON.stringify([file, ...dargs]));
-    console.log("docker exec try 2");
-  
-    const command = `${file} ${dargs.join(' ')}`;
-    console.log("command: ", command);
-    console.log(service);
-  
-    return execSync(command, opts);
-  };
-
-
-  const t = mockExecutionContext();
-  const tools = makeE2ETools(t, bundleCache, {
+  const tools = await makeE2ETools(console.log, bundleCache, {
+    execFileSync,
     execFile,
-    execFileSync: service === '.' ? execFileSync : dockerExec, // see here
     fetch,
     setTimeout,
-    writeFile,
-    bundleDir,
   });
 
-  const stem = path => basename(path).replace(/\..*/, '');
-
-  if (flags.install) {
-    const name = stem(flags.install);
-    console.log("installing bundle from deploy-contract.js ....")
-    await tools.installBundles({ [name]: flags.install }, progress);
+  console.log(`building plan: ${builder}`);
+  // build the plan
+  const { stdout } = await execa`agoric run ${builder}`;
+  console.log({ stdout })
+  const match = stdout.match(/ (?<name>[-\w]+)-permit.json/);
+  if (!(match && match.groups)) {
+    throw new Error('no permit found');
   }
+  const plan = await readJSON(`./${match.groups.name}-plan.json`);
+  console.log(plan);
 
-  if (flags.eval) {
-    for await (const entryFile of flags.eval) {
-      const result = await tools.runCoreEval({
-        name: stem(entryFile),
-        entryFile,
-      });
-      progress(result);
-    }
-  }
+  console.log('copying files to container');
+  tools.copyFiles([
+    nodeRequire.resolve(`../${plan.script}`),
+    nodeRequire.resolve(`../${plan.permit}`),
+    ...plan.bundles.map(b => b.fileName),
+  ]);
+
+  console.log('installing bundles');
+  await tools.installBundles(
+    plan.bundles.map(
+      b => `/tmp/contracts/${b.bundleID}.json`,
+    ),
+    console.log,
+  );
+
+  console.log('executing proposal');
+  await tools.runCoreEval({
+    name: plan.name,
+    description: `${plan.name} proposal`,
+  });
 };
 
-main().catch(err => console.error(err));
+main().catch(err => console.log(err));

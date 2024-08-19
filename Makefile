@@ -12,3 +12,7 @@ add-address:
 	yarn workspace  dapp-agoric-orca-contract add:address
 lint:
 	yarn workspace dapp-agoric-orca-contract lint
+basic-flow-deploy:
+	make -C contract basic-flow-deploy
+orca-deploy:
+	make -C contract orca-deploy	

@@ -7,7 +7,7 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1mqvg26gpv6xzch2v0wpv569md3c2z4cdxq9clz
+ADDR=agoric1wche60gfuc6dplafsx43yxza89kevct630alr6
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -270,3 +270,8 @@ e2e:
 
 lint:
 	yarn lint --fix-dry-run --ignore-pattern "*patch*" 
+
+basic-flow-deploy:
+	node scripts/deploy-contract.js --builder scripts/init-basic-flows.js
+orca-deploy:
+	node scripts/deploy-contract.js --builder scripts/init-orca.js
