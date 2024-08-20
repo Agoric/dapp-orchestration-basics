@@ -112,3 +112,63 @@ export const makeCreateAndFund = async (
   return remoteAccount.asContinuingOffer();
 };
 harden(makeCreateAndFund);
+
+/**
+ * Create an account on a Cosmos chain, transfer funds to it, and delegate
+ *
+ * @param {Orchestrator} orch
+ * @param {object} ctx
+ * @param {ZoeTools['localTransfer']} ctx.localTransfer
+ * @param {StorageNode['setValue']} ctx.setValue
+ * @param {ZCFSeat} seat
+ * @param {{ chainName: string, validator: string }} offerArgs
+ */
+export const makeFundAndDelegate = async (
+  orch,
+  {
+    localTransfer,
+    // write,
+    // makeChildNode,
+    setValue,
+  },
+  seat,
+  { chainName, validator },
+) => {
+
+  const { give } = seat.getProposal();
+  const [[_kw, amt]] = Object.entries(give);
+  
+  const [agoric, chain] = await Promise.all([
+    orch.getChain('agoric'),
+    orch.getChain(chainName),
+  ]);
+
+  const info = await chain.getChainInfo();
+  trace('chain info', info);
+  const assets = await agoric.getVBankAssetInfo();
+  trace('fetched assets:', assets);
+  const localAccount = await agoric.makeAccount();
+  trace('localAccount', localAccount);
+  const remoteAccount = await chain.makeAccount();
+  trace('remoteAccount', remoteAccount);
+  const [localAddress, remoteAddress] = await Promise.all([
+    localAccount.getAddress(),
+    remoteAccount.getAddress(),
+  ]);
+
+  await localTransfer(seat, localAccount, give);
+  await localAccount.transfer(
+    {
+      denom: 'ubld',
+      value: amt.value / 2n,
+    },
+    remoteAddress,
+  );
+  await remoteAccount.delegate(validator, {
+    brand: amt.brand,
+    value: 1n
+  });
+  seat.exit();
+  return remoteAccount.asContinuingOffer();
+};
+harden(makeFundAndDelegate);
