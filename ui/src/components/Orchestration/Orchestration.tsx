@@ -247,6 +247,54 @@ const Orchestration = () => {
     setLoadingUnstake(prevState => ({ ...prevState, [address]: false }));
   };
 
+  const executeFundAndDelegate = () => {
+    setLoadingCreateAndFund(true);
+    setStatusText('Submitted');
+    if (walletConnection) {
+      // const { brands } = useContractStore.getState();
+  
+      const give = { Deposit: { brand: fundDenom, value: BigInt(fundAmount)} };
+  
+      makeOffer(
+        walletConnection,
+        addNotification!,
+        selectedChain,
+        'makeFundAndDelegateInvitation',
+        {
+          chainName: selectedChain,
+          validator: "osmovaloper1qjtcxl86z0zua2egcsz4ncff2gzlcndzs93m43"
+        },
+        setLoadingCreateAndFund,
+        handleToggle,
+        setStatusText,
+        give 
+      ).catch(error => {
+        addNotification!({
+          text: `Transaction failed: ${error.message}`,
+          status: 'error',
+        });
+        setLoadingCreateAndFund(false);
+        handleToggle();
+      });
+    } else {
+      addNotification!({
+        text: 'Error: Please connect your wallet or check your connection to RPC endpoints',
+        status: 'error',
+      });
+      setLoadingCreateAndFund(false);
+      handleToggle();
+    }
+  };
+
+  const openFundModal = async () => {
+      setModalContent('Fund and Delegate');
+      const client = walletConnection.signingClient;
+      const accountAddress = walletConnection.address;
+      const balances = await client.getAllBalances(accountAddress);
+      setWalletBalances([...balances]); 
+      handleToggle();
+  };
+
   return (
     <div className="flex w-full flex-col items-center">
       <div className="w-full p-4">
