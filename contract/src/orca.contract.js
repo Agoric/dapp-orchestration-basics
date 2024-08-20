@@ -76,7 +76,7 @@ const contract = async (
   trace('privateArgs', privateArgs);
 
   // @ts-expect-error XXX ZCFSeat not Passable
-  const { makeAccount, makeCreateAndFund } = orchestrateAll(flows, {
+  const { makeAccount, makeCreateAndFund, makeFundAndDelegate } = orchestrateAll(flows, {
     localTransfer: zoeTools.localTransfer,
     // write: E(storageNode).write),
     // makeChildNode: E(storageNode).makeChildNode,
@@ -89,6 +89,7 @@ const contract = async (
     M.interface('Orca PF', {
       makeAccountInvitation: M.callWhen().returns(InvitationShape),
       makeCreateAndFundInvitation: M.callWhen().returns(InvitationShape),
+      makeFundAndDelegateInvitation: M.callWhen().returns(InvitationShape)
     }),
     {
       makeAccountInvitation() {
@@ -102,6 +103,14 @@ const contract = async (
           M.splitRecord({ give: SingleAmountRecord }),
         );
       },
+      makeFundAndDelegateInvitation() {
+        return zcf.makeInvitation(
+          makeFundAndDelegate,
+          'Make an Orchestration Account, and Fund it',
+          undefined,
+          M.splitRecord({ give: SingleAmountRecord })
+        )
+      }
     },
   );
 
