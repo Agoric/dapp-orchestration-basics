@@ -11,6 +11,7 @@ export const makeOffer = async (
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   handleToggle: () => void,
   setStatusText: React.Dispatch<React.SetStateAction<string>>,
+  give?: Record<string, unknown>,
 ) => {
   if (!selectedChain) {
     addNotification({
@@ -23,6 +24,7 @@ export const makeOffer = async (
   }
 
   const { instances, brands } = useContractStore.getState();
+  console.log(brands);
   const instance = instances?.['orca'];
 
   if (!instance || !brands) {
@@ -32,15 +34,15 @@ export const makeOffer = async (
   }
 
   // fetch the BLD brand
-  const bldBrand = brands.BLD;
-  if (!bldBrand) {
-    setLoading(false);
-    handleToggle();
-    throw Error('BLD brand not found.');
-  }
+  // const bldBrand = brands.BLD;
+  // if (!bldBrand) {
+  //   setLoading(false);
+  //   handleToggle();
+  //   throw Error('BLD brand not found.');
+  // }
 
   const want = {};
-  const give = { Deposit: { brand: bldBrand, value: BigInt(1000) } };
+  // const give = { Deposit: { brand: bldBrand, value: BigInt(1000) } };
 
   const offerId = Date.now();
 
