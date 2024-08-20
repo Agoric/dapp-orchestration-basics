@@ -1,12 +1,16 @@
-import { FaUserPlus, FaWallet } from 'react-icons/fa'; // Importing icons from react-icons
+import { FaUserPlus, FaWallet, FaMoneyCheckAlt, FaChartLine } from 'react-icons/fa';
 
 const CreateAccountButton = ({
   handleCreateAccount,
   handleCreateAndFund,
+  openFundModal,
   loadingCreateAccount,
   loadingCreateAndFund,
+  loadingFundAndDelegate
 }) => (
-  <div className="flex space-x-0">
+  // <div className="flex space-x-0">
+  <div className="grid grid-cols-2 gap-2">
+
     <button
       className={`daisyui-btn daisyui-btn-info flex-grow rounded-r-none text-sm ${loadingCreateAccount ? 'bg-gray-600' : 'bg-blue-500'}`}
       onClick={handleCreateAccount}
@@ -66,6 +70,37 @@ const CreateAccountButton = ({
         </div>
       )}
     </button>
+
+    <button
+      className={`daisyui-btn daisyui-btn-info flex-grow rounded-r-none text-sm ${loadingCreateAccount ? 'bg-gray-600' : 'bg-blue-500'}`}
+      onClick={openFundModal} 
+      disabled={loadingFundAndDelegate}
+    >
+      {loadingFundAndDelegate ? (
+        <svg
+          aria-hidden="true"
+          role="status"
+          className="me-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
+          viewBox="0 0 100 101"
+          fill="none"
+        >
+          <path
+            d="M100 50.6C100 78.2 77.6 100.6 50 100.6 22.4 100.6 0 78.2 0 50.6 0 23 22.4 0.6 50 0.6..."
+            fill="currentColor"
+          />
+          <path
+            d="M93.97 39.04C96.39 38.4 97.86 35.91 97.01 33.55C95.29 28.82 92.87 24.37 89.82 20.35C85.85 15.12..."
+            fill="#1C64F2"
+          />
+        </svg>
+      ) : (
+        <div>
+          Fund & Stake <br />
+          <FaMoneyCheckAlt className="inline-block h-5 w-5" />
+        </div>
+      )}
+    </button>
+    
   </div>
 );
 
