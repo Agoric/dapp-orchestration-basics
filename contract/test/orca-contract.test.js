@@ -589,5 +589,119 @@ const orchestrationAccountAndFundScenario = test.macro({
   },
 });
 
+
+const orchestrationFundAndDelegateScenario = test.macro({
+  title: (_, chainName) =>
+    `orchestrate - ${chainName} makeAccount, fund local account, transfer to remote, and delegate to validator`,
+  exec: async (t, chainName) => {
+    const config = chainConfigs[chainName];
+    if (!config) {
+      return t.fail(`unknown chain: ${chainName}`);
+    }
+
+    const {
+      zoe,
+      bundle,
+      cosmosInterchainService,
+      agoricNames,
+      storageNode,
+      marshaller,
+    } = t.context;
+    t.log('installing the contract...');
+    const installation = E(zoe).install(bundle);
+
+    const privateArgs = harden({
+      cosmosInterchainService,
+      orchestrationService: cosmosInterchainService,
+      storageNode,
+      marshaller,
+      timer: Far('DummyTimer'),
+      timerService: Far('DummyTimer'),
+      localchain: Far('DummyLocalchain'),
+      agoricNames,
+    });
+
+    const { mint, issuer, brand } = makeIssuerKit('BLD');
+
+    const issuers = {
+      BLDIssuer: issuer,
+    };
+
+    t.log('starting the instance...');
+    const { instance } = await E(zoe).startInstance(
+      installation,
+      issuers,
+      {},
+      privateArgs,
+    );
+    t.log('instance started:', instance);
+    t.truthy(instance);
+
+    t.log('getting public facet...');
+    const publicFacet = await E(zoe).getPublicFacet(instance);
+    t.log('public facet obtained:', publicFacet);
+
+    t.log('creating invitation for fund and delegate');
+    const initialInvitation =
+      await E(publicFacet).makeFundAndDelegateInvitation();
+    t.log('invitation created:', initialInvitation);
+
+    t.log('brand', brand);
+    const amount = AmountMath.make(brand, 1n);
+    const makeAccountOffer = {
+      give: { Deposit: amount },
+      want: {},
+      exit: { onDemand: null },
+    };
+
+    const bldPurse = issuer.makeEmptyPurse();
+    const payment = mint.mintPayment(amount);
+    bldPurse.deposit(payment);
+    const withdrawnDeposit = await E(bldPurse).withdraw(amount);
+    t.log('withdrawnDeposit', withdrawnDeposit);
+    t.log('making offer...');
+    const offerId = 'offerId';
+    const initialUserSeat = await E(zoe).offer(
+      initialInvitation,
+      makeAccountOffer,
+      {
+        Deposit: withdrawnDeposit,
+      },
+      {
+        id: offerId,
+      },
+    );
+    t.log('initial user seat:', initialUserSeat);
+
+    t.log('getting offer result...');
+    const offerResult = await E(initialUserSeat).getOfferResult();
+    t.log('offer result:', offerResult);
+    t.truthy(offerResult, 'Offer result should exist');
+
+    const qt = makeQueryToolMock();
+    const wallet = 'test-wallet';
+    await logVstorageState(t, qt, 'published.agoricNames');
+
+    const { address, currentWalletRecord } = await queryVstorage(
+      t,
+      qt,
+      wallet,
+      offerId,
+    );
+
+    t.log('got address:', address);
+    t.regex(
+      address,
+      new RegExp(`^${config.expectedAddressPrefix}1`),
+      `Address for ${chainName} is valid`,
+    );
+    t.log('current wallet record', currentWalletRecord);
+
+    // todo: check delegation success? maybe invoke query?
+  },
+});
+
 test(orchestrationAccountScenario, 'osmosis');
 test(orchestrationAccountAndFundScenario, 'osmosis');
+test(orchestrationFundAndDelegateScenario, 'osmosis');
+
