@@ -135,9 +135,14 @@ export const makeFundAndDelegate = async (
   { chainName, validator },
 ) => {
 
+  trace('inside makeFundAndDelegate')
   const { give } = seat.getProposal();
   const [[_kw, amt]] = Object.entries(give);
-  
+  trace('_kw', _kw);
+  trace('amt', amt);
+  trace('give:', give);
+  trace("chainName:", chainName)
+  trace("validator:", validator)
   const [agoric, chain] = await Promise.all([
     orch.getChain('agoric'),
     orch.getChain(chainName),
@@ -159,7 +164,7 @@ export const makeFundAndDelegate = async (
   await localTransfer(seat, localAccount, give);
   await localAccount.transfer(
     {
-      denom: 'ubld',
+      denom: amt.brand,
       value: amt.value / 2n,
     },
     remoteAddress,
