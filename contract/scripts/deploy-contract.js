@@ -5,19 +5,19 @@ import '@endo/init';
 import fsp from 'node:fs/promises';
 import { execFile, execFileSync, execSync } from 'node:child_process';
 import { basename } from 'node:path';
+import { execa } from 'execa';
+import fse from 'fs-extra';
 
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { parseArgs } from 'node:util';
 import { makeE2ETools } from '../tools/e2e-tools.js';
+import { createRequire } from 'module';
+
+const nodeRequire = createRequire(import.meta.url);
+const { readJSON } = fse;
+
 
 /** @type {import('node:util').ParseArgsConfig['options']} */
-const options = {
-  help: { type: 'boolean' },
-  install: { type: 'string' },
-  eval: { type: 'string', multiple: true },
-  service: { type: 'string', default: 'agd' },
-  workdir: { type: 'string', default: '/workspace/contract' },
-};
 /**
  * @typedef {{
  *   help: boolean,
@@ -25,6 +25,25 @@ const options = {
  *   eval?: string[],
  *   service: string,
  *   workdir: string,
+ * }} DeployOptions
+ */
+
+/** @type {import('node:util').ParseArgsConfig['options']} */
+const options = {
+  help: { type: 'boolean' },
+  builder: { type: 'string' },
+  service: { type: 'string', default: 'agd' },
+  workdir: { type: 'string', default: '/workspace/contract' },
+  install: { type: 'string' },
+  eval: { type: 'string', multiple: true },
+};
+/**
+ * @typedef {{
+ *   help: boolean,
+ *   builder: string, 
+ *   service: string,
+ *   workdir: string,
+ *   install: string,
  * }} DeployOptions
  */
 
@@ -91,9 +110,9 @@ const main = async (bundleDir = 'bundles') => {
   };
 
   const t = mockExecutionContext();
-  const tools = makeE2ETools(t, bundleCache, {
+  const tools = await makeE2ETools(t, bundleCache, {
     execFile,
-    execFileSync: service === '.' ? execFileSync : dockerExec, // see here
+    execFileSync: service === '.' ? execFileSync : dockerExec,
     fetch,
     setTimeout,
     writeFile,
@@ -105,7 +124,7 @@ const main = async (bundleDir = 'bundles') => {
   if (flags.install) {
     const name = stem(flags.install);
     console.log('installing bundle from deploy-contract.js ....');
-    await tools.installBundles({ [name]: flags.install }, progress);
+    await tools.installBundles([ flags.install ], progress);
   }
 
   if (flags.eval) {
