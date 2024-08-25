@@ -2,16 +2,12 @@ import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import { setUpZoeForTest } from '@agoric/zoe/tools/setup-zoe.js';
 import { E, getInterfaceOf } from '@endo/far';
 import path from 'path';
-import {
-  commonSetup,
-  chainConfig,
-} from './support.js';
+import { commonSetup, chainConfig } from './support.js';
 import { makeDoOffer } from '../tools/e2e-tools.js';
-
 
 const test = anyTest;
 
-const accounts = ['agoric', 'cosmoshub', 'osmosis']; 
+const accounts = ['agoric', 'cosmoshub', 'osmosis'];
 
 const contractName = 'orca';
 const contractBuilder = './test/builder/init-orca.js';
@@ -43,7 +39,7 @@ const makeAccountScenario = test.macro({
     const config = chainConfig[chainName];
     if (!config) return t.fail(`Unknown chain: ${chainName}`);
 
-    console.log("testing makeAccountScenario")
+    console.log('testing makeAccountScenario');
     const {
       wallets,
       provisionSmartWallet,
@@ -62,7 +58,7 @@ const makeAccountScenario = test.macro({
     t.log(`${chainName} makeAccount offer`);
     const offerId = `${chainName}-makeAccount-${Date.now()}`;
 
-    t.log("before doOffer")
+    t.log('before doOffer');
     await doOffer({
       id: offerId,
       invitationSpec: {
@@ -82,7 +78,7 @@ const makeAccountScenario = test.macro({
       `${offerId} continuing invitation is in vstorage`,
     );
 
-    console.log("currentWalletRecord", currentWalletRecord)
+    console.log('currentWalletRecord', currentWalletRecord);
 
     const offerToPublicSubscriberMap = Object.fromEntries(
       currentWalletRecord.offerToPublicSubscriberPaths,

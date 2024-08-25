@@ -16,11 +16,11 @@ const chainConfig = {
   agoric: { expectedAddressPrefix: 'agoric' },
 };
 
-const makeKeyring = async (e2eTools) => {
-//   let _keys = ['user1'];
+const makeKeyring = async e2eTools => {
+  //   let _keys = ['user1'];
   let _keys = ['alice'];
-//   const setupTestKeys = async (keys = ['user1']) => {
-const setupTestKeys = async (keys = ['alice']) => {  
+  //   const setupTestKeys = async (keys = ['user1']) => {
+  const setupTestKeys = async (keys = ['alice']) => {
     _keys = keys;
     const wallets = {};
     for (const name of keys) {
@@ -33,15 +33,15 @@ const setupTestKeys = async (keys = ['alice']) => {
 
   const deleteTestKeys = (keys = []) =>
     Promise.allSettled(
-      Array.from(new Set([...keys, ..._keys])).map((key) =>
-        e2eTools.deleteKey(key).catch()
-      )
+      Array.from(new Set([...keys, ..._keys])).map(key =>
+        e2eTools.deleteKey(key).catch(),
+      ),
     ).catch();
 
   return { setupTestKeys, deleteTestKeys };
 };
 
-const commonSetup = async (t) => {
+const commonSetup = async t => {
   const { useChain } = await setupRegistry();
   const tools = await makeAgdTools(t.log, childProcess);
   const keyring = await makeKeyring(tools);
