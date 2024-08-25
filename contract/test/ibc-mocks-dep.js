@@ -11,7 +11,10 @@ import { VTRANSFER_IBC_EVENT } from '@agoric/internal/src/action-types.js';
 import { FungibleTokenPacketData } from '@agoric/cosmic-proto/ibc/applications/transfer/v2/packet.js';
 // import type { PacketSDKType } from '@agoric/cosmic-proto/ibc/core/channel/v1/channel.js';
 import { LOCALCHAIN_DEFAULT_ADDRESS } from '@agoric/vats/tools/fake-bridge.js';
-import { makeQueryPacket, makeTxPacket } from '@agoric/orchestration/src/utils/packet.js';
+import {
+  makeQueryPacket,
+  makeTxPacket,
+} from '@agoric/orchestration/src/utils/packet.js';
 // import { ChainAddress } from '@agoric/orchestration/src/orchestration-api.js';
 
 // interface EncoderI<T> {
@@ -22,8 +25,7 @@ import { makeQueryPacket, makeTxPacket } from '@agoric/orchestration/src/utils/p
 //   typeUrl: string;
 // }
 
-const toPacket = obj =>
-  btoa(JSON.stringify(obj));
+const toPacket = obj => btoa(JSON.stringify(obj));
 
 /**
  * Build a response "packet bytes string" we'd expect to see from a Msg
@@ -34,10 +36,7 @@ const toPacket = obj =>
  * @param Encoder
  * @param message
  */
-export function buildMsgResponseString(
-  Encoder,
-  message,
-) {
+export function buildMsgResponseString(Encoder, message) {
   const encodedMsg = Encoder.encode(Encoder.fromPartial(message)).finish();
 
   // cosmos-sdk double Any encodes
@@ -112,14 +111,12 @@ export function buildQueryResponseString(
  * Build a tx packet string for the mocked dibc bridge handler
  * @param {Array<{
  *  value: Uint8Array,
-*  typeUrl: string
-* }>} msgs
- * 
+ *  typeUrl: string
+ * }>} msgs
+ *
  * @returns {string}
  */
-export function buildTxPacketString(
-  msgs,
-) { 
+export function buildTxPacketString(msgs) {
   return btoa(makeTxPacket(msgs.map(Any.toJSON)));
 }
 
@@ -129,10 +126,7 @@ export function buildTxPacketString(
  * @param opts
  * @returns {string}
  */
-export function buildQueryPacketString(
-  msgs,
-  opts = {},
-) {
+export function buildQueryPacketString(msgs, opts = {}) {
   return btoa(makeQueryPacket(msgs.map(msg => toRequestQueryJson(msg, opts))));
 }
 
@@ -167,9 +161,9 @@ export const buildVTransferEvent = ({
   amount = 10n,
   denom = 'uatom',
   destinationChannel = 'channel-0',
-  sourceChannel = 'channel-405' ,
+  sourceChannel = 'channel-405',
   sequence = 0n,
-} = {} ) => ({
+} = {}) => ({
   type: VTRANSFER_IBC_EVENT,
   blockHeight: 0,
   blockTime: 0,

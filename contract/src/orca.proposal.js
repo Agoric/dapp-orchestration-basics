@@ -48,9 +48,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
       startUpgradable,
     },
     installation: {
-      consume: {
-        orca: orcaInstallation,
-      }
+      consume: { orca: orcaInstallation },
     },
     instance: {
       // @ts-expect-error not a WellKnownName
@@ -61,7 +59,6 @@ export const startOrcaContract = async (permittedPowers, config) => {
   trace('config', config);
   trace('permittedPowers', permittedPowers);
   const installation = await orcaInstallation;
-
 
   console.log('permittedPowers');
   console.log(permittedPowers);
@@ -130,8 +127,8 @@ export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
   trace('getting manifest for orca');
   trace('installKeys');
   trace(installKeys);
-  trace('restoreRef')
-  trace(restoreRef)
+  trace('restoreRef');
+  trace(restoreRef);
   return harden({
     manifest: orcaManifest,
     installations: {

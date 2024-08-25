@@ -11,7 +11,7 @@ services:
       - 1317:1317
     environment:
       DEST: 1
-      DEBUG: "SwingSet:ls,SwingSet:vat"
+      DEBUG: 'SwingSet:ls,SwingSet:vat'
     volumes:
       - .:/workspace
     entrypoint: /workspace/contract/scripts/run-chain.sh
