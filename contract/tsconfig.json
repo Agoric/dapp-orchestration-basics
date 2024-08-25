@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "lib": [
       "ESNext",
       "DOM"
     ],
-    "checkJs": true,
+    "checkJs": false,
     "strict": true,
     "noImplicitAny": false,
     "useUnknownInCatchVariables": false,
@@ -15,10 +15,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "downlevelIteration": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
   },
   "include": [
-    "src",
+    "tools",
     "test"
   ],
   "exclude": [
