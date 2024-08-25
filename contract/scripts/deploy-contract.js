@@ -16,7 +16,6 @@ import { createRequire } from 'module';
 const nodeRequire = createRequire(import.meta.url);
 const { readJSON } = fse;
 
-
 /** @type {import('node:util').ParseArgsConfig['options']} */
 /**
  * @typedef {{
@@ -40,7 +39,7 @@ const options = {
 /**
  * @typedef {{
  *   help: boolean,
- *   builder: string, 
+ *   builder: string,
  *   service: string,
  *   workdir: string,
  *   install: string,
@@ -124,7 +123,7 @@ const main = async (bundleDir = 'bundles') => {
   if (flags.install) {
     const name = stem(flags.install);
     console.log('installing bundle from deploy-contract.js ....');
-    await tools.installBundles([ flags.install ], progress);
+    await tools.installBundles([flags.install], progress);
   }
 
   if (flags.eval) {

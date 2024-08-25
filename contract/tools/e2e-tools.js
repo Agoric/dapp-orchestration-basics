@@ -397,7 +397,7 @@ const runCoreEval = async (
 
   console.log('await voteLatestProposalAndWait', evalPaths);
   const detail = await voteLatestProposalAndWait({ agd, blockTool });
-  console.log("detail", detail)
+  console.log('detail', detail);
   // log(detail.proposal_id, detail.voting_end_time, detail.status);
   log(detail.id, detail.voting_end_time, detail.status);
 
@@ -461,7 +461,7 @@ export const makeE2ETools = async (
     /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
     const bundles = {};
     // for (const [name, rootModPath] of Object.entries(bundleRoots)) {
-    console.log("fullPaths", fullPaths)
+    console.log('fullPaths', fullPaths);
 
     for (const fullPath of fullPaths) {
       const { tx, confirm } = await installBundle(fullPath, {
@@ -473,7 +473,7 @@ export const makeE2ETools = async (
         // bundleId: getBundleId(bundle),
         bundleId: undefined,
       });
-      console.log("confirm", confirm)
+      console.log('confirm', confirm);
       progress({
         // name,
         id: fullPath,
