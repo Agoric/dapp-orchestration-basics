@@ -47,6 +47,11 @@ export const startOrcaContract = async (permittedPowers, config) => {
       cosmosInterchainService,
       startUpgradable,
     },
+    installation: {
+      consume: {
+        orca: orcaInstallation,
+      }
+    },
     instance: {
       // @ts-expect-error not a WellKnownName
       produce: { orca: produceInstance },
@@ -55,17 +60,8 @@ export const startOrcaContract = async (permittedPowers, config) => {
 
   trace('config', config);
   trace('permittedPowers', permittedPowers);
-  const {
-    // must be supplied by caller or template-replaced
-    bundleID = Fail`no bundleID`,
-  } = config?.options?.[contractName] ?? {};
+  const installation = await orcaInstallation;
 
-  // agoricNames gets updated each time; the promise space only once XXXXXXX
-
-  const installation = await installContract(permittedPowers, {
-    name: contractName,
-    bundleID,
-  });
 
   console.log('permittedPowers');
   console.log(permittedPowers);
@@ -134,10 +130,12 @@ export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
   trace('getting manifest for orca');
   trace('installKeys');
   trace(installKeys);
+  trace('restoreRef')
+  trace(restoreRef)
   return harden({
     manifest: orcaManifest,
     installations: {
-      orca: restoreRef(installKeys),
+      [contractName]: restoreRef(installKeys[contractName]),
     },
   });
 };
