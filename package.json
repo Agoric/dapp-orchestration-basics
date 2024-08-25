@@ -27,11 +27,14 @@
     "lint": "yarn lint:format && yarn workspaces foreach --all run lint",
     "lint:fix": "yarn format && yarn workspaces foreach --all run lint:fix",
     "test": "yarn workspaces foreach --all run test",
-    "build": "yarn workspaces foreach --all run build"
+    "build": "yarn workspaces foreach --all run build",
+    "postinstall": "npx patch-package"
   },
   "devDependencies": {
+    "@endo/ses-ava": "^1.2.4",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.11",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
   },
   "prettier": {
@@ -41,5 +44,20 @@
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]
-  }
+  },
+  "nohoist": [
+    "**/ava",
+    "**/ava/**",
+    "**/tsx",
+    "**/tsx/**",
+    "contract/**",
+    "contract/**/@endo/**",
+    "**/@endo/ses-ava",
+    "**/@noble/hashes",
+    "**/@noble/hashes/**",
+    "**/starshipjs",
+    "**/starshipjs/**",
+    "**/@agoric/cosmic-proto",
+    "**/@agoric/cosmic-proto/**"
+  ]
 }
