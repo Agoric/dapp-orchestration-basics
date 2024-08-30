@@ -30,7 +30,7 @@
     "@agoric/time": "dev",
     "@agoric/vat-data": "dev",
     "@agoric/xsnap": "dev",
-    "@agoric/zone": "^0.2.2",
+    "@agoric/zone": "dev",
     "@cosmjs/amino": "^0.32.3",
     "@cosmjs/proto-signing": "^0.32.3",
     "@endo/eslint-plugin": "^2.2.0",
