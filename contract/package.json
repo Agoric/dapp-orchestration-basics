@@ -17,7 +17,6 @@
     "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
     "deploy": "make dev-working",
     "test": "ava --verbose",
-    "test2": "ava --verbose ./test/orca-multichain.test2.ts",
     "lint": "tsc && eslint '**/*.js'",
     "lint:fix": "eslint --fix '**/*.js'"
   },
@@ -97,8 +96,7 @@
     },
     "files": [
       "test/**/test-*.*",
-      "test/**/*.test.*",
-      "**/*.test.ts"
+      "test/**/*.test.*"
     ],
     "require": [
       "ts-node/register/transpile-only"
