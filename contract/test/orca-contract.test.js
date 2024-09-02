@@ -16,13 +16,20 @@ import { makeMockTools } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
 
+import { makeHeapZone } from '@agoric/zone';
+import { prepareSwingsetVowTools } from '@agoric/vow/vat.js';
+
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 
-const myRequire = createRequire(import.meta.url);
-const contractPath = myRequire.resolve(`../src/orca.contract.js`);
+const nodeRequire = createRequire(import.meta.url);
+
+const contractPath = nodeRequire.resolve(`../src/orca.contract.js`);
 const scriptRoot = {
-  orca: myRequire.resolve('../src/orca.proposal.js'),
+  orca: nodeRequire.resolve('../src/orca.proposal.js'),
 };
+// const scriptRoots = {
+//   postalService: nodeRequire.resolve('../src/postal-service.proposal.js'),
+// };
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
 // @ts-expect-error - XXX what's going on here??
@@ -41,6 +48,12 @@ const makeTestContext = async t => {
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
   const tools = await makeMockTools(t, bundleCache);
+
+  console.log('tools');
+  console.log(tools);
+
+  const rootZone = makeHeapZone();
+  const vowTools = prepareSwingsetVowTools(rootZone.subZone('vows'));
 
   const makeDummyStorageNode = (nodeName = 'rootNode') => {
     return Far('DummyStorageNode', {
@@ -201,6 +214,55 @@ const makeTestContext = async t => {
     },
   });
 
+  const localchain = Far('DummyLocalchain', {
+    getChainHub: async () => {
+      const chainHub = {
+        registerChain: async (name, details) => {
+          console.log(`chain registered: ${name}`, details);
+        },
+        getChain: async () => {
+          const state = harden({
+            name: 'agoric',
+            chainId: `agoriclocal`,
+            denom: 'agoric',
+            expectedAddressPrefix: 'agoric',
+            details: `agoric chain details`,
+            stakingTokens: [{ denom: 'agoric' }],
+          });
+
+          return harden({
+            ...state,
+            makeAccount: () =>
+              Far('Account', {
+                getChainId: () => state.chainId,
+                getAccountAddress: () => `${state.name}AccountAddress`,
+                getAddress: () => `${state.name}AccountAddress`,
+                getBalance: () => `1000${state.denom}`,
+                monitorTransfers: () => ``,
+              }),
+            getChainInfo: () =>
+              Far('ChainInfo', {
+                getChainId: () => state.chainId,
+                getDenom: () => state.denom,
+                getExpectedAddressPrefix: () => state.expectedAddressPrefix,
+              }),
+          });
+        },
+      };
+      return chainHub;
+    },
+    makeAccount: async name => {
+      const chainHub = await E(localchain).getChainHub();
+      const chain = await E(chainHub).getChain(name);
+      return E(chain).makeAccount();
+    },
+    getChainInfo: async name => {
+      const chainHub = await E(localchain).getChainHub();
+      const chain = await E(chainHub).getChain(name);
+      return E(chain).getChainInfo();
+    },
+  });
+
   return {
     zoe,
     bundle,
@@ -210,6 +272,8 @@ const makeTestContext = async t => {
     agoricNames,
     storageNode: makeDummyStorageNode(),
     marshaller: makeDummyMarshaller(),
+    vowTools,
+    localchain,
     ...tools,
   };
 };
@@ -255,18 +319,13 @@ test('Start Orca contract', async t => {
   const installation = E(zoe).install(bundle);
 
   const privateArgs = harden({
-    // orchestration: Far('DummyOrchestration'),
-    // cosmosInterchainService: Far('DummyOrchestration'),
     cosmosInterchainService,
     orchestrationService: cosmosInterchainService,
-    // storageNode: Far('DummyStorageNode'),
     storageNode,
-    // marshaller: Far('DummyMarshaller'),
     marshaller,
     timer: Far('DummyTimer'),
     timerService: Far('DummyTimer'),
     localchain: Far('Dumm'),
-    // agoricNames: Far('agoricNames')
     agoricNames,
   });
 
@@ -284,8 +343,8 @@ test('Start Orca contract using core-eval', async t => {
   const { runCoreEval, installBundles, makeQueryTool } = t.context;
   // const { runCoreEval, installBundles } = t.context;
 
-  t.log('run core-eval to start (dummy) orchestration');
-
+  t.log('run core-eval to start (dummy) orchestration 2');
+  t.log('runCoreEval:', runCoreEval);
   t.log('before core eval');
   await runCoreEval({
     name: 'start-orchestration',
@@ -303,14 +362,22 @@ test('Start Orca contract using core-eval', async t => {
   t.log('bundleID');
   t.log(bundleID);
   const name = 'orca';
-  const { status } = await runCoreEval({
-    name,
-    behavior: startOrcaContract,
-    entryFile: scriptRoot.orca,
-    config: { options: { orca: { bundleID } } },
-  });
-  console.log(status);
-  t.is(status, 'PROPOSAL_STATUS_PASSED');
+  try {
+    const result = await runCoreEval({
+      name,
+      behavior: startOrcaContract,
+      entryFile: scriptRoot.orca,
+      config: {
+        options: { orca: { bundleID } },
+      },
+    });
+
+    t.log('runCoreEval finished with status:', result);
+    t.is(result.status, 'PROPOSAL_STATUS_PASSED');
+  } catch (error) {
+    t.log('Error during runCoreEval:', error);
+    throw error;
+  }
 
   const qt = makeQueryTool();
   const instance = await qt
@@ -384,9 +451,11 @@ const orchestrationAccountScenario = test.macro({
       agoricNames,
       storageNode,
       marshaller,
+      vowTools: vt,
     } = t.context;
     t.log('installing the contract...');
-    const installation = E(zoe).install(bundle);
+    t.is('a', 'a');
+    const installation = await E(zoe).install(bundle);
 
     const privateArgs = harden({
       cosmosInterchainService,
@@ -429,18 +498,25 @@ const orchestrationAccountScenario = test.macro({
       initialInvitation,
       makeAccountOffer,
       undefined,
-      { id: offerId },
+      { chainName: 'osmosis' },
     );
     t.log('initial user seat:', initialUserSeat);
 
     t.log('getting offer result...');
-    const offerResult = await E(initialUserSeat).getOfferResult();
+    const offerResult = await vt.when(E(initialUserSeat).getOfferResult());
+    const { invitationMakers, publicSubscribers } = offerResult;
+
     t.log('offer result:', offerResult);
     t.truthy(offerResult, 'Offer result should exist');
+    console.log('invitationMakers:', invitationMakers);
+    console.log('publicSubscribers:', publicSubscribers);
+    console.log(
+      'E(initialUserSeat).hasExited',
+      await vt.when(E(initialUserSeat).hasExited()),
+    );
 
     const qt = makeQueryToolMock();
     const wallet = 'test-wallet';
-    // log vstorage state before querying
     await logVstorageState(t, qt, 'published.agoricNames');
 
     const { address, currentWalletRecord } = await queryVstorage(
@@ -471,9 +547,14 @@ const orchestrationAccountScenario = test.macro({
       continuingInvitation,
       continuingOffer,
       undefined,
-      { previousOffer: offerId },
+      {
+        chainName: 'osmosis',
+        previousOffer: offerId,
+      },
     );
-    const continuingOfferResult = await E(continuingUserSeat).getOfferResult();
+    const continuingOfferResult = await vt.when(
+      continuingUserSeat.getOfferResult(),
+    );
 
     t.truthy(continuingOfferResult, 'continuing offer should produce a result');
     t.log('continuing offer result', continuingOfferResult);
