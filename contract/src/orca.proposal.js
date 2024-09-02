@@ -36,7 +36,7 @@ export const allValues = async obj => {
 export const startOrcaContract = async (permittedPowers, config) => {
   trace('startOrcaContract()... 0.0.93');
   console.log(permittedPowers);
-
+  console.log(config);
   const {
     consume: {
       agoricNames,
@@ -58,11 +58,29 @@ export const startOrcaContract = async (permittedPowers, config) => {
 
   trace('config', config);
   trace('permittedPowers', permittedPowers);
-  const installation = await orcaInstallation;
+  trace('produceInstance:');
+  trace('orcaInstallation', orcaInstallation);
+
+  // NOTE: during contract tests, orcaInstallation doesn't provide the installation, config is also undefined during actual deployment
+  // this ensures both work, with config, and without. Revisit this to see if there is a way to coerce this without conditional check
+  let installation;
+  if (config.options == undefined) {
+    trace('config is undefined, assigning installation to orcaInstallation');
+    installation = await orcaInstallation;
+  } else {
+    trace('config is NOT undefined, using config.options');
+    installation = await installContract(permittedPowers, {
+      name: contractName,
+      bundleID: config.options[contractName].bundleID,
+    });
+  }
+
+  console.log('installation:');
+  console.log(installation);
 
   console.log('permittedPowers');
   console.log(permittedPowers);
-  console.log('from inside startOrcaContract:', installation);
+  console.log('from inside startOrcaContract:', produceInstance);
 
   console.log(cosmosInterchainService);
   console.log(agoricNames); // make storage node
