@@ -499,15 +499,22 @@ export const makeE2ETools = async (
     if ('builderPath' in info) {
       throw Error('@@TODO: agoric run style');
     }
+
+    console.log('info');
+    console.log(info);
     const { name, title = name, description = title } = info;
+    // NOTE: name only comes through as orca, not the actual file names
     const eval0 = {
-      code: `/tmp/contracts/${name}.js`,
-      permit: `/tmp/contracts/${name}-permit.json`,
+      // code: `/tmp/contracts/${name}.js`,
+      // permit: `/tmp/contracts/${name}-permit.json`,
+      code: `/tmp/contracts/startOrcaContract.js`,
+      permit: `/tmp/contracts/startOrcaContract-permit.json`,
     };
 
     const detail = { evals: [eval0], title, description };
     // await runPackageScript('build:deployer', entryFile);
-    const proposal = await runCoreEval(log, detail, { agd, blockTool });
+    console.log('log:', log);
+    const proposal = await runCoreEval(console.log, detail, { agd, blockTool });
     return proposal;
   };
 
