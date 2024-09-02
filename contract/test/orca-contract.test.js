@@ -16,6 +16,9 @@ import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
 
+import { makeHeapZone } from '@agoric/zone';
+import { prepareSwingsetVowTools } from '@agoric/vow/vat.js';
+
 /** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 /**
  * @import {ChainInfo, IBCConnectionInfo, IcaAccount, MakeCosmosInterchainService} from '@agoric/orchestration';
@@ -23,11 +26,15 @@ import { startOrchCoreEval } from '../tools/startOrch.js';
  * @import {TargetRegistration} from '@agoric/vats/src/bridge-target.js';
  */
 
-const myRequire = createRequire(import.meta.url);
-const contractPath = myRequire.resolve(`../src/orca.contract.js`);
+const nodeRequire = createRequire(import.meta.url);
+
+const contractPath = nodeRequire.resolve(`../src/orca.contract.js`);
 const scriptRoot = {
-  orca: myRequire.resolve('../src/orca.proposal.js'),
+  orca: nodeRequire.resolve('../src/orca.proposal.js'),
 };
+// const scriptRoots = {
+//   postalService: nodeRequire.resolve('../src/postal-service.proposal.js'),
+// };
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
 // @ts-expect-error - XXX what's going on here??
@@ -94,6 +101,7 @@ const makeTestContext = async t => {
   const zones = {
     cosmos: powers.zone.subZone('cosmosInterchainService'),
   };
+
   const cVowTools = prepareVowTools(zones.cosmos);
 
   /** @type {ReturnType<MakeCosmosInterchainService>} */
@@ -223,8 +231,8 @@ test('Start Orca contract using core-eval', async t => {
   const { runCoreEval, installBundles, makeQueryTool } = t.context;
   // const { runCoreEval, installBundles } = t.context;
 
-  t.log('run core-eval to start (dummy) orchestration');
-
+  t.log('run core-eval to start (dummy) orchestration 2');
+  t.log('runCoreEval:', runCoreEval);
   t.log('before core eval');
   await runCoreEval({
     name: 'start-orchestration',
@@ -242,14 +250,22 @@ test('Start Orca contract using core-eval', async t => {
   t.log('bundleID');
   t.log(bundleID);
   const name = 'orca';
-  const { status } = await runCoreEval({
-    name,
-    behavior: startOrcaContract,
-    entryFile: scriptRoot.orca,
-    config: { options: { orca: { bundleID } } },
-  });
-  console.log(status);
-  t.is(status, 'PROPOSAL_STATUS_PASSED');
+  try {
+    const result = await runCoreEval({
+      name,
+      behavior: startOrcaContract,
+      entryFile: scriptRoot.orca,
+      config: {
+        options: { orca: { bundleID } },
+      },
+    });
+
+    t.log('runCoreEval finished with status:', result);
+    t.is(result.status, 'PROPOSAL_STATUS_PASSED');
+  } catch (error) {
+    t.log('Error during runCoreEval:', error);
+    throw error;
+  }
 
   const qt = makeQueryTool();
   const instance = await qt
