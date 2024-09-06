@@ -18,7 +18,8 @@
     "deploy": "make dev-working",
     "test": "ava",
     "lint": "tsc && eslint '**/*.js'",
-    "lint:fix": "eslint --fix '**/*.js'"
+    "lint:fix": "eslint --fix '**/*.js'",
+    "e2e": "make e2e"
   },
   "devDependencies": {
     "@agoric/deploy-script-support": "dev",

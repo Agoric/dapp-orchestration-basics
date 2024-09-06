@@ -7,7 +7,7 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1mqvg26gpv6xzch2v0wpv569md3c2z4cdxq9clz
+ADDR=agoric1jwuskhnxkjw50vnx3ak8qwmvy8f43sfdxnd438
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -262,7 +262,7 @@ e2e:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
-	make copy-bn-js  
+	# make copy-bn-js  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"

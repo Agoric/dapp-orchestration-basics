@@ -1,7 +1,7 @@
-e2e: build build
-	yarn workspace dapp-agoric-orca-contract test; yarn workspace dapp-agoric-orca-contract build; yarn workspace dapp-agoric-orca-contract e2e
+e2e: test-orca build build
+	yarn workspace dapp-agoric-orca-contract e2e
 build:
-	yarn workspace dapp-agoric-orca-contract test; yarn workspace dapp-agoric-orca-contract build;
+	yarn workspace dapp-agoric-orca-contract build:deployer;
 redeploy:
 	yarn workspace dapp-agoric-orca-contract deployc
 test-orca:
