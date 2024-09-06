@@ -6781,10 +6781,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@github:paulmillr/noble-hashes#ae060daa6252f3ff2aa2f84e887de0aab491281d":
-  version: 1.4.0
-  resolution: "@noble/hashes@https://github.com/paulmillr/noble-hashes.git#commit=ae060daa6252f3ff2aa2f84e887de0aab491281d"
-  checksum: 10c0/74f690d8f4d09c11fb521a6e748274d3371ff1540d08635d0e3bdd343ec9c410d1657ca783b10e1ef3ad284578cb6f5f6456f4955ac730d691b7cb5830ae6f87
+"@noble/hashes@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@noble/hashes@npm:1.5.0"
+  checksum: 10c0/1b46539695fbfe4477c0822d90c881a04d4fa2921c08c552375b444a48cac9930cb1ee68de0a3c7859e676554d0f3771999716606dc4d8f826e414c11692cdd9
   languageName: node
   linkType: hard
 
