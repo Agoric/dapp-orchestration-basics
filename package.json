@@ -11,7 +11,6 @@
   ],
   "resolutions-note": "work-around for https://github.com/Agoric/agoric-sdk/issues/8621",
   "resolutions": {
-    "@noble/hashes": "https://github.com/paulmillr/noble-hashes.git#ae060daa6252f3ff2aa2f84e887de0aab491281d",
     "esm": "https://github.com/agoric-labs/esm.git#Agoric-built"
   },
   "scripts": {
@@ -60,5 +59,8 @@
     "**/starshipjs/**",
     "**/@agoric/cosmic-proto",
     "**/@agoric/cosmic-proto/**"
-  ]
+  ],
+  "dependencies": {
+    "@noble/hashes": "^1.5.0"
+  }
 }
