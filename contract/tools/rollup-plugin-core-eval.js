@@ -3,6 +3,8 @@
 import '@endo/init';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 
+const trace = (...msgs) => console.log('[rollup-plugin-core-eval]', ...msgs);
+
 export const coreEvalGlobals = {
   E: 'E',
   Far: 'Far',
@@ -48,20 +50,23 @@ export const configureBundleID = ({ name, rootModule, cache }) => {
   return {
     name: 'configureBundleID',
     transform: async (code, _id) => {
+      trace('transform', name, code, _id);
       // passes in code
-      const bundle = await bundleCacheP.then(c => c.load(rootModule, name));
-      console.log(bundle.endoZipBase64Sha512);
-      console.log('rootModule: ', rootModule);
-      console.log('name: ', name);
+      const bundle = await bundleCacheP.then(c =>
+        c.load(rootModule, name, trace, { elideComments: true }),
+      );
+      trace(bundle.endoZipBase64Sha512);
+      trace('rootModule: ', rootModule);
+      trace('name: ', name);
       const test = JSON.stringify(`z${bundle.endoZipBase64Sha512}`);
-      console.log(test);
+      trace(test);
       const revised = code.replace(
         pattern,
         `bundleID = ${JSON.stringify(`b1-${bundle.endoZipBase64Sha512}`)}`,
         // test,
         // () => `b1-${test}`
       );
-      console.log('revised === code:', revised === code);
+      trace('revised === code:', revised === code);
       if (revised === code) return null;
       return { code: revised };
     },
