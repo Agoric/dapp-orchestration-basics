@@ -398,7 +398,7 @@ const orchestrationAccountAndFundScenario = test.macro({
       toCreateAndFund,
       { give: { Deposit } },
       { Deposit: payment },
-      { chainName },
+      { chainName, denom: 'ubld' },
     );
 
     const offerResult = await vt.when(E(seat).getOfferResult());
