@@ -185,15 +185,18 @@ const makeTestContext = async t => {
                     harden({
                       chainId: state.chainId,
                       value: `${state.name}AccountAddress`,
-                      encoding: 'bech32', // or 'ethereum', based on your requirements
+                      encoding: 'bech32',
                     }),
                   getBalance: () => `1000${state.denom}`,
+                  getLocalAddress: () =>  `${state.name}LocalAccountAddress`,
+                  getRemoteAddress: () =>  `${state.name}RemoteAccountAddress`,
                 }),
               getChainInfo: () =>
                 Far('ChainInfo', {
                   getChainId: () => state.chainId,
                   getDenom: () => state.denom,
                   getExpectedAddressPrefix: () => state.expectedAddressPrefix,
+                  
                 }),
             });
           }
@@ -639,7 +642,9 @@ const orchestrationAccountAndFundScenario = test.macro({
         Deposit: withdrawnDeposit,
       },
       {
-        id: offerId,
+        chainName: 'osmosis',
+        denom: 'ubld',
+        id: offerId, //delete
       },
     );
     t.log('initial user seat:', initialUserSeat);
