@@ -7,7 +7,9 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1mqvg26gpv6xzch2v0wpv569md3c2z4cdxq9clz
+ADDR=agoric1vck7hw7wak2y7vv3pnf7am6kmgl7nwgz3ltsla
+# ADDR=agoric125d8s0tamx50gpqdd3m7f5gtkzkcnjs0ehsujr
+
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -154,6 +156,11 @@ fund: fund-provision-pool check-balance
 
 fund-osmo:
 	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx bank send faucet ${CLIENT_OSMO_ADDR} 9870000000uosmo --fees 1000uosmo -y;
+
+fund-osmo-ibc:
+	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx ibc-transfer transfer transfer channel-0 ${CLIENTADDR} 1000000uosmo --from faucet --chain-id osmosislocal --node http://127.0.0.1:26657 --fees 5000uosmo -y;
+	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx ibc-transfer transfer transfer channel-1 ${CLIENTADDR} 1000000uosmo --from faucet --chain-id osmosislocal --node http://127.0.0.1:26657 --fees 5000uosmo -y;
+
 check-balance:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd q bank balances $(ADDR)
 fund-wallet:
@@ -257,14 +264,15 @@ e2e:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v /root/*"
 	yarn run build:deployer
 	make copy-project  
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn install"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
-	yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn install"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @endo/patterns@1.3.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn build:deployer"
+	yarn node scripts/deploy-contract.js --install /root/src/orca.contract.js --eval /root/src/orca.proposal.js
 # todo: figure out why this sequence # is always off by 1 forcing a retry
+# yarn node script/deploy-contract.js
 
 lint:
 	yarn lint --fix-dry-run --ignore-pattern "*patch*" 
