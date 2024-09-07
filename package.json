@@ -59,5 +59,8 @@
     "**/starshipjs/**",
     "**/@agoric/cosmic-proto",
     "**/@agoric/cosmic-proto/**"
-  ]
+  ],
+  "dependencies": {
+    "@noble/hashes": "^1.5.0"
+  }
 }
