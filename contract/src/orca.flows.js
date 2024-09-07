@@ -6,6 +6,8 @@
  * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Transfer} from './orca.contract.js';
+ * @import {DenomArg} from '@agoric/orchestration';
+
  */
 
 import { M, mustMatch } from '@endo/patterns';
@@ -20,7 +22,7 @@ const trace = makeTracer('OrchFlows');
  * @param {Orchestrator} orch
  * @param {unknown} _ctx
  * @param {ZCFSeat} seat
- * @param {{ chainName: string }} offerArgs
+ * @param {{ chainName: string, denom: string }} offerArgs
  */
 export const makeAccount = async (orch, _ctx, seat, offerArgs) => {
   trace('version 0.1.36');
@@ -33,7 +35,6 @@ export const makeAccount = async (orch, _ctx, seat, offerArgs) => {
   trace(chain);
   const chainAccount = await chain.makeAccount();
   trace('chainAccount', chainAccount);
-
   return chainAccount.asContinuingOffer();
 };
 harden(makeAccount);
@@ -44,30 +45,29 @@ harden(makeAccount);
  *
  * @param {Orchestrator} orch
  * @param {object} ctx
- * @param {Transfer} ctx.transfer
+ * @param {ZoeTools['localTransfer']} ctx.localTransfer
  * @param {StorageNode['setValue']} ctx.setValue
  * @param {ZCFSeat} seat
- * @param {{ chainName: string }} offerArgs
+ * @param {{ chainName: string, denom: DenomArg }} offerArgs
  */
 export const makeCreateAndFund = async (
   orch,
   {
-    transfer,
-    // write,
-    // makeChildNode,
+    localTransfer,
     setValue,
   },
   seat,
-  { chainName },
+  { chainName, denom },
 ) => {
+
+  trace(`invoked makeCreateAndFund with chain ${chainName}, and denom ${denom}`)
   const { give } = seat.getProposal();
   const [[_kw, amt]] = Object.entries(give);
   trace('orch', orch);
   trace('_kw', _kw);
   trace('amt', amt);
   trace('give:', give);
-  // trace("write:", write);
-  // trace("makeChildNode:", makeChildNode);
+
   trace('setValue:', setValue);
 
   const [agoric, chain] = await Promise.all([
@@ -93,24 +93,29 @@ export const makeCreateAndFund = async (
 
   // vstorage tests
   trace('writing');
-  // setValue(`status x`)
-  // const node1 = await makeChildNode(`orca-createAndFund-${localAddress.value}-${localAddress.value}`);
 
   trace('localAddress', localAddress);
   trace('remoteAddress', remoteAddress);
-  trace('fund new orch account');
+  trace('fund new orch account 2');
   trace('seat', seat);
-  trace('transfer', transfer);
-  await transfer(
-    seat,
-    localAccount,
-    remoteAccount,
-    give,
-    amt,
-    localAddress,
+
+  await localTransfer(seat, localAccount, give);
+  trace('after transfer');
+  
+  // const localChainBalance = await localAccount.getBalance("BLD"); //'ubld'
+  // trace("localChainBalance", localChainBalance); 
+
+  await localAccount.transfer(
+    {
+      denom: 'ubld',
+      value: amt.value / 2n,
+    },
     remoteAddress,
   );
   seat.exit();
+  const remoteChainBalance = await remoteAccount.getBalance('uosmo');
+  console.log("remoteChainBalance", remoteChainBalance);
+  
   return remoteAccount.asContinuingOffer();
 };
 harden(makeCreateAndFund);
