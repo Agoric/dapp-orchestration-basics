@@ -16,9 +16,10 @@
     "build:deployer": "rollup -c rollup.config.mjs",
     "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
     "deploy": "make dev-working",
-    "test": "ava --verbose",
+    "test": "ava --verbose ./test/orca-contract.test.js",
     "lint": "tsc && eslint '**/*.js'",
-    "lint:fix": "eslint --fix '**/*.js'"
+    "lint:fix": "eslint --fix '**/*.js'",
+    "_postinstall": "cd node_modules/@noble; npx tsc --init; npm install @noble/hashes; npx tsc; yarn; npm run build"
   },
   "devDependencies": {
     "@agoric/async-flow": "^0.1.1-u17.1",
@@ -129,6 +130,13 @@
   ],
   "resolutions": {
     "node-fetch": "2.6.12",
-    "axios": "1.6.7"
+    "axios": "1.6.7",
+    "@noble/hashes": "https://github.com/paulmillr/noble-hashes.git#ae060daa6252f3ff2aa2f84e887de0aab491281d"
+  },
+  "_moduleAliases": {
+    "starshipjs": "../node_modules/starshipjs"
+  },
+  "paths": {
+    "starshipjs": "../node_modules/starshipjs"
   }
 }
