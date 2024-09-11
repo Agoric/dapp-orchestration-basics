@@ -188,15 +188,14 @@ const makeTestContext = async t => {
                       encoding: 'bech32',
                     }),
                   getBalance: () => `1000${state.denom}`,
-                  getLocalAddress: () =>  `${state.name}LocalAccountAddress`,
-                  getRemoteAddress: () =>  `${state.name}RemoteAccountAddress`,
+                  getLocalAddress: () => `${state.name}LocalAccountAddress`,
+                  getRemoteAddress: () => `${state.name}RemoteAccountAddress`,
                 }),
               getChainInfo: () =>
                 Far('ChainInfo', {
                   getChainId: () => state.chainId,
                   getDenom: () => state.denom,
                   getExpectedAddressPrefix: () => state.expectedAddressPrefix,
-                  
                 }),
             });
           }
