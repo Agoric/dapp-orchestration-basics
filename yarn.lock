@@ -10457,13 +10457,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aggregate-error@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "aggregate-error@npm:3.1.0"
+"aggregate-error@npm:3.0.0":
+  version: 3.0.0
+  resolution: "aggregate-error@npm:3.0.0"
   dependencies:
     clean-stack: "npm:^2.0.0"
-    indent-string: "npm:^4.0.0"
-  checksum: 10c0/a42f67faa79e3e6687a4923050e7c9807db3848a037076f791d10e092677d65c1d2d863b7848560699f40fc0502c19f40963fb1cd1fb3d338a7423df8e45e039
+    indent-string: "npm:^3.2.0"
+  checksum: 10c0/1bc02a239b28f931ec8a3de4e34c951876f75d4a8a8caf8a677ff134bc1c10779f8fdb1eeb01597e2791e58a188ee9f436472642b910bacc953a6df2907b8de2
   languageName: node
   linkType: hard
 
@@ -15012,10 +15012,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indent-string@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "indent-string@npm:4.0.0"
-  checksum: 10c0/1e1904ddb0cb3d6cce7cd09e27a90184908b7a5d5c21b92e232c93579d314f0b83c246ffb035493d0504b1e9147ba2c9b21df0030f48673fba0496ecd698161f
+"indent-string@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "indent-string@npm:3.2.0"
+  checksum: 10c0/91b6d61621d24944c5c4d365d6f1ff4a490264ccaf1162a602faa0d323e69231db2180ad4ccc092c2f49cf8888cdb3da7b73e904cc0fdeec40d0bfb41ceb9478
   languageName: node
   linkType: hard
 

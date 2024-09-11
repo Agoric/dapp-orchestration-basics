@@ -49,7 +49,7 @@ const makeAccountScenario = test.macro({
     } = t.context;
 
     const agoricAddr = wallets[chainName];
-    console.log("agoricAddr:", agoricAddr)
+    console.log('agoricAddr:', agoricAddr);
     const wdUser1 = await provisionSmartWallet(agoricAddr, {
       BLD: 100n,
       IST: 100n,
@@ -114,12 +114,15 @@ const makeAccountScenario = test.macro({
 });
 
 const makeCreateAndFundScenario = test.macro({
-  title: (_, chainName, denom) => `Create and fund account on ${chainName} with denom: ${denom}`,
+  title: (_, chainName, denom) =>
+    `Create and fund account on ${chainName} with denom: ${denom}`,
   exec: async (t, chainName, denom) => {
     const config = chainConfig[chainName];
     if (!config) return t.fail(`Unknown chain: ${chainName}`);
 
-    console.log(`testing makeCreateAndFundScenario for chain ${chainName}, and denom ${denom}`);
+    console.log(
+      `testing makeCreateAndFundScenario for chain ${chainName}, and denom ${denom}`,
+    );
     const {
       wallets,
       provisionSmartWallet,
@@ -128,7 +131,7 @@ const makeCreateAndFundScenario = test.macro({
     } = t.context;
 
     const agoricAddr = wallets[chainName];
-    console.log("agoricAddr:", agoricAddr)
+    console.log('agoricAddr:', agoricAddr);
     const wdUser1 = await provisionSmartWallet(agoricAddr, {
       BLD: 100n,
       IST: 100n,
@@ -153,7 +156,7 @@ const makeCreateAndFundScenario = test.macro({
     );
     const brand = Object.fromEntries(brands).BLD;
 
-    console.log("brand::", brand)
+    console.log('brand::', brand);
 
     const amount = AmountMath.make(brand, 10n);
 
@@ -162,7 +165,7 @@ const makeCreateAndFundScenario = test.macro({
       invitationSpec: {
         source: 'agoricContract',
         instancePath: [contractName],
-        callPipe: [['makeCreateAndFundInvitation']], 
+        callPipe: [['makeCreateAndFundInvitation']],
       },
       offerArgs: { chainName, denom },
       proposal: {
@@ -171,7 +174,7 @@ const makeCreateAndFundScenario = test.macro({
         exit: { onDemand: null },
       },
     });
-    
+
     const currentWalletRecord = await retryUntilCondition(
       () => vstorageClient.queryData(`published.wallet.${agoricAddr}.current`),
       ({ offerToPublicSubscriberPaths }) =>
@@ -212,10 +215,9 @@ const makeCreateAndFundScenario = test.macro({
   },
 });
 
-// test.serial(makeAccountScenario, 'agoric');
-// test.serial(makeAccountScenario, 'cosmoshub');
-// test.serial(makeAccountScenario, 'osmosis');
+test.serial(makeAccountScenario, 'agoric');
+test.serial(makeAccountScenario, 'cosmoshub');
+test.serial(makeAccountScenario, 'osmosis');
 
-// test.serial(makeCreateAndFundScenario, 'agoric', 'ubld');
 // use IBC/E7827844CB818EE9C4DB2C159F1543FF62B26213B44CE8029D5CEFE52F0EE596
 test.serial(makeCreateAndFundScenario, 'osmosis', 'ubld');

@@ -52,15 +52,13 @@ harden(makeAccount);
  */
 export const makeCreateAndFund = async (
   orch,
-  {
-    localTransfer,
-    setValue,
-  },
+  { localTransfer, setValue },
   seat,
   { chainName, denom },
 ) => {
-
-  trace(`invoked makeCreateAndFund with chain ${chainName}, and denom ${denom}`)
+  trace(
+    `invoked makeCreateAndFund with chain ${chainName}, and denom ${denom}`,
+  );
   const { give } = seat.getProposal();
   const [[_kw, amt]] = Object.entries(give);
   trace('orch', orch);
@@ -101,9 +99,9 @@ export const makeCreateAndFund = async (
 
   await localTransfer(seat, localAccount, give);
   trace('after transfer');
-  
+
   // const localChainBalance = await localAccount.getBalance("BLD"); //'ubld'
-  // trace("localChainBalance", localChainBalance); 
+  // trace("localChainBalance", localChainBalance);
 
   await localAccount.transfer(
     {
@@ -114,8 +112,8 @@ export const makeCreateAndFund = async (
   );
   seat.exit();
   const remoteChainBalance = await remoteAccount.getBalance('uosmo');
-  console.log("remoteChainBalance", remoteChainBalance);
-  
+  console.log('remoteChainBalance', remoteChainBalance);
+
   return remoteAccount.asContinuingOffer();
 };
 harden(makeCreateAndFund);

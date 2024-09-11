@@ -118,7 +118,7 @@ const Orchestration = () => {
         addNotification!,
         selectedChain,
         'makeCreateAndFundInvitation',
-        { chainName: selectedChain, denom: "ubld" },
+        { chainName: selectedChain, denom: 'ubld' },
         setLoadingCreateAndFund,
         handleToggle,
         setStatusText,
