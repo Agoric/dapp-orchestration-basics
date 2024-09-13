@@ -16,11 +16,13 @@ test('makeNameProxy makes NameHub lookup convenient', async t => {
 
   const A = makeNameProxy(agoricNames);
 
-  const ab = await A.brand.Atom;
+  // const ab = await A.brand.Atom;
+  const ab = await /** @type {any} */ (A).brand.Atom;
   t.log('brand', ab);
   t.is(ab, atomBrand);
 
-  const b = await A.brand;
+  // const b = await A.brand;
+  const b = await /** @type {any} */ (A).brand;
   t.log('hub', b);
   t.is(b, kb.nameHub);
 });

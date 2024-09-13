@@ -7,8 +7,14 @@ import { Fail } from '@endo/errors';
 import { E } from '@endo/far';
 import { M } from '@endo/patterns';
 import * as flows from './orca.flows.js';
-
-import '@agoric/zoe/src/zoeService/types-ambient.js';
+// import {ZCF} from "@agoric/zoe/src/contractFacet/types-ambient.js"
+// import '@agoric/zoe/src/zoeService/types-ambient.js';
+// import '@agoric/zoe/src/contractFacet/types-ambient.js';
+// import '@agoric/vats/src/core/types-ambient.js';
+// import '@agoric/vow/src/types.js';
+// import { Remote } from '@agoric/internal/src/types.js';
+// import '@agoric/orchestration/src/types.js';
+// import '@agoric/orchestration/src/exos/int'
 
 /**
  * @import {GuestOf} from '@agoric/async-flow';
@@ -19,6 +25,34 @@ import '@agoric/zoe/src/zoeService/types-ambient.js';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Baggage} from '@agoric/vat-data';
  * @import {Zone} from '@agoric/zone';
+ * @import {Remote} from '@agoric/vow';
+ * @import {CosmosInterchainService} from '@agoric/orchestration';
+ * @import {TimerService} from '@agoric/time';
+ * @import {NameHub} from '@agoric/vats';
+ *
+ */
+
+// /**
+//  * @typedef {import('@agoric/zoe/src/').ZCF<Record<string, unknown>>} OrcaZCF
+//  */
+
+/**
+ * @typedef {import('@agoric/vats/src/localchain.js').LocalChain} LocalChain
+ * @typedef {import('@agoric/zoe/src/zoeService/utils.js').ContractStartFunction} ContractStartFunction
+ */
+
+// /**
+//  * @typedef {import('@agoric/zoe/src/contractFacet/types-ambient.js').ZCF} ZCF
+//  */
+
+// /**
+//  * @typedef {import('@agoric/zoe/src/contractFacet/types-ambient.js').ContractStartFn} ContractStartFunction
+//  */
+
+/// <reference types="@agoric/vats/src/core/types-ambient"/>
+/// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
+
+/**
  */
 
 const trace = makeTracer('OrchDev1');
@@ -62,7 +96,17 @@ export const meta = {
 harden(meta);
 
 /**
- * @param {ZCF} zcf
+ * @typedef {{
+ *   localchain: Remote<LocalChain>;
+ *   orchestrationService: Remote<CosmosInterchainService>;
+ *   storageNode: Remote<StorageNode>;
+ *   timerService: Remote<TimerService>;
+ *   agoricNames: Remote<NameHub>;
+ * }} OrchestrationPowers
+ */
+
+/**
+ * @param {ZCF<Record<string, unknown>> | undefined} zcf
  * @param {OrchestrationPowers & {
  *   marshaller: Marshaller;
  * }} privateArgs
@@ -70,6 +114,7 @@ harden(meta);
  * @param {OrchestrationTools} tools
  */
 const contract = async (
+  /** @type {ZCF<Record<string, unknown>>} */
   zcf,
   privateArgs,
   zone,
@@ -81,7 +126,6 @@ const contract = async (
   // @ts-expect-error XXX ZCFSeat not Passable
   const { makeAccount, makeCreateAndFund } = orchestrateAll(flows, {
     localTransfer: zoeTools.localTransfer,
-    setValue: privateArgs.storageNode.setValue,
   });
 
   const publicFacet = zone.exo(
@@ -108,6 +152,11 @@ const contract = async (
   return { publicFacet };
 };
 
-export const start = withOrchestration(contract);
+/** @type {ContractStartFunction} */
+export const start = /** @type {ContractStartFunction} */ (
+  withOrchestration(contract)
+);
 harden(start);
-/** @typedef {typeof start} OrcaSF */
+
+// /** @typedef {typeof start} OrcaSF */
+/** @typedef {ContractStartFunction} OrcaSF */

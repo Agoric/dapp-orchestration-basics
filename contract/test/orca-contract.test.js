@@ -1,6 +1,5 @@
 // @ts-check
 
-/* eslint-disable import/order -- https://github.com/endojs/endo/issues/1235 */
 import { test as anyTest } from './prepare-test-env-ava.js';
 
 import { createRequire } from 'module';

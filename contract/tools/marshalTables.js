@@ -59,7 +59,8 @@ const makeTranslationTable = (makeSlot, makeVal) => {
   return harden({ convertValToSlot, convertSlotToVal });
 };
 
-/** @type {(slot: string, iface: string | undefined) => any} */
+// /** @type {(slot: string, iface: string | undefined) => any} */
+/** @type {(slot: string | null, iface: string | undefined) => any} */
 const synthesizeRemotable = (slot, iface) => {
   const ifaceStr = iface ?? '';
   const suffix = ifaceStr.endsWith(`#${slot}`) ? '' : `#${slot}`;
