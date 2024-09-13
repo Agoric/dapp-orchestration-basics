@@ -65,7 +65,6 @@ export const makeCreateAndFund = async (
   trace('amt', amt);
   trace('give:', give);
 
-
   const [agoric, chain] = await Promise.all([
     orch.getChain('agoric'),
     orch.getChain(chainName),

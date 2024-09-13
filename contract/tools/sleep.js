@@ -1,6 +1,6 @@
 const ambientSetTimeout = globalThis.setTimeout;
 
-const sleep = (ms, { log = (msg) => {}, setTimeout = ambientSetTimeout } = {}) =>
+const sleep = (ms, { log = msg => {}, setTimeout = ambientSetTimeout } = {}) =>
   new Promise(resolve => {
     log(`Sleeping for ${ms}ms...`);
     setTimeout(resolve, ms);
@@ -13,7 +13,7 @@ const retryUntilCondition = async (
   {
     maxRetries = 6,
     retryIntervalMs = 3500,
-    log = (msg) => {},
+    log = msg => {},
     setTimeout = ambientSetTimeout,
   } = {},
 ) => {

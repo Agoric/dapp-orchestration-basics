@@ -112,9 +112,6 @@ const installBundle = async (fullPath, opts) => {
   return { tx, confirm: true };
 };
 
-
-
-
 /**
  * @param {string} address
  * @param {Record<string, number | bigint>} balances
@@ -142,7 +139,6 @@ export const provisionSmartWallet = async (
     // q = makeQueryKit(makeVStorage(lcd)).query,
   },
 ) => {
-
   const q = makeQueryKit(makeVStorage(lcd)).query;
 
   // TODO: skip this query if balances is {}

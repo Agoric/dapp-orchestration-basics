@@ -29,7 +29,7 @@ import * as flows from './orca.flows.js';
  * @import {CosmosInterchainService} from '@agoric/orchestration';
  * @import {TimerService} from '@agoric/time';
  * @import {NameHub} from '@agoric/vats';
- * 
+ *
  */
 
 // /**
@@ -45,7 +45,6 @@ import * as flows from './orca.flows.js';
 //  * @typedef {import('@agoric/zoe/src/contractFacet/types-ambient.js').ZCF} ZCF
 //  */
 
-
 // /**
 //  * @typedef {import('@agoric/zoe/src/contractFacet/types-ambient.js').ContractStartFn} ContractStartFunction
 //  */
@@ -54,9 +53,7 @@ import * as flows from './orca.flows.js';
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
 
 /**
-*/
-
-
+ */
 
 const trace = makeTracer('OrchDev1');
 
@@ -98,16 +95,15 @@ export const meta = {
 };
 harden(meta);
 
-
 /**
  * @typedef {{
-*   localchain: Remote<LocalChain>;
-*   orchestrationService: Remote<CosmosInterchainService>;
-*   storageNode: Remote<StorageNode>;
-*   timerService: Remote<TimerService>;
-*   agoricNames: Remote<NameHub>;
-* }} OrchestrationPowers
-*/
+ *   localchain: Remote<LocalChain>;
+ *   orchestrationService: Remote<CosmosInterchainService>;
+ *   storageNode: Remote<StorageNode>;
+ *   timerService: Remote<TimerService>;
+ *   agoricNames: Remote<NameHub>;
+ * }} OrchestrationPowers
+ */
 
 /**
  * @param {ZCF<Record<string, unknown>> | undefined} zcf
@@ -126,7 +122,6 @@ const contract = async (
 ) => {
   trace('inside start function: v1.1.96');
   trace('privateArgs', privateArgs);
-  
 
   // @ts-expect-error XXX ZCFSeat not Passable
   const { makeAccount, makeCreateAndFund } = orchestrateAll(flows, {
@@ -158,7 +153,9 @@ const contract = async (
 };
 
 /** @type {ContractStartFunction} */
-export const start = /** @type {ContractStartFunction} */ (withOrchestration(contract));
+export const start = /** @type {ContractStartFunction} */ (
+  withOrchestration(contract)
+);
 harden(start);
 
 // /** @typedef {typeof start} OrcaSF */

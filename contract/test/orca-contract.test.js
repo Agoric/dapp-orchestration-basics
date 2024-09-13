@@ -221,7 +221,7 @@ const makeTestContext = async t => {
         registerChain: async (name, details) => {
           console.log(`chain registered: ${name}`, details);
         },
-        getChain: async (chainName) => {
+        getChain: async chainName => {
           const state = harden({
             name: 'agoric',
             chainId: `agoriclocal`,

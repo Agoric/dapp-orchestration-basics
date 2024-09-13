@@ -10,7 +10,6 @@ import { makeTracer } from './tools/debug.js';
 // import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
 
-
 /**
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
@@ -19,15 +18,13 @@ import { makeTracer } from './tools/debug.js';
  * @import {OrcaSF} from './orca.contract.js';
  */
 
-  /**
-  * * @typedef {import('./orca.contract.js').OrcaSF} OrcaSF
-  */
-
+/**
+ * * @typedef {import('./orca.contract.js').OrcaSF} OrcaSF
+ */
 
 /**
  * @typedef {import('@agoric/vow').Remote<import('@agoric/vats/src/localchain.js').LocalChain>} LocalChain
  */
-
 
 const trace = makeTracer('OrCE');
 const { entries, fromEntries } = Object;
@@ -114,16 +111,12 @@ export const startOrcaContract = async (permittedPowers, config) => {
   const marshaller = await E(board).getPublishingMarshaller();
   console.log(marshaller);
 
-
-
-
-  
   /** @type {StartUpgradableOpts<OrcaSF>} **/
   const startOpts = {
     label: 'orca',
     installation,
     terms: undefined,
-    privateArgs: {      
+    privateArgs: {
       localchain: await localchain,
       // localchain: await E(localchain),
       orchestrationService: await cosmosInterchainService,

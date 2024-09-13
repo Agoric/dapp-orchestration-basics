@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./dist",
+    "outDir": "./dist"
   },
   "include": ["tools", "test"],
   "exclude": ["node_modules"]

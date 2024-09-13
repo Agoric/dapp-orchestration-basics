@@ -1,4 +1,4 @@
-import { dirname, join } from 'path';
+import path from 'path';
 import { execa } from 'execa';
 import fse from 'fs-extra';
 import childProcess from 'child_process';
@@ -8,8 +8,12 @@ import { generateMnemonic } from '../tools/wallet.js';
 import { makeRetryUntilCondition } from '../tools/sleep.js';
 import { makeDeployBuilder } from '../tools/deploy.js';
 
-// const setupRegistry = makeSetupRegistry(makeGetFile({ dirname, join }));
-const setupRegistry = makeSetupRegistry(makeGetFile());
+const setupRegistry = makeSetupRegistry(
+  makeGetFile({
+    dirname: path.dirname(new URL(import.meta.url).pathname),
+    join: path.join,
+  }),
+);
 
 const chainConfig = {
   cosmoshub: { expectedAddressPrefix: 'cosmos' },

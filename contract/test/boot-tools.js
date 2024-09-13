@@ -19,8 +19,6 @@ import '@agoric/vats/src/core/types-ambient.js';
 import '@agoric/zoe/src/zoeService/types-ambient.js';
 const { entries } = Object;
 
-
-
 /**
  * Make powers (zoe, timer and name services, etc.) sufficient to test
  * deploying and using contracts. priceAuthority is a dummy.
@@ -66,7 +64,7 @@ export const mockBootstrapPowers = async (
 
   /**
    * @typedef {Record<Keyword, Issuer<any, any>>} IssuerKeywordRecord
-  */
+   */
   const startUpgradable = ({
     installation,
     issuerKeywordRecord,

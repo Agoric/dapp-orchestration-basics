@@ -52,7 +52,7 @@ export const mockWalletFactory = (
         const brand = await E(issuer).getBrand();
         //         /** @type {[Brand, Purse]} */
         /** @type {[Brand<any>, Purse<any, any>]} */
-       const entry = [brand, purse];
+        const entry = [brand, purse];
         return entry;
       }),
     );
@@ -65,7 +65,7 @@ export const mockWalletFactory = (
 
     const depositFacet = Far('DepositFacet', {
       // /** @param {Payment} pmt */
-        /** @param {Payment<any, any>} pmt */
+      /** @param {Payment<any, any>} pmt */
 
       receive: async pmt => {
         const pBrand = await E(pmt).getAllegedBrand();
