@@ -102,7 +102,13 @@ export const makeWalletView = (addr, { query, vstorage }) => {
  * @param {import('./batchQuery.js').VStorage} vstorage
  * @param {import('@endo/marshal').Marshal<string | null>} [m]
  */
-export const makeQueryKit = (vstorage, m = makeClientMarshaller()) => {
+// export const makeQueryKit = (vstorage, m = makeClientMarshaller()) => {
+export const makeQueryKit = (
+  vstorage,
+  m = /** @type {import('@endo/marshal').Marshal<string | null>} */ (
+    makeClientMarshaller()
+  ),
+) => {
   /** @param {['children' | 'data', string][]} paths */
   const batchQuery = async paths =>
     batchVstorageQuery(vstorage, m.fromCapData, paths);

@@ -1,5 +1,4 @@
 // @ts-check
-/* eslint-disable import/no-extraneous-dependencies */
 import '@endo/init';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 

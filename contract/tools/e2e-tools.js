@@ -136,9 +136,11 @@ export const provisionSmartWallet = async (
     chainId = 'agoriclocal',
     whale = 'faucet',
     progress = console.log,
-    q = makeQueryKit(makeVStorage(lcd)).query,
+    // q = makeQueryKit(makeVStorage(lcd)).query,
   },
 ) => {
+  const q = makeQueryKit(makeVStorage(lcd)).query;
+
   // TODO: skip this query if balances is {}
   const vbankEntries = await q.queryData('published.agoricNames.vbankAsset');
   const byName = Object.fromEntries(
@@ -285,7 +287,6 @@ export const provisionSmartWallet = async (
     }
   }
 
-  // @ts-expect-error FIXME no type
   /** @type {import('../test/wallet-tools.js').MockWallet['peek']} */
   const peek = Far('Peek', { purseUpdates });
 
@@ -398,12 +399,12 @@ const runCoreEval = async (
   console.log('await voteLatestProposalAndWait', evalPaths);
   const detail = await voteLatestProposalAndWait({ agd, blockTool });
   console.log('detail', detail);
-  // log(detail.proposal_id, detail.voting_end_time, detail.status);
-  log(detail.id, detail.voting_end_time, detail.status);
+  log(detail.proposal_id, detail.voting_end_time, detail.status);
+  // log(detail.id, detail.voting_end_time, detail.status);
 
   // TODO: how long is long enough? poll?
-  // await blockTool.waitForBlock(5, { step: 'run', propsal: detail.proposal_id });
-  await blockTool.waitForBlock(5, { step: 'run', propsal: detail.id });
+  await blockTool.waitForBlock(5, { step: 'run', propsal: detail.proposal_id });
+  // await blockTool.waitForBlock(5, { step: 'run', propsal: detail.id });
 
   assert(detail.status, 'PROPOSAL_STATUS_PASSED');
   return detail;
@@ -457,7 +458,6 @@ export const makeE2ETools = async (
    */
   const installBundles = async (fullPaths, progress) => {
     await null;
-    // @ts-expect-error FIXME no type
     /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
     const bundles = {};
     // for (const [name, rootModPath] of Object.entries(bundleRoots)) {
@@ -536,7 +536,7 @@ export const makeE2ETools = async (
         blockTool,
         lcd,
         delay,
-        q: vstorageClient,
+        // q: vstorageClient,
       }),
     /**
      * @param {string} name
@@ -562,7 +562,8 @@ export const makeE2ETools = async (
 export const seatLike = updates => {
   const sync = {
     result: makePromiseKit(),
-    /** @type {PromiseKit<AmountKeywordRecord>} */
+    // /** @type {PromiseKit<AmountKeywordRecord>} */
+    /** @type {ReturnType<typeof makePromiseKit>} */
     payouts: makePromiseKit(),
   };
   (async () => {
