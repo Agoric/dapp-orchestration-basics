@@ -1,6 +1,5 @@
 // @ts-check
 
-/* eslint-disable import/order -- https://github.com/endojs/endo/issues/1235 */
 import { test as anyTest } from './prepare-test-env-ava.js';
 
 import { createRequire } from 'module';
@@ -222,7 +221,7 @@ const makeTestContext = async t => {
         registerChain: async (name, details) => {
           console.log(`chain registered: ${name}`, details);
         },
-        getChain: async () => {
+        getChain: async (chainName) => {
           const state = harden({
             name: 'agoric',
             chainId: `agoriclocal`,
@@ -596,6 +595,7 @@ const orchestrationAccountAndFundScenario = test.macro({
 
     const { mint, issuer, brand } = makeIssuerKit('BLD');
 
+    /** @type {Record<string, any>} */
     const issuers = {
       BLDIssuer: issuer,
     };

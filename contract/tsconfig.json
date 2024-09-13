@@ -13,9 +13,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "outDir": "./dist",
-    "downlevelIteration": true,
-    "strictNullChecks": true,
-    "noImplicitThis": true
   },
   "include": ["tools", "test"],
   "exclude": ["node_modules"]

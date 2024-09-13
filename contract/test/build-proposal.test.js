@@ -1,4 +1,3 @@
-/* eslint-disable import/order -- https://github.com/endojs/endo/issues/1235 */
 import { test } from './prepare-test-env-ava.js';
 import { execFile } from 'node:child_process';
 import { promises as fs } from 'node:fs';
@@ -63,7 +62,6 @@ test.failing('bundles small enough for Mainnet', async t => {
   t.assert(bundles.length, 'Found bundles');
 
   for (const bundleName of bundles) {
-    // eslint-disable-next-line @jessie.js/safe-await-separator
     const { bundle, compressed: buffer } = await compressBundle(bundleName);
     t.assert(buffer);
     const sizeInMb = buffer.length / MB;

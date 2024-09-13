@@ -8,7 +8,8 @@ import { generateMnemonic } from '../tools/wallet.js';
 import { makeRetryUntilCondition } from '../tools/sleep.js';
 import { makeDeployBuilder } from '../tools/deploy.js';
 
-const setupRegistry = makeSetupRegistry(makeGetFile({ dirname, join }));
+// const setupRegistry = makeSetupRegistry(makeGetFile({ dirname, join }));
+const setupRegistry = makeSetupRegistry(makeGetFile());
 
 const chainConfig = {
   cosmoshub: { expectedAddressPrefix: 'cosmos' },

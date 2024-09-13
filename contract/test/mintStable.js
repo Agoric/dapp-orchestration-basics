@@ -59,7 +59,7 @@ export const makeStableFaucet = ({
     const { creatorFacet: bootstrapSupplier } = await E(zoe).startInstance(
       centralSupply,
       {},
-      { bootstrapPaymentValue: value },
+      /** @type {any} */ ({ bootstrapPaymentValue: value }),      
       { feeMintAccess },
     );
     return E(bootstrapSupplier).getBootstrapPayment();

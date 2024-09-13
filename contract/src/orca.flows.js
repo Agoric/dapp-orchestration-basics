@@ -46,13 +46,12 @@ harden(makeAccount);
  * @param {Orchestrator} orch
  * @param {object} ctx
  * @param {ZoeTools['localTransfer']} ctx.localTransfer
- * @param {StorageNode['setValue']} ctx.setValue
  * @param {ZCFSeat} seat
  * @param {{ chainName: string, denom: DenomArg }} offerArgs
  */
 export const makeCreateAndFund = async (
   orch,
-  { localTransfer, setValue },
+  { localTransfer },
   seat,
   { chainName, denom },
 ) => {
@@ -66,7 +65,6 @@ export const makeCreateAndFund = async (
   trace('amt', amt);
   trace('give:', give);
 
-  trace('setValue:', setValue);
 
   const [agoric, chain] = await Promise.all([
     orch.getChain('agoric'),

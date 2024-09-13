@@ -16,7 +16,7 @@
     "build:deployer": "rollup -c rollup.config.mjs",
     "build:deployer2": "echo \"deployer2\"; agoric run scripts/build-contract-deployer.js",
     "deploy": "make dev-working",
-    "test": "ava --verbose ./test/orca-contract.test.js",
+    "test": "ava",
     "lint": "tsc && eslint '**/*.js'",
     "lint:fix": "eslint --fix '**/*.js'",
     "_postinstall": "cd node_modules/@noble; npx tsc --init; npm install @noble/hashes; npx tsc; yarn; npm run build"
