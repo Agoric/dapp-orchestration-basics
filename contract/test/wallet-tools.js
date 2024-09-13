@@ -7,7 +7,6 @@
 import { E, Far } from '@endo/far';
 import { makePromiseKit } from '@endo/promise-kit';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeNotifier } from '@agoric/notifier';
 
 import '@agoric/zoe/src/zoeService/types-ambient.js';
@@ -51,7 +50,8 @@ export const mockWalletFactory = (
       values(issuerKeywordRecord).map(async issuer => {
         const purse = await E(issuer).makeEmptyPurse();
         const brand = await E(issuer).getBrand();
-        /** @type {[Brand, Purse]} */
+        //         /** @type {[Brand, Purse]} */
+        /** @type {[Brand<any>, Purse<any, any>]} */
         const entry = [brand, purse];
         return entry;
       }),
@@ -64,7 +64,9 @@ export const mockWalletFactory = (
     assert(invitationPurse);
 
     const depositFacet = Far('DepositFacet', {
-      /** @param {Payment} pmt */
+      // /** @param {Payment} pmt */
+      /** @param {Payment<any, any>} pmt */
+
       receive: async pmt => {
         const pBrand = await E(pmt).getAllegedBrand();
         if (!purseByBrand.has(pBrand))
