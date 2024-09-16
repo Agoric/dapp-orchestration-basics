@@ -17,6 +17,8 @@ PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 PROPOSAL=1
 VOTE_OPTION=yes
 
+# `CLIENTADDR` is your address from your browser wallet that you will use to interact with the orchestration dapp. 
+#`CLIENT_OSMO_ADDR` is the same, but your osmosis account.
 CLIENTADDR=agoric12j5kzvrwunqvrga5vm4zpy3mkeh3lvyld0amz5
 CLIENT_OSMO_ADDR=osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z
 

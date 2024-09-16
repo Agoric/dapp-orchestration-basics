@@ -7,41 +7,38 @@
 The Orchestration Basics dApp showcases various features of the orchestration API running inside of an end-to-end environment, and a user interface:
 
 
+## Set up the local environment
 
+- Follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
 
-# Setting up the local environment
-
-See `agoric-sdk/multichain-testing/README.md` for instructions to setup local multi-chain environment needed to run
-and test dApp.
-
-You can run `agd status` to check if this was successful.
-
-We need to run `hermes update` in the background. Run the following in the root directory of `dapp-orchestration-basics`:
+- Run the following in the top level directory of `dapp-orchestration-basics` to run `hermes update` in the background:
 
 ```sh
 make hermes-update & 
 ```
 
-# Add a new address to the keychain inside of the kubernetes pod (for building/deploying inside of the pod)
-From top level directory:
-```
-make add-address
-```
-paste address in the `Makefile` for `ADDR`.
-
-# Fund the account
-This will fund the pool, provision the smart wallet, and will also fund `CLIENTADDR` and `CLIENT_OSMO_ADDR`. `CLIENTADDR` is your address from your browser wallet that you will use to interact with the orchestration dapp. `CLIENT_OSMO_ADDR` is the same, but your osmosis account.
-
-This can be ran from the top-level directory
+## Fund the account
+- Run the following in the `contract/` directory of `dapp-orchestration-basics`:
 ```
 make fund
 ```
+This will fund `ADDR`, `CLIENTADDR`, and `CLIENT_OSMO_ADDR` as defined in `contract/Makefile`.
 
-# Build & Deploy the dapp
-From the top level directory, run:
+## Build & Deploy the dapp
+- From the `contract/` directory of `dapp-orchestration-basics`, run:
 ```
-make
+make e2e
 ```
+Wait for this step to complete (this could take a while!) before you start UI in the next.
+## Start UI
+- Run the following inside of the `ui/` directory of `dapp-orchestration-basics`:
+```sh
+yarn dev
+```
+
+<img src="./images/ui.png" width="100%" />
+
+--- 
 
 # Tests
 From top-level directory:
