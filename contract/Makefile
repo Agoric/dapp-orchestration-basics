@@ -6,9 +6,8 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-# your deployer address made from make add-address
-ADDR=agoric1vck7hw7wak2y7vv3pnf7am6kmgl7nwgz3ltsla
-# ADDR=agoric125d8s0tamx50gpqdd3m7f5gtkzkcnjs0ehsujr
+# Getting deployer address from chain if it fails use address made from make add-address
+ADDR=$(kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add user1 | jq -r '.address')
 
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
