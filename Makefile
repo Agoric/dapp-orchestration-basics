@@ -12,3 +12,11 @@ add-address:
 	yarn workspace  dapp-agoric-orca-contract add:address
 lint:
 	yarn workspace dapp-agoric-orca-contract lint
+hermes-update:
+	kubectl exec -i hermes-agoric-osmosis-0 -c relayer -- hermes update client --host-chain agoriclocal --client 07-tendermint-1 || { \
+	echo "'07-tendermint-1' failed, trying '07-tendermint-0'..."; \
+	kubectl exec -i hermes-agoric-osmosis-0 -c relayer -- hermes update client --host-chain agoriclocal --client 07-tendermint-0; \
+	}
+
+	sleep 60
+	make hermes-update
