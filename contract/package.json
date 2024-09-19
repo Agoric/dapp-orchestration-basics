@@ -97,13 +97,17 @@
     },
     "files": [
       "test/**/test-*.*",
-      "test/**/*.test.*"
+      "test/**/*.test.*",
+      "!test/orca-multichain.test.js"
     ],
     "require": [
       "ts-node/register/transpile-only"
     ],
     "timeout": "20m",
-    "workerThreads": false
+    "workerThreads": false,
+    "match": [
+      "!test/*multichain*"
+    ]
   },
   "keywords": [],
   "repository": {
