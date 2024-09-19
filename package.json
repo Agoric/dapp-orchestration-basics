@@ -22,6 +22,7 @@
     "docker:make": "cd contract; docker compose exec agd make -C /workspace/contract",
     "make:help": "make -C contract list",
     "start:contract": "cd contract && yarn start",
+    "integration": "cd contract && yarn ava ./test/orca-multichain.test.js",
     "start:ui": "cd ui && yarn dev",
     "format": "yarn prettier --write .github contract ui",
     "lint:format": "yarn prettier --check .github contract ui",
