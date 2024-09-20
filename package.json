@@ -9,7 +9,7 @@
     "contract",
     "ui"
   ],
-  "resolutions-note": "work-around for https://github.com/Agoric/agoric-sdk/issues/8621",
+  "resolutions-note": "needed until @agoric/orchestration is available using this",
   "resolutions": {
     "esm": "https://github.com/agoric-labs/esm.git#Agoric-built",
     "aggregate-error": "3.0.0"

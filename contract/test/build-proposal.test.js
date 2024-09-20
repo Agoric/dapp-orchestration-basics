@@ -10,6 +10,8 @@ const MB = 1024 * 1024;
 
 const MAINNET_MAX_MB = 0.5;
 
+const trace = (...msgs) => console.log('[build-proposal.test]', ...msgs);
+
 test.before(async t => {
   const bundleCache = await makeNodeBundleCache('bundles', {}, s => import(s));
 
@@ -19,7 +21,10 @@ test.before(async t => {
    * @param {string} name of an _already cached_ bundle
    */
   const compressBundle = async name => {
-    const bundle = await bundleCache.load('', name);
+    // NOTE load options must match those used in the proposal builder
+    const bundle = await bundleCache.load('', name, trace, {
+      elideComments: true,
+    });
     const fileContents = JSON.stringify(bundle);
     const buffer = Buffer.from(fileContents, 'utf-8');
     const compressed = await promisify(gzip)(buffer);
@@ -52,8 +57,7 @@ test.before(async t => {
   t.context = { compressBundle, $, runPackageScript, listBundles };
 });
 
-// Will not fit on Mainnet, but that's okay for current purposes
-test.failing('bundles small enough for Mainnet', async t => {
+test('bundles small enough for Mainnet', async t => {
   // @ts-expect-error ses-ava types
   const { runPackageScript, listBundles, compressBundle } = t.context;
   await runPackageScript('build:deployer');

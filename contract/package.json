@@ -84,7 +84,7 @@
     "@agoric/vow": "dev",
     "@agoric/zoe": "dev",
     "@agoric/zone": "dev",
-    "@endo/bundle-source": "^3.3.0",
+    "@endo/bundle-source": "^3.4.0",
     "@endo/errors": "^1.2.4",
     "@endo/far": "^1.1.4",
     "@endo/init": "^1.1.3",
