@@ -47,7 +47,7 @@ const OrchestrationPowersShape = M.splitRecord({
   orchestrationService: M.remotable('orchestrationService'),
   storageNode: M.remotable('storageNode'),
   timerService: M.remotable('timerService'),
-  agoricNames: M.remotable('localchagoricNamesain'),
+  agoricNames: M.remotable('agoricNames'),
 });
 
 /** @type {ContractMeta} */
