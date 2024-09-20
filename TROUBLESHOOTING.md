@@ -1,14 +1,14 @@
-
 # Trouble Shooting Issues & their Solutions
-1) SyntaxError#2: Unexpected token b in JSON at position 0
-confusing bundle ids for bundles, need to prepend with "@"
 
+1. SyntaxError#2: Unexpected token b in JSON at position 0
+   confusing bundle ids for bundles, need to prepend with "@"
 
-2) RangeError: Expected "[undefined]" is same as "Interface"
-endo/patterns issue
+2. RangeError: Expected "[undefined]" is same as "Interface"
+   endo/patterns issue
 
-3) get E$1: undefined variable
-using another E import, because it gets stripped by the rollup older versions of dapps use
+3. get E$1: undefined variable
+   using another E import, because it gets stripped by the rollup older versions of dapps use
+
 ```javascript
 import { E } from '@endo/far';
 ```
@@ -16,65 +16,78 @@ import { E } from '@endo/far';
 the rollup intends to strip that import:
 https://github.com/Agoric/dapp-orchestration-basics/blob/921255ed33bd828843a89d73f64aeb82939dd78b/contract/rollup.config.mjs#L5-L7
 
-4) SyntaxError: Possible HTML comment rejected at <unknown>:
+4. SyntaxError: Possible HTML comment rejected at <unknown>:
+
 ```html
-// ISSUE IMPORTING THIS, which promted yarn link: 
-/*
-    [!] (plugin configureBundleID) TypeError: Failed to load module "./src/orchdev.contract.js" in package "file:///Users/jovonni/Documents/projects/experiments/orca/contract/" (1 underlying failures: Cannot find external module "@agoric/orchestration/src/exos/stakingAccountKit.js" in package file:///Users/jovonni/Documents/projects/experiments/orca/contract/
-src/orchdev.proposal.js
-*/
+// ISSUE IMPORTING THIS, which promted yarn link: /* [!] (plugin
+configureBundleID) TypeError: Failed to load module "./src/orchdev.contract.js"
+in package "file:///Users/jovonni/Documents/projects/experiments/orca/contract/"
+(1 underlying failures: Cannot find external module
+"@agoric/orchestration/src/exos/stakingAccountKit.js" in package
+file:///Users/jovonni/Documents/projects/experiments/orca/contract/
+src/orchdev.proposal.js */
 ```
 
-5) possible import rejection SES
-check for `bn.js` containing `while (j-- > 0) {`
+5. possible import rejection SES
+   check for `bn.js` containing `while (j-- > 0) {`
 
 we can check for this from outside the container:
+
 ```
 kubectl exec -it agoriclocal-genesis-0 -- cat ./node_modules/bn.js/lib/bn.js | grep "j\-\-"
 ```
 
 If the file is there, we can do `make copy-bn-js `
 
-6) 
+6.
+
 ```
 v38: Error#1: privateArgs: (an undefined) - Must be a copyRecord to match a copyRecord pattern: {"marshaller":"[match:remotable]","orchestration":"[match:remotable]","storageNode":"[match:remotable]","timer":"[match:remotable]"}
 ```
+
 ensure privateArgs adheres to the format
 
-7) 
+7.
+
 ```
 privateArgs: timer: (an object) - Must be a remotable TimerService, not promise
 ```
+
 ensure to pass the result of the promise, not the promise: `timer: await chainTimerService`
 
-8) 
-ensure to install
+8.  ensure to install
+
 ```
 yarn add typescript --dev
 npm install -g rollup
 ```
 
-9)
+9.
+
 ```
 yarn add @agoric/vow@0.1.1-upgrade-16-fi-dev-8879538.0
 yarn add @agoric/orchestration@0.1.1-upgrade-16-dev-d45b478.0
 npm install rollup
 ```
 
-10)
+10.
+
 ```
 AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: The expression evaluated to a falsy value:
 
     assert(refs.runnerChain)
 ```
 
-11)
+11.
+
 ```
   AssertionError [ERR_ASSERTION] [ERR_ASSERTION]: The expression evaluated to a falsy value:
 ```
+
 `"@endo/patterns": "^1.4.0"` throws this error when used in devdependencies, when running tests, just remove
 
 Note: also remove all resolutions from root package.json, especially if you see this:
+
 ```
 Uncaught exception in test/test-deploy-tools.js
 
@@ -96,41 +109,49 @@ Uncaught exception in test/test-deploy-tools.js
   ─
 ```
 
-12) 
+12.
+
 ```
 v43: Error#1: Cannot find file for internal module "./src/exos/cosmosOrchestrationAccount.js" (with candidates "./src/exos/cosmosOrchestrationAccount.js", "./src/exos/cosmosOrchestrationAccount.js.js", "./src/exos/cosmosOrchestrationAccount.js.json", "
 ```
 
 inspect the container, and look at the module in question:
+
 ```
 head node_modules/@agoric/orchestration/package.json
 ```
 
 double check the package.json `version`, to ensure resolution isn't overrriding a package on `yarn install` etc.
 
-13)
+13.
+
 ```
 xsnap: v52: Error: methodGuard: guard:methodGuard: (an object) - Must match one of [{"argGuards":"[match:arrayOf]","callKind":"sync","optionalArgGuards":"[match:or]","restArgGuard":"[match:or]","returnGuard":"[match:or]"},{"argGuards":"[match:arrayOf]","callKind":"async","optionalArgGuards":"[match:or]","restArgGuard":"[match:or]","returnGuard":"[Seen]"}]
 
 ```
 
-Ensure 
+Ensure
+
 ```javascript
 makeAcountInvitationMaker: M.call().returns(M.promise()),
 ```
+
 updated syntax:
+
 ```javascript
-makeAccountInvitationMaker: M.callWhen().returns(InvitationShape)
+makeAccountInvitationMaker: M.callWhen().returns(InvitationShape);
 ```
 
-14) 
+14.
+
 ```
 Cannot find file for internal module "./vat.js"
 ```
 
 the version of `@agoric/vow` should be kept updated to `@dev` for now to keep up.
 
-15)
+15.
+
 ```
 ReferenceError#1: accountsStorageNode: get E: undefined variable
 ```
@@ -153,7 +174,8 @@ export const meta = harden({
 export const privateArgsShape = meta.privateArgsShape;
 ```
 
-16) 
+16.
+
 ```
 Error#1: redefinition of durable kind " Durable Publish Kit "
 ```
@@ -161,13 +183,16 @@ Error#1: redefinition of durable kind " Durable Publish Kit "
 ```javascript
 const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);
 ```
+
 it throwing this error. `provideOrchestration` also calls `prepareRecorderKitMakers`. Also ensure the `remotePowers` has the following keys:
+
 ```javascript
 orchestrationService: remotePowers.orchestration,
 timerService: remotePowers.timer,
 ```
 
 Because `makeOrchestrationFacade` expects the following remotePowers structure:
+
 ```javascript
 /**
  *
@@ -181,12 +206,14 @@ Because `makeOrchestrationFacade` expects the following remotePowers structure:
  * }} powers
 ```
 
-17)
+17.
+
 ```
 TypeError: orchestrate: no function
 ```
 
 If i log `asyncFlowTools`:
+
 ```
 asyncFlowTools
 2024-06-30T02:33:01.781Z SwingSet: vat: v38: { prepareAsyncFlowKit: [Function: prepareAsyncFlowKit], asyncFlow: [Function: asyncFlow], adminAsyncFlow: Object [Alleged: AdminAsyncFlow] {}, allWokenP: Promise [Promise] {} }
@@ -199,6 +226,7 @@ asyncFlowTools
 ```
 
 this is the `orchestrate` function in `@agoric/orchestration@0.1.1-upgrade-16-fi-dev-8879538.0+8879538`
+
 ```javascript
 orchestrate(durableName, ctx, fn) {
     /** @type {Orchestrator} */
@@ -240,11 +268,10 @@ orchestrate(durableName, hostCtx, guestFn) {
 
 Hypothesis: `prepareEndowment` doesn't exist, so version issue
 
+18. If you see `x.js` can't be resolved from an `@agoric/...` npm package, there may be a version mismatch where that version isn't exporting said file. Should be fixed with more stable versions eventually.
 
-18)
-If you see `x.js` can't be resolved from an `@agoric/...` npm package, there may be a version mismatch where that version isn't exporting said file. Should be fixed with more stable versions eventually. 
+19.
 
-19)
 ```
 Error#1: In "makeAccountInvitation" method of (OrcaFacet): result: (an object) - Must be a remotable Invitation, not promise
 ```
@@ -258,7 +285,8 @@ const publicFacet = zone.exo(
     makeAccountInvitation: M.call().returns(M.promise()),
   }),
   {
-    async makeAccountInvitation() { // make sure NOT to use async here
+    async makeAccountInvitation() {
+      // make sure NOT to use async here
       const invitation = await zcf.makeInvitation(
         createAccounts,
         'Create accounts',
@@ -273,7 +301,6 @@ const publicFacet = zone.exo(
     },
   },
 );
-
 ```
 
 ```
@@ -284,20 +311,21 @@ const publicFacet = zone.exo(
 
 Make sure the offer handlers are in the top-level scope, so they don't inherit any "side effects"
 
+20.
 
-
-
-20)
 ```js
 await makeAccountInvitation() {
 ```
+
 instead of:
+
 ```js
 makeAccountInvitation() {
 ```
 
 also the function signature that works is:
-```js
+
+````js
 
 /**
  * handler function for creating and managing accounts //* Xparam {object} offerArgs
@@ -309,7 +337,7 @@ also the function signature that works is:
 const createAccountsFn = async (orch, _ctx, seat, {chainName}) => {```
 
 some types were not correct
-```
+````
 
 Then also, fron the client:
 
@@ -317,7 +345,7 @@ Then also, fron the client:
 wallet?.makeOffer(
     {
       source: 'contract',
-      instance, 
+      instance,
       publicInvitationMaker: 'makeOrchAccountInvitation',
       // publicInvitationMaker: 'makeAccountInvitation',
       // source: 'agoricContract',
@@ -329,4 +357,3 @@ wallet?.makeOffer(
 ```
 
 The offerArgs was empty
-
