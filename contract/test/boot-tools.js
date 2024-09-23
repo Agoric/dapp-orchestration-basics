@@ -32,7 +32,7 @@ const { entries } = Object;
  */
 export const mockBootstrapPowers = async (
   log,
-  spaceNames = ['installation', 'instance', 'issuer', 'brand'],
+  spaceNames = ['installation', 'instance', 'issuer', 'brand', 'vbankAsset'],
 ) => {
   const baggage = makeScalarMapStore('testing');
   const zone = makeDurableZone(baggage);
