@@ -38,7 +38,7 @@ jobs:
 
       - name: Clone and build agoric-sdk
         run: |
-          git clone https://github.com/Agoric/agoric-sdk.git
+          git clone --depth 1 --branch dev-upgrade-17 https://github.com/Agoric/agoric-sdk.git
           cd agoric-sdk
           yarn install
           yarn build
