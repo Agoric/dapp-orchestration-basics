@@ -30,9 +30,9 @@ export const flags = record => {
 const returnString = /** @type {const} */ ({ encoding: 'utf-8' });
 
 /**
- * @param {{ execFileSync: ExecSync }} io
+ * @param {{ execFileSync: ExecSync, log?: typeof console.log }} io
  */
-export const makeAgd = ({ execFileSync }) => {
+export const makeAgd = ({ execFileSync, log = console.log }) => {
   /**
    * @param { {
    *       home?: string;
@@ -123,7 +123,7 @@ export const makeAgd = ({ execFileSync }) => {
           ...(yes ? ['--yes'] : []),
           ...outJson,
         ];
-        console.log('$$$', agdBinary, ...args);
+        log('$$$', agdBinary, ...args);
         const out = exec(args);
         try {
           const detail = JSON.parse(out);
@@ -152,6 +152,7 @@ export const makeAgd = ({ execFileSync }) => {
             { encoding: 'utf-8', input: mnemonic },
           ).toString();
         },
+        showAddress: nameHub.lookup,
         /** @param {string} name */
         delete: name => {
           return exec([...keyringArgs, 'keys', 'delete', name, '-y']);
@@ -177,6 +178,8 @@ export const makeAgd = ({ execFileSync }) => {
  *   destDir?: string;
  *   execFileSync: ExecSync;
  *   log?: Console['log'];
+ *   join?: (...paths: string[]) => string
+ *   basename?: (path: string)  => string
  * }} io
  */
 export const makeContainer = ({
@@ -186,6 +189,8 @@ export const makeContainer = ({
   destDir = '/root',
   cmd = ['kubectl', 'exec', '-i'],
   log = console.log,
+  join = (...paths) => paths.join('/'),
+  basename = path => path.split('/').at(-1) || assert.fail('bad path'),
 }) => {
   /** @param {{ [k: string]: unknown }} hFlags */
   const make = (hFlags = {}) => {
@@ -214,7 +219,8 @@ export const makeContainer = ({
         }
         const lsOutput = runtime.execFileSync('ls', [destDir], returnString);
         log(`ls ${destDir}:\n`, lsOutput);
-        return lsOutput;
+        const destPaths = paths.map(p => join(destDir, basename(p)));
+        return destPaths;
       },
       /** @param {{ [k: string]: unknown }} newFlags */
       withFlags: newFlags => make({ ...hFlags, ...newFlags }),
@@ -223,3 +229,5 @@ export const makeContainer = ({
   };
   return make();
 };
+
+/** @typedef {ReturnType<makeContainer>} Container */
