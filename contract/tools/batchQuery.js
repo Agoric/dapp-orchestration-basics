@@ -134,8 +134,8 @@ export const batchVstorageQuery = async (vstorage, unmarshal, paths) => {
 
   return Promise.all(requests).then(responses =>
     responses.map((res, index) => {
-      console.log('responses', res);
-      console.log('responses', index);
+      // console.log('responses', res);
+      // console.log('responses', index);
 
       if (paths[index][0] === 'children') {
         return [
