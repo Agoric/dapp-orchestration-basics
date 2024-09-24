@@ -15,9 +15,7 @@ import { exit } from 'process';
 import { exec } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import { makeAgdTools } from '../tools/agd-tools.js';
 import { makeDeployBuilder } from '../tools/deploy.js';
-import childProcess from 'child_process';
 import fse from 'fs-extra';
 import { execa } from 'execa';
 import os from 'os';
@@ -25,6 +23,7 @@ import { createRequire } from 'module';
 const nodeRequire = createRequire(import.meta.url);
 
 /** @import { EnglishMnemonic } from '@cosmjs/crypto'; */
+/** @import { Container } from './agd-lib.js'; */
 
 const BLD = '000000ubld';
 
@@ -48,7 +47,9 @@ const makeBlockTool = ({ rpc, delay }) => {
       id += 1;
       const data = await rpc
         .execute({ jsonrpc: '2.0', id, method: 'status', params: [] })
-        .catch(_err => {});
+        .catch(err => {
+          console.debug('fetch error', err);
+        });
 
       if (!data) throw Error('no data from status');
 
@@ -396,8 +397,7 @@ const runCoreEval = async (
   // TODO? double-check that bundles are loaded
 
   const evalPaths = evals.map(e => [e.permit, e.code]).flat();
-  log(evalPaths);
-  console.log('await tx', evalPaths);
+  log('swingset-core-eval', evalPaths);
   const result = await agd.tx(
     [
       'gov',
@@ -412,9 +412,9 @@ const runCoreEval = async (
   // FIXME TypeError#1: unrecognized details 0
   // assert(result.code, 0);
 
-  console.log('await voteLatestProposalAndWait', evalPaths);
+  log('await voteLatestProposalAndWait', evalPaths);
   const detail = await voteLatestProposalAndWait({ agd, blockTool });
-  console.log('detail', detail);
+  log('proposal result detail', detail);
   log(detail.proposal_id, detail.voting_end_time, detail.status);
   // log(detail.id, detail.voting_end_time, detail.status);
 
@@ -431,7 +431,7 @@ const runCoreEval = async (
  * @param {import('@agoric/swingset-vat/tools/bundleTool.js').BundleCache} bundleCache
  * @param {object} io
  * @param {typeof import('child_process').execFileSync} io.execFileSync
- * @param {typeof import('child_process').execFile} io.execFile
+ * @param {Container['copyFiles']} io.copyFiles
  * @param {typeof window.fetch} io.fetch
  * @param {typeof window.setTimeout} io.setTimeout
  * @param {string} [io.bundleDir]
@@ -444,6 +444,7 @@ export const makeE2ETools = (
   bundleCache,
   {
     execFileSync,
+    copyFiles,
     fetch,
     setTimeout,
     rpcAddress = 'http://localhost:26657',
@@ -506,7 +507,7 @@ export const makeE2ETools = (
     /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
     const bundles = {};
     // for (const [name, rootModPath] of Object.entries(bundleRoots)) {
-    console.log('fullPaths', fullPaths);
+    console.log('fullPaths E2E', fullPaths);
 
     console.log('getBundleId(bundle)');
 
@@ -571,7 +572,6 @@ export const makeE2ETools = (
       }
 
       // generate plan, etc
-      const tools = await makeAgdTools(console.log, childProcess);
       // const keyring = await makeKeyring(tools);
       // const deployBuilder = makeDeployBuilder(tools, fse.readJSON, execa);
       const contractBuilder = './test/builder/init-orca.js';
@@ -587,7 +587,7 @@ export const makeE2ETools = (
       console.log('copying files to containr');
 
       // copy artifacts to container
-      tools.copyFiles([
+      copyFiles([
         nodeRequire.resolve(`../${plan.script}`),
         nodeRequire.resolve(`../${plan.permit}`),
         ...plan.bundles.map(b => b.fileName),
@@ -656,11 +656,14 @@ export const makeE2ETools = (
   };
 
   /**
+   * NOTE: name only comes through as orca, not the actual file names
+   *
    * @param {{
    *   name: string;
    *   title?: string;
    *   description?: string;
-   *   config?: unknown;
+   *   code?: string;
+   *   permit?: string;
    * } & {
    *   behavior?: Function;
    * }} info
@@ -672,17 +675,14 @@ export const makeE2ETools = (
 
     console.log('info');
     console.log(info);
-    const { name, title = name, description = title } = info;
-    // NOTE: name only comes through as orca, not the actual file names
-    const eval0 = {
-      // code: `/tmp/contracts/${name}.js`,
-      // permit: `/tmp/contracts/${name}-permit.json`,
-      // code: `/tmp/contracts/startOrcaContract.js`,
-      // permit: `/tmp/contracts/startOrcaContract-permit.json`,
-      code: `/root/startOrcaContract.js`,
-      permit: `/root/startOrcaContract-permit.json`,
-    };
-
+    const {
+      name,
+      title = name,
+      description = title,
+      code = `${name}.js`,
+      permit = `${name}-permit.json`,
+    } = info;
+    const eval0 = { code, permit };
     const detail = { evals: [eval0], title, description };
     // await runPackageScript('build:deployer', entryFile);
     console.log('log:', log);
@@ -690,12 +690,11 @@ export const makeE2ETools = (
     return proposal;
   };
 
-  const { copyFiles } = makeContainer({ execFileSync, log });
-
   const vstorageClient = makeQueryKit(vstorage).query;
 
-  return {
+  const tools = harden({
     vstorageClient,
+    agd,
     installBundles,
     installBundlesE2E,
     runCoreEval: buildAndRunCoreEval,
@@ -711,21 +710,13 @@ export const makeE2ETools = (
         delay,
         // q: vstorageClient,
       }),
-    /**
-     * @param {string} name
-     * @param {EnglishMnemonic | string} mnemonic
-     */
-    addKey: async (name, mnemonic) =>
-      agd.keys.add(
-        name,
-        // @ts-expect-error XXX
-        Array.isArray(mnemonic) ? mnemonic.join(' ') : mnemonic,
-      ),
-    /** @param {string} name */
-    deleteKey: async name => agd.keys.delete(name),
+
     copyFiles,
-  };
+  });
+  return tools;
 };
+
+/** @typedef {ReturnType<makeE2ETools>} E2ETools */
 
 /**
  * Seat-like API from wallet updates
@@ -778,5 +769,3 @@ export const makeDoOffer = wallet => {
 
   return doOffer;
 };
-
-/** @typedef {Awaited<ReturnType<makeE2ETools>>} E2ETools */

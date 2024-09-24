@@ -5,17 +5,11 @@ import '@endo/init';
 import fsp from 'node:fs/promises';
 import { execFile, execFileSync } from 'node:child_process';
 import { basename } from 'node:path';
-import { execa } from 'execa';
-import fse from 'fs-extra';
 
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { parseArgs } from 'node:util';
 import { makeE2ETools } from '../tools/e2e-tools.js';
-import { createRequire } from 'module';
 import { makeContainer } from '../tools/agd-lib.js';
-
-const nodeRequire = createRequire(import.meta.url);
-const { readJSON } = fse;
 
 /** @type {import('node:util').ParseArgsConfig['options']} */
 const options = {

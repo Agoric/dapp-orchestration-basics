@@ -1,42 +1,65 @@
 import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
-import { setUpZoeForTest } from '@agoric/zoe/tools/setup-zoe.js';
-import { E, getInterfaceOf } from '@endo/far';
-import path from 'path';
-import { commonSetup, chainConfig } from './support.js';
+
+import { AmountMath } from '@agoric/ertp';
+import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
+import childProcess from 'node:child_process';
+import fsp from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { ConfigContext, useRegistry } from 'starshipjs';
 import { makeDoOffer } from '../tools/e2e-tools.js';
-import { AmountMath, makeIssuerKit } from '@agoric/ertp';
+import { chainConfig, commonSetup, ensureAccounts } from './support.js';
+import { makeContainer } from '../tools/agd-lib.js';
 
+const nodeRequire = createRequire(import.meta.url);
+const configFile = nodeRequire.resolve('../../e2e-testing/config.yaml');
+
+/**
+ * @import {TestFn} from 'ava';
+ */
+
+/** @type {TestFn<Awaited<ReturnType<makeTestContext>>>} */
 const test = anyTest;
-
-const accounts = ['agoric', 'cosmoshub', 'osmosis'];
 
 const contractName = 'orca';
 const contractBuilder = './test/builder/init-orca.js';
 
-test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
+const makeTestContext = async t => {
+  t.log('configure starship regisry', configFile);
+  const fetcher = await useRegistry(configFile);
+  await ConfigContext.init(configFile, fetcher);
+
+  const bundleCache = await makeNodeBundleCache('bundles', {}, s => import(s));
+  const container = makeContainer({ execFileSync: childProcess.execFileSync });
+
+  const { deployBuilder, retryUntilCondition, ...tools } = commonSetup(t, {
+    execFile: childProcess.execFile,
+    container,
+    bundleCache,
+    readFile: fsp.readFile,
+    fetch,
+    setTimeout: globalThis.setTimeout,
+    log: console.log,
+  });
+  const wallets = await ensureAccounts(tools.agd.keys);
 
   t.log('bundle and install contract', contractName);
-  await t.context.deployBuilder(contractBuilder);
-  const { vstorageClient } = t.context;
-  await t.context.retryUntilCondition(
+  await deployBuilder(contractBuilder);
+  const { vstorageClient } = tools;
+  await retryUntilCondition(
     () => vstorageClient.queryData(`published.agoricNames.instance`),
     res => contractName in Object.fromEntries(res),
     `${contractName} instance is available`,
   );
-});
 
-test.after(async t => {
-  const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
-});
+  return { ...tools, deployBuilder, retryUntilCondition, wallets };
+};
+
+test.before(async t => (t.context = await makeTestContext(t)));
 
 const makeAccountScenario = test.macro({
   title: (_, chainName) => `Create account on ${chainName}`,
   exec: async (t, chainName) => {
+    assert.typeof(chainName, 'string');
     const config = chainConfig[chainName];
     if (!config) return t.fail(`Unknown chain: ${chainName}`);
 
@@ -117,6 +140,7 @@ const makeCreateAndFundScenario = test.macro({
   title: (_, chainName, denom) =>
     `Create and fund account on ${chainName} with denom: ${denom}`,
   exec: async (t, chainName, denom) => {
+    assert.typeof(chainName, 'string');
     const config = chainConfig[chainName];
     if (!config) return t.fail(`Unknown chain: ${chainName}`);
 
