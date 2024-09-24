@@ -1,0 +1,15 @@
+diff --git a/src/exos/exo-interfaces.ts b/src/exos/exo-interfaces.ts
+index 9916556b9affe7ac3194a1d3e50a9b89f595e886..473403300df14c1fdbf78445e07c5bda70f8eb32 100644
+--- a/src/exos/exo-interfaces.ts
++++ b/src/exos/exo-interfaces.ts
+@@ -1,8 +1,8 @@
+ import type { IBCConnectionID } from '@agoric/vats';
+ import type { Vow } from '@agoric/vow';
+ import type { IcaAccount } from '../cosmos-api.ts';
+-import type { ICAChannelAddressOpts } from '../utils/address';
+-import type { ICQConnection } from './icq-connection-kit';
++import type { ICAChannelAddressOpts } from '../utils/address.js';
++import type { ICQConnection } from './icq-connection-kit.js';
+ 
+ /**
+  * Authority to make a Cosmos interchain account or an interchain query connection.
