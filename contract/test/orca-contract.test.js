@@ -171,7 +171,7 @@ const makeTestContext = async t => {
     bundle,
     bundleCache,
     cosmosInterchainService,
-    localchain,
+    localchain: Far('MockLocalchain'),
     vowTools,
     consume: powers.consume,
     ...tools,
