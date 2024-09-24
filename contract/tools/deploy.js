@@ -1,8 +1,4 @@
 /** @file run a builder and deploy it onto the Agoric chain in local Starship cluster */
-import { createRequire } from 'module';
-import { makeAgdTools } from './agd-tools.js';
-
-const nodeRequire = createRequire(import.meta.url);
 
 export const makeDeployBuilder = (tools, readJSON, execa) =>
   async function deployBuilder(builder) {
@@ -17,9 +13,10 @@ export const makeDeployBuilder = (tools, readJSON, execa) =>
     console.log(plan);
 
     console.log('copying files to container');
+
     tools.copyFiles([
-      nodeRequire.resolve(`../${plan.script}`),
-      nodeRequire.resolve(`../${plan.permit}`),
+      `./${plan.script}`,
+      `./${plan.permit}`,
       ...plan.bundles.map(b => b.fileName),
     ]);
 

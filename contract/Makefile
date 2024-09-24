@@ -1,3 +1,5 @@
+# TODO: figure out how to factor with e2e-testing/Makefile
+
 CHAINID=agoriclocal
 USER1ADDR=$(shell agd keys show alice -a --keyring-backend="test")
 ACCT_ADDR=$(USER1ADDR)
@@ -276,3 +278,4 @@ e2e:
 
 lint:
 	yarn lint --fix-dry-run --ignore-pattern "*patch*" 
+

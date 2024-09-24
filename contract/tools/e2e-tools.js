@@ -505,10 +505,8 @@ export const makeE2ETools = async (
     const { name, title = name, description = title } = info;
     // NOTE: name only comes through as orca, not the actual file names
     const eval0 = {
-      // code: `/tmp/contracts/${name}.js`,
-      // permit: `/tmp/contracts/${name}-permit.json`,
-      code: `/tmp/contracts/startOrcaContract.js`,
-      permit: `/tmp/contracts/startOrcaContract-permit.json`,
+      code: `/tmp/contracts/${name}.js`,
+      permit: `/tmp/contracts/${name}-permit.json`,
     };
 
     const detail = { evals: [eval0], title, description };

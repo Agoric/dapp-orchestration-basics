@@ -24,35 +24,71 @@ jobs:
       - run: ls ./contract
       - run: yarn test
   integration:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-16core
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - run: corepack enable
-      - run: yarn install
-      - run: yarn start:docker
-      - run: yarn build
-      # Borrowed from https://github.com/DCFoundation/cosmos-proposal-builder/blob/main/.github/workflows/pr.yml#L43-L61
-      - name: Wait for Docker container to be ready
+
+      # - name: yarn link
+      #   run: |
+      #     yarn link-cli ~/bin/agoric
+      #     echo "/home/runner/bin" >> $GITHUB_PATH
+      #   working-directory: ./agoric-sdk
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Build dapp-agoric-basics
+        run: yarn build
+
+      - name: Setup Starship Infrastructure
+        id: starship-infra
+        uses: cosmology-tech/starship-action@0.3.0
+        with:
+          # uses ghcr.io/agoric/agoric-sdk:dev image (latest master)
+          values: ./e2e-testing/config.yaml
+          port-forward: true
+          version: 0.2.10
+          timeout: 30m
+          namespace: agoric-multichain
+
+      - name: Fund Provision Pool
         run: |
-          timeout 300 bash -c '
-            TARGET_HEIGHT=1111
-            SLEEP=10
-            echo "Waiting for the Agoric service to be fully ready..."
-            echo "Target block height: $TARGET_HEIGHT"
-            while true; do
-              response=$(curl --silent http://localhost:26657/abci_info);
-              height=$(echo $response | jq -r ".result.response.last_block_height | tonumber");
-              if [ "$height" -ge $TARGET_HEIGHT ]; then
-                echo "Service is ready! Last block height: $height";
-                break;
-              else
-                echo "Waiting for last block height to reach $TARGET_HEIGHT. Current height: $height";
-              fi;
-              sleep $SLEEP;
-            done
-          '
-      - run: yarn integration-test
+          kubectl config set-context --current --namespace=agoric-multichain
+          kubectl get pods
+          make fund-provision-pool
+        working-directory: ./e2e-testing
+
+      - name: Ensure ports are forwarded
+        run: |
+          curl --fail --retry 3 --retry-delay 10 http://localhost:26657/status || (echo "agoriclocal node is available")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/agoriclocal || (echo "agoriclocal URL check failed")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/osmosislocal || (echo "osmosislocal URL check failed")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/gaialocal || (echo "gaialocal URL check failed")
+
+      - name: Override Chain Registry
+        run: make override-chain-registry
+        working-directory: ./e2e-testing
+
+      - name: Run Integration Test
+        run: yarn integration-test
+
+      - name: Capture and print agoric validator logs
+        if: always()
+        run: kubectl logs agoriclocal-genesis-0 --container=validator || true
+
+      - name: Capture and print agoric-osmosis relayer logs
+        if: always()
+        run: kubectl logs hermes-agoric-osmosis-0 --container=relayer || true
+
+      - name: Capture and print agoric-cosmos relayer logs
+        if: always()
+        run: kubectl logs hermes-agoric-gaia-0 --container=relayer || true
+
       - name: verify contracts started onchain
         run: |
           curl http://localhost:1317/agoric/vstorage/data/published.agoricNames.instance | grep orca

@@ -27,7 +27,9 @@ export const makeGetFile = ({
 export const makeSetupRegistry = getFile => {
   let initialized = false;
 
-  const setupRegistry = async ({ config = '../config.yaml' } = {}) => {
+  const setupRegistry = async ({
+    config = '../../e2e-testing/config.yaml',
+  } = {}) => {
     if (initialized) return { useChain };
     const configFile = getFile(config);
     console.log('configFile', configFile);
