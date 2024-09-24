@@ -67,19 +67,19 @@ This will fund the pool, provision the smart wallet, and will also fund `CLIENTA
 
 This can be ran from the top-level directory
 ```
-make fund
+make -C contract fund-account
 ```
 
 # Build & Deploy the dapp
 From the top level directory, run:
 ```
-make
+yarn build
 ```
 
 # Tests
 From top-level directory:
 ```
-make test-orca
+yarn test
 ```
 
 # tests from root directory
