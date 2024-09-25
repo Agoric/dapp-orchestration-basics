@@ -135,6 +135,7 @@ const makeTestContext = async t => {
     },
   });
 
+  const BLD = await powers.consume.bldIssuerKit;
   /** @type {LocalChain} */
   const localchain = Far('Localchain mock', {
     async makeAccount() {
@@ -146,8 +147,8 @@ const makeTestContext = async t => {
         getBalance() {
           throw Error('mock TODO getBalance');
         },
-        deposit() {
-          throw Error('mock TODO makeAccount');
+        async deposit(payment, optAmountShape) {
+          return AmountMath.make(BLD.brand, 1234n);
         },
         withdraw() {
           throw Error('mock TODO withdraw');
