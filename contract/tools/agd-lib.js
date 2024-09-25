@@ -189,7 +189,8 @@ export const makeCopyFiles = (
   {
     podName = 'agoriclocal-genesis-0',
     containerName = 'validator',
-    destDir = '/tmp/contracts',
+    // destDir = '/tmp/contracts',
+    destDir = '/root',
   } = {},
 ) => {
   /** @param {string[]} paths } */
