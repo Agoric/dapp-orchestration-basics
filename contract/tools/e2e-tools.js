@@ -7,6 +7,22 @@ import { flags, makeAgd, makeCopyFiles } from './agd-lib.js';
 import { makeHttpClient, makeAPI } from './makeHttpClient.js';
 import { dedup, makeQueryKit, poll } from './queryKit.js';
 import { makeVStorage } from './batchQuery.js';
+import { getBundleId } from './bundle-tools.js';
+import { exit } from 'process';
+
+/////////
+
+import { exec } from 'child_process';
+import path from 'path';
+import fs from 'fs';
+import { makeAgdTools } from '../tools/agd-tools.js';
+import { makeDeployBuilder } from '../tools/deploy.js';
+import childProcess from 'child_process';
+import fse from 'fs-extra';
+import { execa } from 'execa';
+import os from 'os';
+import { createRequire } from 'module';
+const nodeRequire = createRequire(import.meta.url);
 
 /** @import { EnglishMnemonic } from '@cosmjs/crypto'; */
 
@@ -463,17 +479,142 @@ export const makeE2ETools = async (
     // for (const [name, rootModPath] of Object.entries(bundleRoots)) {
     console.log('fullPaths', fullPaths);
 
-    for (const fullPath of fullPaths) {
-      const { tx, confirm } = await installBundle(fullPath, {
+    console.log('getBundleId(bundle)');
+
+    for (const _fullPath of fullPaths) {
+      console.log('+fullPath');
+      console.log(_fullPath);
+
+      const pathSlices = _fullPath.split(',');
+      if (pathSlices.length != 2) throw 'invalid path slices length';
+      const contractPath = pathSlices[0];
+      const proposalPath = pathSlices[1];
+
+      console.log('contractPath');
+      console.log(contractPath);
+      console.log('proposalPath');
+      console.log(proposalPath);
+
+      const fullPath = contractPath;
+      const containerPath = fullPath.includes('contract/src/')
+        ? '/root/src/' + fullPath.split('contract/src/').pop()
+        : fullPath;
+
+      console.log('containerPath');
+      console.log(containerPath);
+
+      // load bundle
+      const bundle = await bundleCache.load(fullPath, 'orca');
+      const bundle_proposal = await bundleCache.load(proposalPath, 'orca');
+
+      console.log('bundle');
+      console.log(bundle);
+      console.log(bundle_proposal);
+
+      //copy to
+      const homeDir = os.homedir();
+      const bundleId = getBundleId(bundle);
+      const bundleFileName = path.join(
+        homeDir,
+        '.agoric/cache',
+        `${bundleId}.json`,
+      );
+
+      console.log('bundleFileName');
+      console.log(bundleFileName);
+
+      if (fs.existsSync(bundleFileName)) {
+        console.log(`copying ${bundleFileName} to container...`);
+        const copyCommand = `kubectl cp ${bundleFileName} agoriclocal-genesis-0:/root/bundles/${path.basename(bundleFileName)}`;
+        exec(copyCommand, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error copying file: ${stderr}`);
+            return;
+          }
+        });
+        console.log(
+          `bundle copied to container at /root/${path.basename(bundleFileName)}`,
+        );
+      } else {
+        console.error(`bundle file ${bundleFileName} does not exist!`);
+        // exit(1)
+        // return;
+      }
+
+      // generate plan, etc
+      const tools = await makeAgdTools(console.log, childProcess);
+      // const keyring = await makeKeyring(tools);
+      // const deployBuilder = makeDeployBuilder(tools, fse.readJSON, execa);
+      const contractBuilder = './test/builder/init-orca.js';
+      // await deployBuilder(contractBuilder);
+      const { stdout } = await execa`agoric run ${contractBuilder}`;
+      const match = stdout.match(/ (?<name>[-\w]+)-permit.json/);
+      if (!(match && match.groups)) {
+        throw new Error('no permit found');
+      }
+      const plan = await fse.readJSON(`./${match.groups.name}-plan.json`);
+      console.log(plan);
+
+      console.log('copying files to containr');
+
+      // copy artifacts to container
+      tools.copyFiles([
+        nodeRequire.resolve(`../${plan.script}`),
+        nodeRequire.resolve(`../${plan.permit}`),
+        ...plan.bundles.map(b => b.fileName),
+      ]);
+
+      console.log(
+        'getBundleId(bundle)',
+        getBundleId(bundle),
+        plan.bundles[0].bundleID,
+        getBundleId(bundle) == plan.bundles[0].bundleID,
+      );
+
+      //install proposal
+      const proposalResult = await installBundle(
+        `/root/${plan.bundles[1].bundleID}.json`,
+        {
+          id: fullPath,
+          agd,
+          follow: qt.query.follow,
+          progress,
+          delay,
+          // bundleId: getBundleId(bundle),
+          bundleId: plan.bundles[1].bundleID,
+          // bundleId: undefined,
+        },
+      );
+
+      console.log('confirm_contract', proposalResult.confirm);
+
+      progress({
+        // name,
         id: fullPath,
-        agd,
-        follow: qt.query.follow,
-        progress,
-        delay,
-        // bundleId: getBundleId(bundle),
-        bundleId: undefined,
+        installHeight: proposalResult.tx.height,
+        installed: proposalResult.confirm,
       });
-      console.log('confirm', confirm);
+
+      //install contract
+
+      // const { tx, confirm } = await installBundle(fullPath, {
+      // const { tx, confirm } = await installBundle(containerPath, {
+      let { tx, confirm } = await installBundle(
+        `/root/${plan.bundles[0].bundleID}.json`,
+        {
+          id: fullPath,
+          agd,
+          follow: qt.query.follow,
+          progress,
+          delay,
+          // bundleId: getBundleId(bundle),
+          bundleId: plan.bundles[0].bundleID,
+          // bundleId: undefined,
+        },
+      );
+
+      console.log('confirm_contract', confirm);
+
       progress({
         // name,
         id: fullPath,
@@ -507,8 +648,10 @@ export const makeE2ETools = async (
     const eval0 = {
       // code: `/tmp/contracts/${name}.js`,
       // permit: `/tmp/contracts/${name}-permit.json`,
-      code: `/tmp/contracts/startOrcaContract.js`,
-      permit: `/tmp/contracts/startOrcaContract-permit.json`,
+      // code: `/tmp/contracts/startOrcaContract.js`,
+      // permit: `/tmp/contracts/startOrcaContract-permit.json`,
+      code: `/root/startOrcaContract.js`,
+      permit: `/root/startOrcaContract-permit.json`,
     };
 
     const detail = { evals: [eval0], title, description };
