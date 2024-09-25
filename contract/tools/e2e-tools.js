@@ -468,11 +468,40 @@ export const makeE2ETools = async (
   const vstorage = makeVStorage(lcd);
   const qt = makeQueryKit(vstorage);
 
+  const installBundles = async (fullPaths, progress) => {
+    await null;
+    /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
+    const bundles = {};
+    // for (const [name, rootModPath] of Object.entries(bundleRoots)) {
+    console.log('fullPaths', fullPaths);
+
+    for (const fullPath of fullPaths) {
+      const { tx, confirm } = await installBundle(fullPath, {
+        id: fullPath,
+        agd,
+        follow: qt.query.follow,
+        progress,
+        delay,
+        // bundleId: getBundleId(bundle),
+        bundleId: undefined,
+      });
+      console.log('confirm', confirm);
+      progress({
+        // name,
+        id: fullPath,
+        installHeight: tx.height,
+        installed: confirm,
+      });
+    }
+    // eslint-disable-next-line no-undef
+    return harden(bundles);
+  };
+
   /**
    * @param {Iterable<string>} fullPaths
    * @param {typeof console.log} progress
    */
-  const installBundles = async (fullPaths, progress) => {
+  const installBundlesE2E = async (fullPaths, progress) => {
     await null;
     /** @type {Record<string, import('../test/boot-tools.js').CachedBundle>} */
     const bundles = {};
@@ -486,7 +515,7 @@ export const makeE2ETools = async (
       console.log(_fullPath);
 
       const pathSlices = _fullPath.split(',');
-      if (pathSlices.length != 2) throw 'invalid path slices length';
+      // if (pathSlices.length != 2) throw 'invalid path slices length';
       const contractPath = pathSlices[0];
       const proposalPath = pathSlices[1];
 
@@ -668,6 +697,7 @@ export const makeE2ETools = async (
   return {
     vstorageClient,
     installBundles,
+    installBundlesE2E,
     runCoreEval: buildAndRunCoreEval,
     /**
      * @param {string} address
