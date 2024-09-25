@@ -123,7 +123,7 @@ const main = async (bundleDir = 'bundles') => {
   if (flags.install) {
     const name = stem(flags.install);
     console.log('installing bundle from deploy-contract.js ....');
-    await tools.installBundles([flags.install], progress);
+    await tools.installBundlesE2E([flags.install], progress);
   }
 
   if (flags.eval) {
