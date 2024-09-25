@@ -1,6 +1,6 @@
 import { AmountShape } from '@agoric/ertp';
 import { makeTracer } from '@agoric/internal';
-import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
+import { withOrchestration } from '@agoric/orchestration';
 import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { Fail } from '@endo/errors';
@@ -20,13 +20,11 @@ import * as flows from './orca.flows.js';
  * @import {GuestOf} from '@agoric/async-flow';
  * @import {Amount} from '@agoric/ertp/src/types.js';
  * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
- * @import {ChainAddress, Orchestrator} from '@agoric/orchestration';
- * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
+ * @import {ChainAddress, OrchestrationPowers, OrchestrationTools, CosmosInterchainService} from '@agoric/orchestration';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Baggage} from '@agoric/vat-data';
  * @import {Zone} from '@agoric/zone';
  * @import {Remote} from '@agoric/vow';
- * @import {CosmosInterchainService} from '@agoric/orchestration';
  * @import {TimerService} from '@agoric/time';
  * @import {NameHub} from '@agoric/vats';
  *

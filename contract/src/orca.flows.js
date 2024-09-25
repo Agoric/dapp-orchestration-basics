@@ -3,7 +3,6 @@
  * @import {Amount} from '@agoric/ertp/src/types.js';
  * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
  * @import {ChainAddress, Orchestrator} from '@agoric/orchestration';
- * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Transfer} from './orca.contract.js';
  * @import {DenomArg} from '@agoric/orchestration';
