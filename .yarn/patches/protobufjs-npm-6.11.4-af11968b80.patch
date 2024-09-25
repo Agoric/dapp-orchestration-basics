@@ -1,8 +1,8 @@
-diff --git a/node_modules/protobufjs/src/util/minimal.js b/node_modules/protobufjs/src/util/minimal.js
-index 7f62daa..8d60657 100644
---- a/node_modules/protobufjs/src/util/minimal.js
-+++ b/node_modules/protobufjs/src/util/minimal.js
-@@ -259,14 +259,9 @@ util.newError = newError;
+diff --git a/src/util/minimal.js b/src/util/minimal.js
+index 3c406dee753b5c6fb29dda2e64d4482e754e7873..ec1b36c1b0b028484495b54d90e229ea0033072f 100644
+--- a/src/util/minimal.js
++++ b/src/util/minimal.js
+@@ -259,15 +259,10 @@ util.lcFirst = function lcFirst(str) {
   * @returns {Constructor<Error>} Custom error constructor
   */
  function newError(name) {
@@ -11,21 +11,27 @@ index 7f62daa..8d60657 100644
 -
          if (!(this instanceof CustomError))
              return new CustomError(message, properties);
--
+ 
 -        // Error.call(this, message);
 -        // ^ just returns a new error instance because the ctor can be called as a function
- 
+-
          Object.defineProperty(this, "message", { get: function() { return message; } });
  
+         /* istanbul ignore next */
 @@ -280,13 +275,31 @@ function newError(name) {
              merge(this, properties);
      }
  
 -    (CustomError.prototype = Object.create(Error.prototype)).constructor = CustomError;
+-
+-    Object.defineProperty(CustomError.prototype, "name", { get: function() { return name; } });
+-
+-    CustomError.prototype.toString = function toString() {
+-        return this.name + ": " + this.message;
+-    };
 +    // Create a new object with Error.prototype as its prototype
 +    const proto = Object.create(Error.prototype);
- 
--    Object.defineProperty(CustomError.prototype, "name", { get: function() { return name; } });
++
 +    // Define properties on the prototype
 +    Object.defineProperties(proto, {
 +        constructor: {
@@ -45,10 +51,7 @@ index 7f62daa..8d60657 100644
 +            configurable: true
 +        }
 +    });
- 
--    CustomError.prototype.toString = function toString() {
--        return this.name + ": " + this.message;
--    };
++
 +    // Set the prototype of CustomError
 +    CustomError.prototype = proto;
  

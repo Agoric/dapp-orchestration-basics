@@ -1,8 +1,8 @@
-diff --git a/node_modules/axios/dist/node/axios.cjs b/node_modules/axios/dist/node/axios.cjs
-index 9099d87..7104f6e 100644
---- a/node_modules/axios/dist/node/axios.cjs
-+++ b/node_modules/axios/dist/node/axios.cjs
-@@ -370,9 +370,9 @@ function merge(/* obj1, obj2, obj3, ... */) {
+diff --git a/dist/node/axios.cjs b/dist/node/axios.cjs
+index f6fedeb8afd6bd144ca28c09f5fdb2f4eb04bf21..0ff6d5329deaffe10ce6dac5721b8de2eabfda24 100644
+--- a/dist/node/axios.cjs
++++ b/dist/node/axios.cjs
+@@ -369,9 +369,9 @@ function merge(/* obj1, obj2, obj3, ... */) {
  const extend = (a, b, thisArg, {allOwnKeys}= {}) => {
    forEach(b, (val, key) => {
      if (thisArg && isFunction(val)) {
@@ -14,7 +14,7 @@ index 9099d87..7104f6e 100644
      }
    }, {allOwnKeys});
    return a;
-@@ -403,7 +403,9 @@ const stripBOM = (content) => {
+@@ -402,7 +402,9 @@ const stripBOM = (content) => {
   */
  const inherits = (constructor, superConstructor, props, descriptors) => {
    constructor.prototype = Object.create(superConstructor.prototype, descriptors);
@@ -25,7 +25,7 @@ index 9099d87..7104f6e 100644
    Object.defineProperty(constructor, 'super', {
      value: superConstructor.prototype
    });
-@@ -565,12 +567,14 @@ const isRegExp = kindOfTest('RegExp');
+@@ -564,12 +566,14 @@ const isRegExp = kindOfTest('RegExp');
  
  const reduceDescriptors = (obj, reducer) => {
    const descriptors = Object.getOwnPropertyDescriptors(obj);
