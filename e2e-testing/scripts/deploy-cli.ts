@@ -18,7 +18,7 @@ async function main() {
 
   try {
     const agdTools = await makeAgdTools(console.log, childProcess);
-    const deployBuilder = makeDeployBuilder(agdTools, fse.readJSON, execa, './e2e-testing');
+    const deployBuilder = makeDeployBuilder(agdTools, fse.readJSON, execa);
     await deployBuilder(builder);
   } catch (err) {
     console.error(err);
