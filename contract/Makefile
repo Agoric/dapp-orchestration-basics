@@ -272,7 +272,7 @@ e2e:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn build:deployer"
 
 # yarn node scripts/deploy-contract.js --install /root/src/orca.contract.js --eval /root/src/orca.proposal.js
-	yarn node scripts/deploy-contract.js --install ${PWD}/src/orca.contract.js --eval /root/src/orca.proposal.js
+	yarn node scripts/deploy-contract.js --install ${PWD}/src/orca.contract.js,${PWD}/src/orca.proposal.js --eval /root/src/orca.proposal.js
 
 # todo: figure out why this sequence # is always off by 1 forcing a retry
 # yarn node script/deploy-contract.js
