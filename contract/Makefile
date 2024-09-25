@@ -7,7 +7,20 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # Getting deployer address from chain if it fails use address made from make add-address
-ADDR=$(kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add user1 | jq -r '.address')
+# Default to "user1"
+USERNAME ?= user1
+
+ADDR := $(shell kubectl exec -i agoriclocal-genesis-0 -c validator -- sh -c '\
+    if ! agd keys show $(USERNAME) >/dev/null 2>&1; then \
+        agd keys add $(USERNAME) --output json; \
+    else \
+        agd keys show $(USERNAME) --output json; \
+    fi' | jq -r ".address" \
+)
+
+$(info USERNAME is $(USERNAME))
+$(info ADDR is $(ADDR))
+
 
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
