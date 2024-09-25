@@ -62,10 +62,22 @@ export const makeAgd = ({ execFileSync }) => {
      * @param {string[]} args
      * @param {*} [opts]
      */
-    const exec = (
-      args,
-      opts = { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
-    ) => execFileSync(kubectlBinary, [...binaryArgs, ...args], opts);
+    const exec = (args, opts = { encoding: 'utf-8' }) => {
+      try {
+        return execFileSync(kubectlBinary, [...binaryArgs, ...args], {
+          ...opts,
+          stdio: ['ignore', 'pipe', 'pipe'],
+        });
+      } catch (error) {
+        // Capture both stdout and stderr
+        const stdout = error.stdout ? error.stdout.toString() : '';
+        const stderr = error.stderr ? error.stderr.toString() : '';
+        console.error('Error executing kubectl command:');
+        console.error('stdout:', stdout);
+        console.error('stderr:', stderr);
+        throw new Error(`kubectl command failed: ${stderr}`);
+      }
+    };
 
     const outJson = flags({ output: 'json' });
 
