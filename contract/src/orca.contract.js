@@ -83,7 +83,7 @@ harden(meta);
  */
 
 /**
- * @param {ZCF<Record<string, unknown>> | undefined} zcf
+ * @param {ZCF} zcf
  * @param {OrchestrationPowers & {
  *   marshaller: Marshaller;
  * }} privateArgs
@@ -91,7 +91,6 @@ harden(meta);
  * @param {OrchestrationTools} tools
  */
 const contract = async (
-  /** @type {ZCF<Record<string, unknown>>} */
   zcf,
   privateArgs,
   zone,
@@ -135,5 +134,4 @@ export const start = /** @type {ContractStartFunction} */ (
 );
 harden(start);
 
-// /** @typedef {typeof start} OrcaSF */
-/** @typedef {ContractStartFunction} OrcaSF */
+/** @typedef {typeof start} OrcaSF */
