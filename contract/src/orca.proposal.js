@@ -36,7 +36,7 @@ export const allValues = async obj => {
  * @param {{options: {[contractName]: {bundleID: string}}}} config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
-  trace('startOrcaContract()... 0.0.93');
+  trace('startOrcaContract()... 0.0.93', config);
   console.log(permittedPowers);
   console.log(config);
   const {
@@ -58,11 +58,6 @@ export const startOrcaContract = async (permittedPowers, config) => {
     },
   } = permittedPowers;
 
-  trace('config', config);
-  trace('permittedPowers', permittedPowers);
-  trace('produceInstance:');
-  trace('orcaInstallation', orcaInstallation);
-
   // NOTE: during contract tests, orcaInstallation doesn't provide the installation, config is also undefined during actual deployment
   // this ensures both work, with config, and without. Revisit this to see if there is a way to coerce this without conditional check
   let installation;
@@ -77,23 +72,8 @@ export const startOrcaContract = async (permittedPowers, config) => {
     });
   }
 
-  console.log('installation:');
-  console.log(installation);
-
-  console.log('permittedPowers');
-  console.log(permittedPowers);
-  console.log('from inside startOrcaContract:', produceInstance);
-
-  console.log(cosmosInterchainService);
-  console.log(agoricNames); // make storage node
-  console.log('chainStorage');
-  console.log(chainStorage);
   const storageNode = await E(chainStorage).makeChildNode('orca');
-
-  console.log(storageNode);
-  console.log('DONE MAKING NODES v0.3');
   const marshaller = await E(board).getPublishingMarshaller();
-  console.log(marshaller);
 
   /** @type {StartUpgradableOpts<ContractStartFunction & OrcaSF>} **/
   const startOpts = {
@@ -143,11 +123,7 @@ const orcaManifest = {
 harden(orcaManifest);
 
 export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
-  trace('getting manifest for orca');
-  trace('installKeys');
-  trace(installKeys);
-  trace('restoreRef');
-  trace(restoreRef);
+  trace('getManifestForOrca', installKeys);
   return harden({
     manifest: orcaManifest,
     installations: {

@@ -1,5 +1,3 @@
-console.log('sane');
-
 import { makeHelpers } from '@agoric/deploy-script-support';
 import { startOrcaContract } from '../../src/orca.proposal.js';
 
