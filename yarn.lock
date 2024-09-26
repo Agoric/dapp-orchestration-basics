@@ -12085,7 +12085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esm@github:agoric-labs/esm#Agoric-built":
+"esm@github:agoric-labs/esm.git#Agoric-built":
   version: 3.2.25
   resolution: "esm@https://github.com/agoric-labs/esm.git#commit=3603726ad4636b2f865f463188fcaade6375638e"
   checksum: 10c0/fc1e112a3a681e7b4152d4f5c76dd5aa9e30496d2020490ffa0fb61aaf57d1e12dae0c1074fdd2e0f08949ab2df7e00e750262356781f072e4119955ee10b754
