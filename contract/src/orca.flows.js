@@ -97,9 +97,6 @@ export const makeCreateAndFund = async (
   await localTransfer(seat, localAccount, give);
   trace('after transfer');
 
-  // const localChainBalance = await localAccount.getBalance("BLD"); //'ubld'
-  // trace("localChainBalance", localChainBalance);
-
   await localAccount.transfer(
     {
       denom: 'ubld',

@@ -7,14 +7,6 @@ import { Fail } from '@endo/errors';
 import { E } from '@endo/far';
 import { M } from '@endo/patterns';
 import * as flows from './orca.flows.js';
-// import {ZCF} from "@agoric/zoe/src/contractFacet/types-ambient.js"
-// import '@agoric/zoe/src/zoeService/types-ambient.js';
-// import '@agoric/zoe/src/contractFacet/types-ambient.js';
-// import '@agoric/vats/src/core/types-ambient.js';
-// import '@agoric/vow/src/types.js';
-// import { Remote } from '@agoric/internal/src/types.js';
-// import '@agoric/orchestration/src/types.js';
-// import '@agoric/orchestration/src/exos/int'
 
 /**
  * @import {GuestOf} from '@agoric/async-flow';
@@ -32,28 +24,13 @@ import * as flows from './orca.flows.js';
  *
  */
 
-// /**
-//  * @typedef {import('@agoric/zoe/src/').ZCF<Record<string, unknown>>} OrcaZCF
-//  */
-
 /**
  * @typedef {import('@agoric/vats/src/localchain.js').LocalChain} LocalChain
  * @typedef {import('@agoric/zoe/src/zoeService/utils.js').ContractStartFunction} ContractStartFunction
  */
 
-// /**
-//  * @typedef {import('@agoric/zoe/src/contractFacet/types-ambient.js').ZCF} ZCF
-//  */
-
-// /**
-//  * @typedef {import('@agoric/zoe/src/contractFacet/types-ambient.js').ContractStartFn} ContractStartFunction
-//  */
-
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
-
-/**
- */
 
 const trace = makeTracer('OrchDev1');
 

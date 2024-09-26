@@ -118,7 +118,6 @@ export const startOrcaContract = async (permittedPowers, config) => {
     terms: undefined,
     privateArgs: {
       localchain: await localchain,
-      // localchain: await E(localchain),
       orchestrationService: await cosmosInterchainService,
       storageNode,
       timerService: await chainTimerService,
