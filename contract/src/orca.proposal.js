@@ -8,6 +8,7 @@ import { makeTracer } from './tools/debug.js';
 /**
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
+ * @import {ChainInfo, IBCConnectionInfo,} from '@agoric/orchestration';
  * @import {OrcaSF} from './orca.contract.js';
  * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
@@ -18,6 +19,43 @@ const { entries, fromEntries } = Object;
 trace('start proposal module evaluating');
 
 const contractName = 'orca';
+
+/** @type {IBCConnectionInfo} */
+const c1 = harden({
+  id: 'connection-0',
+  client_id: 'client-0',
+  state: 3, // OPEN
+  counterparty: harden({
+    client_id: 'client-0',
+    connection_id: 'connection-0',
+    prefix: {
+      key_prefix: 'key-prefix-0',
+    },
+  }),
+  transferChannel: harden({
+    portId: 'transfer',
+    channelId: 'channel-0',
+    counterPartyPortId: 'transfer',
+    counterPartyChannelId: 'channel-1',
+    ordering: 2, // ORDERED
+    version: '1',
+    state: 3, // OPEN
+  }),
+});
+
+// TODO: rename chainDetails to defaultChainDetails? or move back to test?
+/** @type {Record<string, ChainInfo>} */
+export const chainDetails = harden({
+  agoric: {
+    chainId: `agoriclocal`,
+    stakingTokens: [{ denom: 'ubld' }],
+    connections: { osmosislocal: c1 },
+  },
+  osmosis: {
+    chainId: `osmosislocal`,
+    stakingTokens: [{ denom: 'uosmo' }],
+  },
+});
 
 /**
  * Given a record whose values may be promise, return a promise for a record with all the values resolved.
@@ -79,7 +117,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
   const startOpts = {
     label: 'orca',
     installation,
-    terms: undefined,
+    terms: { chainDetails },
     privateArgs: {
       localchain: await localchain,
       orchestrationService: await cosmosInterchainService,

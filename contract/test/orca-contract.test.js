@@ -6,23 +6,19 @@ import { createRequire } from 'module';
 import { E, Far, passStyleOf } from '@endo/far';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { AmountMath } from '@agoric/ertp';
-import { registerChain } from '@agoric/orchestration/src/chain-info.js';
 import { prepareVowTools } from '@agoric/vow/vat.js';
 
-import { startOrcaContract } from '../src/orca.proposal.js';
+import { startOrcaContract, chainDetails } from '../src/orca.proposal.js';
 
 import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
 
-import { makeHeapZone } from '@agoric/zone';
-import { prepareSwingsetVowTools } from '@agoric/vow/vat.js';
-
-/** @typedef {typeof import('../src/orca.contract.js').start} OrcaContractFn */
 /**
- * @import {ChainInfo, IBCConnectionInfo, IcaAccount, MakeCosmosInterchainService} from '@agoric/orchestration';
+ * @import {IcaAccount, MakeCosmosInterchainService} from '@agoric/orchestration';
  * @import {LocalChain,LocalChainAccount} from '@agoric/vats/src/localchain.js';
  * @import {TargetRegistration} from '@agoric/vats/src/bridge-target.js';
+ * @import {OrcaSF} from '../src/orca.contract.js';
  */
 
 const nodeRequire = createRequire(import.meta.url);
@@ -35,43 +31,6 @@ const scriptRoot = {
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
 // @ts-expect-error - XXX what's going on here??
 const test = anyTest;
-
-/** @type {IBCConnectionInfo} */
-const c1 = harden({
-  id: 'connection-0',
-  client_id: 'client-0',
-  state: 3, // OPEN
-  counterparty: harden({
-    client_id: 'client-0',
-    connection_id: 'connection-0',
-    prefix: {
-      key_prefix: 'key-prefix-0',
-    },
-  }),
-  transferChannel: harden({
-    portId: 'transfer',
-    channelId: 'channel-0',
-    counterPartyPortId: 'transfer',
-    counterPartyChannelId: 'channel-1',
-    ordering: 2, // ORDERED
-    version: '1',
-    state: 3, // OPEN
-  }),
-});
-
-/** @type {Record<string, ChainInfo>} */
-const chainInfo = harden({
-  agoric: {
-    chainId: `agoriclocal`,
-    stakingTokens: [{ denom: 'ubld' }],
-    connections: { osmosislocal: c1 },
-  },
-  osmosis: {
-    chainId: `osmosislocal`,
-    stakingTokens: [{ denom: 'uosmo' }],
-    connections: { agoriclocal: c1 },
-  },
-});
 
 /**
  * Tests assume access to the zoe service and that contracts are bundled.
@@ -87,12 +46,6 @@ const makeTestContext = async t => {
   const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
   const bundle = await bundleCache.load(contractPath, 'orca');
   const tools = await makeMockTools(t, bundleCache);
-
-  const { agoricNamesAdmin } = await powers.consume;
-
-  for (const [name, info] of Object.entries(chainInfo)) {
-    await registerChain(agoricNamesAdmin, name, info);
-  }
 
   const zones = {
     cosmos: powers.zone.subZone('cosmosInterchainService'),
@@ -203,6 +156,7 @@ test('Start Orca contract', async t => {
   const { bundle, bootstrapSpace, cosmosInterchainService, localchain } =
     t.context;
   const { zoe } = bootstrapSpace;
+  /** @type {Installation<OrcaSF>} */
   const installation = await E(zoe).install(bundle);
 
   const privateArgs = harden({
@@ -217,7 +171,8 @@ test('Start Orca contract', async t => {
   const { instance } = await E(zoe).startInstance(
     installation,
     {},
-    {},
+    // @ts-expect-error XXX startInstance typedef problem?
+    { chainDetails },
     privateArgs,
   );
   t.log('started:', instance);
@@ -249,7 +204,7 @@ test('Start Orca contract using core-eval', async t => {
       behavior: startOrcaContract,
       entryFile: scriptRoot.orca,
       config: {
-        options: { orca: { bundleID } },
+        options: { orca: { bundleID, chainDetails } },
       },
     });
 
@@ -299,7 +254,7 @@ const orchestrationAccountScenario = test.macro({
     const { zoe } = bootstrapSpace;
 
     t.log('installing the contract...'); // why are we doing this again???
-    /** @type {Installation<OrcaContractFn>} */
+    /** @type {Installation<OrcaSF>} */
     const installation = await E(zoe).install(bundle);
 
     const privateArgs = harden({
@@ -315,7 +270,8 @@ const orchestrationAccountScenario = test.macro({
     const { instance } = await E(zoe).startInstance(
       installation,
       {},
-      {},
+      // @ts-expect-error XXX startInstance typedef problem?
+      { chainDetails },
       privateArgs,
     );
     const publicFacet = await E(zoe).getPublicFacet(instance);
@@ -359,6 +315,7 @@ const orchestrationAccountAndFundScenario = test.macro({
     } = t.context;
     const { zoe } = bootstrapSpace;
     t.log('installing the contract...');
+    /** @type {Installation<OrcaSF>} */
     const installation = await E(zoe).install(bundle);
 
     const privateArgs = harden({
@@ -376,7 +333,8 @@ const orchestrationAccountAndFundScenario = test.macro({
     const { instance } = await E(zoe).startInstance(
       installation,
       { BLD: BLD.issuer },
-      {},
+      // @ts-expect-error XXX startInstance typedef problem?
+      { chainDetails },
       privateArgs,
     );
     const publicFacet = await E(zoe).getPublicFacet(instance);
