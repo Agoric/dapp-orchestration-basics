@@ -56,7 +56,6 @@
     "postinstall": "npx patch-package"
   },
   "devDependencies": {
-    "@endo/ses-ava": "^1.2.4",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "ts-node": "^10.9.2",
