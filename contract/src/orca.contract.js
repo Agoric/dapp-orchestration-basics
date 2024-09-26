@@ -26,7 +26,6 @@ import * as flows from './orca.flows.js';
 
 /**
  * @typedef {import('@agoric/vats/src/localchain.js').LocalChain} LocalChain
- * @typedef {import('@agoric/zoe/src/zoeService/utils.js').ContractStartFunction} ContractStartFunction
  */
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
@@ -73,16 +72,6 @@ export const meta = {
 harden(meta);
 
 /**
- * @typedef {{
- *   localchain: Remote<LocalChain>;
- *   orchestrationService: Remote<CosmosInterchainService>;
- *   storageNode: Remote<StorageNode>;
- *   timerService: Remote<TimerService>;
- *   agoricNames: Remote<NameHub>;
- * }} OrchestrationPowers
- */
-
-/**
  * @param {ZCF} zcf
  * @param {OrchestrationPowers & {
  *   marshaller: Marshaller;
@@ -96,8 +85,7 @@ const contract = async (
   zone,
   { orchestrateAll, vowTools, zoeTools },
 ) => {
-  trace('inside start function: v1.1.96');
-  trace('privateArgs', privateArgs);
+  trace('inside start function: privateArgs', privateArgs);
 
   // @ts-expect-error XXX ZCFSeat not Passable
   const { makeAccount, makeCreateAndFund } = orchestrateAll(flows, {
@@ -128,10 +116,7 @@ const contract = async (
   return { publicFacet };
 };
 
-/** @type {ContractStartFunction} */
-export const start = /** @type {ContractStartFunction} */ (
-  withOrchestration(contract)
-);
+export const start = withOrchestration(contract);
 harden(start);
 
 /** @typedef {typeof start} OrcaSF */

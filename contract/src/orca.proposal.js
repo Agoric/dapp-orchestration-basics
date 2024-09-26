@@ -1,13 +1,8 @@
 import { E } from '@endo/far';
 import { installContract } from './platform-goals/start-contract.js';
 import { makeTracer } from './tools/debug.js';
-// import '@agoric/orchestration/src/types.js';
-// import '@agoric/vats/src/types.js';
-// import '@agoric/vats/src/localchain.js';
-// import '@agoric/vow/src/types.js';
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
-// import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
 
 /**
@@ -16,14 +11,8 @@ import { makeTracer } from './tools/debug.js';
  * @import {OrchestrationPowers} from './exos/cosmos-interchain-service.js';
  * @import {Remote} from '@agoric/vow';
  * @import {OrcaSF} from './orca.contract.js';
- */
-
-/**
- * * @typedef {import('./orca.contract.js').OrcaSF} OrcaSF
- */
-
-/**
- * @typedef {import('@agoric/vow').Remote<import('@agoric/vats/src/localchain.js').LocalChain>} LocalChain
+ * @import {LocalChain} from '@agoric/vats/src/localchain.js';
+ * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
 
 const trace = makeTracer('OrCE');
@@ -48,7 +37,7 @@ export const allValues = async obj => {
 };
 
 /**
- * @param {BootstrapPowers & {installation: {consume: {orca: Installation<import('./orca.contract.js').start>}}}} permittedPowers
+ * @param {BootstrapPowers & {installation: {consume: {orca: Installation<OrcaSF>}}}} permittedPowers
  * @param {{options: {[contractName]: {bundleID: string}}}} config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
@@ -111,7 +100,7 @@ export const startOrcaContract = async (permittedPowers, config) => {
   const marshaller = await E(board).getPublishingMarshaller();
   console.log(marshaller);
 
-  /** @type {StartUpgradableOpts<OrcaSF>} **/
+  /** @type {StartUpgradableOpts<ContractStartFunction & OrcaSF>} **/
   const startOpts = {
     label: 'orca',
     installation,
@@ -139,7 +128,6 @@ const orcaManifest = {
   [startOrcaContract.name]: {
     consume: {
       agoricNames: true,
-      // brandAuxPublisher: true,
       board: true,
       chainStorage: true,
       startUpgradable: true,
