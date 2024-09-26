@@ -1,5 +1,4 @@
 import { useAgoric } from '@agoric/react-components';
-import { SigningStargateClient } from '@cosmjs/stargate';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { NotificationContext } from '../../context/NotificationContext';
 import { useContractStore } from '../../store/contract';
@@ -7,9 +6,7 @@ import AccountList from './AccountList';
 import ChainSelector from './ChainSelector';
 import CreateAccountButton from './CreateAccountButton';
 import { fetchBalances } from './FetchBalances';
-import { initializeKeplr } from './KeplrInitializer';
 import { makeOffer } from './MakeOffer';
-import RpcEndpoints from './RpcEndpoints';
 
 const Orchestration = () => {
   const { walletConnection } = useAgoric();
@@ -118,7 +115,7 @@ const Orchestration = () => {
         addNotification!,
         selectedChain,
         'makeCreateAndFundInvitation',
-        { chainName: selectedChain, denom: 'ubld' },
+        { chainName: selectedChain }, // adjust as needed
         setLoadingCreateAndFund,
         handleToggle,
         setStatusText,
@@ -147,7 +144,6 @@ const Orchestration = () => {
   const executeDeposit = async () => {
     setLoadingDeposit(prevState => ({ ...prevState, [modalAddress]: true }));
     try {
-      await initializeKeplr();
       let chain = '';
       if (modalAddress.startsWith('osmo1')) {
         chain = 'osmosis';
@@ -156,54 +152,33 @@ const Orchestration = () => {
       } else {
         throw new Error('unsupported address prefix');
       }
+      const { signingClient, address } = walletConnection;
       if (chain === 'agoric') {
-        await window.keplr.enable(`${chain}local`);
-        const offlineSigner = window.getOfflineSigner(`${chain}local`);
-        const accounts = await offlineSigner.getAccounts();
-        const client = await SigningStargateClient.connectWithSigner(
-          `${RpcEndpoints[chain]}`,
-          offlineSigner,
-        );
-        const sendMsg = {
-          typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-          value: {
-            fromAddress: accounts[0].address,
-            toAddress: modalAddress,
-            amount: [{ denom: selectedDenom, amount: amount.toString() }],
-          },
-        };
+        const amountToSend = [
+          { denom: selectedDenom, amount: amount.toString() },
+        ];
         const fee = {
           amount: [{ denom: 'ubld', amount: '5000' }],
           gas: '200000',
         };
-        const result = await client.signAndBroadcast(
-          accounts[0].address,
-          [sendMsg],
+        const result = await signingClient.sendTokens(
+          address,
+          modalAddress,
+          amountToSend,
           fee,
-          '',
         );
         if (result.code !== undefined && result.code !== 0) {
           throw new Error(`failed to send message: ${result}`);
         }
         console.log('message sent successfully');
       } else {
-        // await window.keplr.enable(`${chain}local`);
-        // const offlineSigner = window.getOfflineSigner(`${chain}local`);
-        await window.keplr.enable(`agoriclocal`);
-        const offlineSigner = window.getOfflineSigner(`agoriclocal`);
-        const accounts = await offlineSigner.getAccounts();
-        // const client = await SigningStargateClient.connectWithSigner(`${RpcEndpoints[chain]}`, offlineSigner);
-        const client = await SigningStargateClient.connectWithSigner(
-          `${RpcEndpoints['agoric']}`,
-          offlineSigner,
-        );
         const sendMsg = {
           typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
           value: {
             sourcePort: 'transfer',
-            sourceChannel: 'channel-0', //TODO: fetch correct channel id
+            sourceChannel: 'channel-0', // TODO: fetch correct channel id
             token: { denom: selectedDenom, amount: amount.toString() },
-            sender: accounts[0].address,
+            sender: address,
             receiver: modalAddress,
             timeoutTimestamp: (Math.floor(Date.now() / 1000) + 600) * 1e9, //10
           },
@@ -212,8 +187,8 @@ const Orchestration = () => {
           amount: [{ denom: 'ubld', amount: '5000' }],
           gas: '200000',
         };
-        const result = await client.signAndBroadcast(
-          accounts[0].address,
+        const result = await walletConnection.signingClient.signAndBroadcast(
+          address,
           [sendMsg],
           fee,
           '',

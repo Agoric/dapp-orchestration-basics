@@ -28,6 +28,17 @@ function App() {
                 rpc: ['http://localhost:26657'],
               },
             },
+            {
+              testChain: {
+                chainId: 'agoric-emerynet-8',
+                chainName: 'emerynet',
+                iconUrl: 'agoric.svg',
+              },
+              apis: {
+                rest: ['https://emerynet.api.agoric.net'],
+                rpc: ['https://emerynet.rpc.agoric.net'],
+              },
+            },
           ]}
           defaultChainName="agoric-local"
         >
