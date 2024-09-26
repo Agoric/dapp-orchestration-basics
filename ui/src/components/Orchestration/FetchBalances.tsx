@@ -1,11 +1,7 @@
 import { StargateClient } from '@cosmjs/stargate';
+import { rpcEndpoints } from '../../util';
 
-const rpcEndpoints = {
-  osmosis: 'http://127.0.0.1:26655',
-  agoric: 'http://127.0.0.1:26657',
-};
-
-export const fetchBalances = async (addresses: string[]) => {
+export const fetchBalances = async (addresses: string[], chainName: string) => {
   return Promise.all(
     addresses.map(async address => {
       console.log('address', address);
@@ -21,7 +17,7 @@ export const fetchBalances = async (addresses: string[]) => {
         };
       }
 
-      const rpcEndpoint = rpcEndpoints[chain];
+      const rpcEndpoint = rpcEndpoints[chainName][chain];
       try {
         const balance = await fetchBalanceFromRpc(address, rpcEndpoint);
         return {

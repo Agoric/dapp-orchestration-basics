@@ -224,7 +224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/ertp@npm:0.16.3-upgrade-17-dev-ec448b0.0+ec448b0, @agoric/ertp@npm:^0.16.3-dev-e2e36cc.0, @agoric/ertp@npm:^0.16.3-u14.0, @agoric/ertp@npm:^0.16.3-u17.1":
+"@agoric/ertp@npm:0.16.3-upgrade-17-dev-ec448b0.0+ec448b0, @agoric/ertp@npm:^0.16.3-dev-e2e36cc.0, @agoric/ertp@npm:^0.16.3-u17.1":
   version: 0.16.3-upgrade-17-dev-ec448b0.0
   resolution: "@agoric/ertp@npm:0.16.3-upgrade-17-dev-ec448b0.0"
   dependencies:
@@ -553,12 +553,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/react-components@npm:^0.1.1-dev-ca0ddde.0":
-  version: 0.1.1-dev-ca0ddde.0
-  resolution: "@agoric/react-components@npm:0.1.1-dev-ca0ddde.0"
+"@agoric/react-components@npm:0.2.1-dev-e6f79e0.0":
+  version: 0.2.1-dev-e6f79e0.0
+  resolution: "@agoric/react-components@npm:0.2.1-dev-e6f79e0.0"
   dependencies:
-    "@agoric/rpc": "npm:0.9.1-dev-ca0ddde.0+ca0ddde"
-    "@agoric/web-components": "npm:0.15.1-dev-ca0ddde.0+ca0ddde"
+    "@agoric/rpc": "npm:0.10.1-dev-e6f79e0.0+e6f79e0"
+    "@agoric/web-components": "npm:0.16.1-dev-e6f79e0.0+e6f79e0"
     "@cosmos-kit/core": "npm:2.8.9"
     "@cosmos-kit/react": "npm:2.10.10"
     "@interchain-ui/react": "npm:1.21.18"
@@ -573,20 +573,20 @@ __metadata:
     chain-registry: 1.28.0
     react: 18.2.0
     react-dom: 18.2.0
-  checksum: 10c0/1995754aef89048c30dd011df26a246df0c622607c0561ca21dd1ab6efaa04056044b0dc7552686e98e9c9029e8c7ab942290f43ae9ab6dcc92bc264edf10020
+  checksum: 10c0/9e4794f3dea40782f86c06629c9ae3b65864f158582b44a35bf210f532f45dff6f762255705c24cf830d2edbb99542ecfbea48ad20148764af55b15f7854bf5c
   languageName: node
   linkType: hard
 
-"@agoric/rpc@npm:0.9.1-dev-ca0ddde.0+ca0ddde":
-  version: 0.9.1-dev-ca0ddde.0
-  resolution: "@agoric/rpc@npm:0.9.1-dev-ca0ddde.0"
+"@agoric/rpc@npm:0.10.1-dev-e6f79e0.0+e6f79e0":
+  version: 0.10.1-dev-e6f79e0.0
+  resolution: "@agoric/rpc@npm:0.10.1-dev-e6f79e0.0"
   dependencies:
     "@endo/marshal": "npm:^0.8.9"
     axios: "npm:^1.6.2"
     axios-retry: "npm:^4.0.0"
     vite: "npm:^4.3.2"
     vite-tsconfig-paths: "npm:^4.2.0"
-  checksum: 10c0/75ca55aeb40b1871fe7b008cbbdcdd632378416057683038997341dd1ac987c829ba794c78f330e289cabfc23b809ddddf773e6d48c52ab8070f07a363a4db5d
+  checksum: 10c0/14e9acbf99c2c41174e8a5649ab40850d069a12afa2fdeda529f2ab7871b30afc1e6c17dcc7d6a0806df5e2caca1a53658d744f8efac2d199b5822219606308f
   languageName: node
   linkType: hard
 
@@ -934,24 +934,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/ui-components@npm:^0.3.9-u13.0":
-  version: 0.3.9-u14.0
-  resolution: "@agoric/ui-components@npm:0.3.9-u14.0"
-  dependencies:
-    "@agoric/assert": "npm:^0.6.1-u11wf.0"
-    "@agoric/ertp": "npm:^0.16.3-u14.0"
-    "@endo/eventual-send": "npm:0.17.2"
-    "@endo/init": "npm:0.5.56"
-    "@endo/nat": "npm:4.1.27"
-    clsx: "npm:^1.1.1"
-  peerDependencies:
-    "@material-ui/core": ^4.11.3
-    react: ^16.14.0
-    react-dom: ^16.8.0
-  checksum: 10c0/9b606929ac4b427f057875a448e061c268c2e0e74dc6a75f8a8f8df3cff6f2095b80631762d191958665281b802d6b58e99cdab462cf6f8079ddaefcc2fd0807
-  languageName: node
-  linkType: hard
-
 "@agoric/vat-data@npm:0.5.3-upgrade-17-dev-ec448b0.0+ec448b0, @agoric/vat-data@npm:^0.5.3-u14.0, @agoric/vat-data@npm:^0.5.3-u17.1":
   version: 0.5.3-upgrade-17-dev-ec448b0.0
   resolution: "@agoric/vat-data@npm:0.5.3-upgrade-17-dev-ec448b0.0"
@@ -1052,26 +1034,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/web-components@npm:0.15.1-dev-8fc28e8.0":
-  version: 0.15.1-dev-8fc28e8.0
-  resolution: "@agoric/web-components@npm:0.15.1-dev-8fc28e8.0"
-  dependencies:
-    "@agoric/assert": "npm:^0.6.0"
-    "@agoric/cache": "npm:^0.3.2"
-    "@agoric/casting": "npm:^0.4.3-u13.0"
-    "@agoric/ertp": "npm:^0.16.2"
-    "@agoric/notifier": "npm:^0.6.3-dev-8c14632.0"
-    "@agoric/smart-wallet": "npm:^0.5.3"
-    "@endo/captp": "npm:^3.1.1"
-    "@endo/eventual-send": "npm:^0.17.5"
-    "@endo/marshal": "npm:^0.8.5"
-  checksum: 10c0/8a3ef79bd73e34fd1a22131ad3faf9745851e14fb5579c30fbe10ad0fb22665c6353f5fd348e98720889ec52457114b6ab04ff4940291181edef9a3dad300a6a
-  languageName: node
-  linkType: hard
-
-"@agoric/web-components@npm:0.15.1-dev-ca0ddde.0+ca0ddde":
-  version: 0.15.1-dev-ca0ddde.0
-  resolution: "@agoric/web-components@npm:0.15.1-dev-ca0ddde.0"
+"@agoric/web-components@npm:0.16.1-dev-e6f79e0.0+e6f79e0":
+  version: 0.16.1-dev-e6f79e0.0
+  resolution: "@agoric/web-components@npm:0.16.1-dev-e6f79e0.0"
   dependencies:
     "@agoric/assert": "npm:^0.6.0"
     "@agoric/cache": "npm:^0.3.2"
@@ -1083,7 +1048,7 @@ __metadata:
     "@endo/captp": "npm:^3.1.1"
     "@endo/eventual-send": "npm:^0.17.5"
     "@endo/marshal": "npm:^0.8.5"
-  checksum: 10c0/641b3c479ca8d4e61d4962714d8bc8a285013bc99a7bc020c12ff618c9e324541a19be40bb73568c59bff33f202fd5724cc96403914845b876c5e207251a50c6
+  checksum: 10c0/590954323e32dde8c80e069e7163689ef0c06d3d5f85ac88bf0ecd657be2d1530fe4973493effb92dab69e3eac585a4f488cdc1ecc6d2c553e8dabfc25f59f81
   languageName: node
   linkType: hard
 
@@ -10319,7 +10284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0, clsx@npm:^1.1.1, clsx@npm:^1.2.1":
+"clsx@npm:^1.1.0, clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 10c0/34dead8bee24f5e96f6e7937d711978380647e936a22e76380290e35486afd8634966ce300fc4b74a32f3762c7d4c0303f442c3e259f4ce02374eb0c82834f27
@@ -10852,9 +10817,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dapp-agoric-orca-ui@workspace:ui"
   dependencies:
-    "@agoric/react-components": "npm:^0.1.1-dev-ca0ddde.0"
-    "@agoric/ui-components": "npm:^0.3.9-u13.0"
-    "@agoric/web-components": "npm:0.15.1-dev-8fc28e8.0"
+    "@agoric/react-components": "npm:0.2.1-dev-e6f79e0.0"
     "@interchain-ui/react": "npm:1.21.18"
     "@keplr-wallet/types": "npm:^0.12.121"
     "@types/react": "npm:^18.2.56"
