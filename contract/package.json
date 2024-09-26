@@ -60,12 +60,14 @@
     "execa": "^9.2.0",
     "fs-extra": "^11.2.0",
     "import-meta-resolve": "^2.2.1",
+    "prettier": "^3.3.3",
     "prettier-plugin-jsdoc": "^1.0.0",
     "rollup": "^4.18.0",
     "starshipjs": "^2.4.0",
     "tsimp": "^2.0.10",
     "type-coverage": "^2.26.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^7.18.0"
   },
   "dependencies": {
     "@agoric/ertp": "^0.16.3-u17.1",
