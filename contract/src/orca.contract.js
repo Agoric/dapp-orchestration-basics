@@ -1,12 +1,14 @@
 import { AmountShape } from '@agoric/ertp';
 import { makeTracer } from '@agoric/internal';
 import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
+import { ChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { M } from '@endo/patterns';
 import * as flows from './orca.flows.js';
 
 /**
  * @import {Marshaller} from '@agoric/internal/src/lib-chainStorage.js';
+ * @import {CosmosChainInfo} from '@agoric/orchestration';
  * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {Zone} from '@agoric/zone';
  */
@@ -14,6 +16,7 @@ import * as flows from './orca.flows.js';
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
 
+const { entries, keys } = Object;
 const trace = makeTracer('OrchDev1');
 
 const SingleAmountRecord = M.and(
@@ -39,11 +42,18 @@ export const meta = {
       marshaller: M.remotable('marshaller'),
     }),
   ),
+  customTermsShape: {
+    chainDetails: M.recordOf(M.string(), ChainInfoShape),
+  },
 };
 harden(meta);
 
 /**
- * @param {ZCF} zcf
+ * @typedef {{
+ *   chainDetails: Record<string, CosmosChainInfo>
+ * }} OrcaTerms
+ *
+ * @param {ZCF<OrcaTerms>} zcf
  * @param {OrchestrationPowers & {
  *   marshaller: Marshaller;
  * }} privateArgs
@@ -54,9 +64,22 @@ const contract = async (
   zcf,
   privateArgs,
   zone,
-  { orchestrateAll, vowTools, zoeTools },
+  { orchestrateAll, zoeTools, chainHub },
 ) => {
-  trace('inside start function: privateArgs', privateArgs);
+  trace('orca start contract');
+
+  const { chainDetails } = zcf.getTerms();
+  for (const [name, info] of entries(chainDetails)) {
+    const { connections = {} } = info;
+    trace('register', name, {
+      chainId: info.chainId,
+      connections: keys(connections),
+    });
+    chainHub.registerChain(name, info);
+    for (const [chainId, connInfo] of entries(connections)) {
+      chainHub.registerConnection(info.chainId, chainId, connInfo);
+    }
+  }
 
   // @ts-expect-error XXX ZCFSeat not Passable
   const { makeAccount, makeCreateAndFund } = orchestrateAll(flows, {
