@@ -229,8 +229,6 @@ test('Start Orca contract using core-eval', async t => {
   // const { runCoreEval, installBundles } = t.context;
 
   t.log('run core-eval to start (dummy) orchestration 2');
-  t.log('runCoreEval:', runCoreEval);
-  t.log('before core eval');
   await runCoreEval({
     name: 'start-orchestration',
     behavior: startOrchCoreEval,
@@ -242,10 +240,8 @@ test('Start Orca contract using core-eval', async t => {
   const bundles = await installBundles({ orca: contractPath });
 
   t.log('run orca core-eval');
-  t.log(`${bundles.orca}`);
   const bundleID = getBundleId(bundles.orca);
-  t.log('bundleID');
-  t.log(bundleID);
+  t.log('bundleID', bundleID);
   const name = 'orca';
   try {
     const result = await runCoreEval({
