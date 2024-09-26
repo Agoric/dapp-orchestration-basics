@@ -20,19 +20,6 @@ const runCommand = command => {
 
 /** @type {import('@agoric/deploy-script-support/src/externalTypes.js').CoreEvalBuilder} */
 export const defaultProposalBuilder = async ({ publishRef, install }) => {
-  try {
-    const whoamiOutput = await runCommand('whoami');
-    console.log('Whoami Output:', whoamiOutput);
-
-    const lsOutput = await runCommand('ls');
-    console.log('LS Output:', lsOutput);
-
-    const pwdOutput = await runCommand('pwd');
-    console.log('PWD Output:', pwdOutput);
-  } catch (error) {
-    console.error('Command execution error:', error);
-  }
-
   return harden({
     sourceSpec: '../../src/orca.proposal.js',
     getManifestCall: [
