@@ -8,10 +8,7 @@ import { makeTracer } from './tools/debug.js';
 /**
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
- * @import {OrchestrationPowers} from './exos/cosmos-interchain-service.js';
- * @import {Remote} from '@agoric/vow';
  * @import {OrcaSF} from './orca.contract.js';
- * @import {LocalChain} from '@agoric/vats/src/localchain.js';
  * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
 
@@ -19,8 +16,6 @@ const trace = makeTracer('OrCE');
 const { entries, fromEntries } = Object;
 
 trace('start proposal module evaluating');
-
-const { Fail } = assert;
 
 const contractName = 'orca';
 
