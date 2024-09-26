@@ -145,18 +145,8 @@ const makeCreateAndFundScenario = test.macro({
 
     t.log('Before doOffer');
 
-    // const { mint, issuer, brand } = makeIssuerKit('BLD');
-
-    // const issuers = {
-    //   BLDIssuer: issuer,
-    // };
-
-    const brands = await vstorageClient.queryData(
-      'published.agoricNames.brand',
-    );
+    const brands = await wdUser1.query.queryData('published.agoricNames.brand');
     const brand = Object.fromEntries(brands).BLD;
-
-    console.log('brand::', brand);
 
     const amount = AmountMath.make(brand, 10n);
 
@@ -181,8 +171,6 @@ const makeCreateAndFundScenario = test.macro({
         Object.fromEntries(offerToPublicSubscriberPaths)[offerId],
       `${offerId} continuing invitation is in vstorage`,
     );
-
-    console.log('currentWalletRecord', currentWalletRecord);
 
     const offerToPublicSubscriberMap = Object.fromEntries(
       currentWalletRecord.offerToPublicSubscriberPaths,
