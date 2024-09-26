@@ -1,31 +1,14 @@
 import { AmountShape } from '@agoric/ertp';
 import { makeTracer } from '@agoric/internal';
 import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
-import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
-import { Fail } from '@endo/errors';
-import { E } from '@endo/far';
 import { M } from '@endo/patterns';
 import * as flows from './orca.flows.js';
 
 /**
- * @import {GuestOf} from '@agoric/async-flow';
- * @import {Amount} from '@agoric/ertp/src/types.js';
- * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
- * @import {ChainAddress, Orchestrator} from '@agoric/orchestration';
+ * @import {Marshaller} from '@agoric/internal/src/lib-chainStorage.js';
  * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
- * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
- * @import {Baggage} from '@agoric/vat-data';
  * @import {Zone} from '@agoric/zone';
- * @import {Remote} from '@agoric/vow';
- * @import {CosmosInterchainService} from '@agoric/orchestration';
- * @import {TimerService} from '@agoric/time';
- * @import {NameHub} from '@agoric/vats';
- *
- */
-
-/**
- * @typedef {import('@agoric/vats/src/localchain.js').LocalChain} LocalChain
  */
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
@@ -39,18 +22,6 @@ const SingleAmountRecord = M.and(
   }),
   M.not(harden({})),
 );
-
-/**
- * @typedef {(
- * srcSeat: ZCFSeat,
- * localAccount,
- * remoteAccount,
- * give: AmountKeywordRecord,
- * amt: Amount<'nat'>,
- * localAddress: ChainAddress,
- * remoteAddress: ChainAddress,
- * ) => Promise<void>} Transfer
- */
 
 const OrchestrationPowersShape = M.splitRecord({
   localchain: M.remotable('localchain'),

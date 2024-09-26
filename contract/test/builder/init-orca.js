@@ -2,21 +2,6 @@ console.log('sane');
 
 import { makeHelpers } from '@agoric/deploy-script-support';
 import { startOrcaContract } from '../../src/orca.proposal.js';
-import { exec } from 'child_process';
-
-const runCommand = command => {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(`Error: ${error.message}`);
-      } else if (stderr) {
-        reject(`Stderr: ${stderr}`);
-      } else {
-        resolve(stdout);
-      }
-    });
-  });
-};
 
 /** @type {import('@agoric/deploy-script-support/src/externalTypes.js').CoreEvalBuilder} */
 export const defaultProposalBuilder = async ({ publishRef, install }) => {

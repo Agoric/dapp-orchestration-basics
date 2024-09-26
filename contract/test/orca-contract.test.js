@@ -31,9 +31,6 @@ const contractPath = nodeRequire.resolve(`../src/orca.contract.js`);
 const scriptRoot = {
   orca: nodeRequire.resolve('../src/orca.proposal.js'),
 };
-// const scriptRoots = {
-//   postalService: nodeRequire.resolve('../src/postal-service.proposal.js'),
-// };
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
 // @ts-expect-error - XXX what's going on here??
