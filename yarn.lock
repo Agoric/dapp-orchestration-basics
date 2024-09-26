@@ -9534,12 +9534,12 @@ __metadata:
 
 "axios@patch:axios@npm%3A1.6.8#~/.yarn/patches/axios-npm-1.6.8-85cf1e7152.patch":
   version: 1.6.8
-  resolution: "axios@patch:axios@npm%3A1.6.8#~/.yarn/patches/axios-npm-1.6.8-85cf1e7152.patch::version=1.6.8&hash=deb324"
+  resolution: "axios@patch:axios@npm%3A1.6.8#~/.yarn/patches/axios-npm-1.6.8-85cf1e7152.patch::version=1.6.8&hash=0dab91"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/fc533922b4f59994c66e2a2e9249e29811e95316538b781656f105e1dc750b6c95c14c9db36e399ea4b7acfd2a4479fe498f4279f927440ab18fcd83cc1e25b7
+  checksum: 10c0/26983d494402425130deee491d92a0a7aaf65fe7be2dc3e894084af66b03a37ce27889ffa9237836fd1420428d9c3a0f67951c3a93cdd66e218e53c9712490c5
   languageName: node
   linkType: hard
 
@@ -15434,7 +15434,7 @@ __metadata:
 
 "node-fetch@patch:node-fetch@npm%3A2.7.0#~/.yarn/patches/node-fetch-npm-2.7.0-587d57004e.patch":
   version: 2.7.0
-  resolution: "node-fetch@patch:node-fetch@npm%3A2.7.0#~/.yarn/patches/node-fetch-npm-2.7.0-587d57004e.patch::version=2.7.0&hash=2f3044"
+  resolution: "node-fetch@patch:node-fetch@npm%3A2.7.0#~/.yarn/patches/node-fetch-npm-2.7.0-587d57004e.patch::version=2.7.0&hash=67d1e0"
   dependencies:
     whatwg-url: "npm:^5.0.0"
   peerDependencies:
@@ -15442,7 +15442,7 @@ __metadata:
   peerDependenciesMeta:
     encoding:
       optional: true
-  checksum: 10c0/9437cd4e481b7cea60ca85ceb9c212a71a1007122185df7a432c347bf7ec27949c431ea63626b7f1a17c32aa96ea66ea24e670e611198c3d6c7227487154b775
+  checksum: 10c0/7e3c0ae054fa7fe4bb1f84204a08b1a8a5555d1b5edb730ece5afc3a319302ccd57f876e2bfc6b754fa7534a4540ae6ec7ac5d79f9cdfc1281760d62ffee627c
   languageName: node
   linkType: hard
 
