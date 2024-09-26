@@ -7,6 +7,7 @@ import AccountList from './AccountList';
 import ChainSelector from './ChainSelector';
 import CreateAccountButton from './CreateAccountButton';
 import { fetchBalances } from './FetchBalances';
+import { fetchDelegations } from './FetchDelegations';
 import { initializeKeplr } from './KeplrInitializer';
 import { makeOffer } from './MakeOffer';
 import RpcEndpoints from './RpcEndpoints';
@@ -16,6 +17,9 @@ const Orchestration = () => {
   const { addNotification } = useContext(NotificationContext);
   const icas = useContractStore(state => state.icas);
   const [balances, setBalances] = useState([]);
+  const [walletBalances, setWalletBalances] = useState([]);
+  const [delegations, setDelegations] = useState([]);
+
   const [selectedChain, setSelectedChain] = useState('');
   const [loadingDeposit, setLoadingDeposit] = useState<{
     [key: string]: boolean;
@@ -35,6 +39,8 @@ const Orchestration = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAddress, setModalAddress] = useState('');
   const [selectedDenom, setSelectedDenom] = useState('uist');
+  const [fundDenom, setFundDenom] = useState('uist');
+  const [fundAmount, setFundAmount] = useState(0);
   const [amount, setAmount] = useState(0);
   const [statusText, setStatusText] = useState('');
   const modalRef = useRef<HTMLDialogElement | null>(null);
@@ -47,8 +53,12 @@ const Orchestration = () => {
   useEffect(() => {
     const loadBalances = async () => {
       try {
-        const fetchedBalances = await fetchBalances(icas);
+        const [fetchedBalances, fetchedDelegations] = await Promise.all([
+          fetchBalances(icas),
+          fetchDelegations(icas),
+        ]);
         setBalances(fetchedBalances);
+        setDelegations(fetchedDelegations);
       } catch (error) {
         console.error('failed to fetch balances:', error);
       }
@@ -87,6 +97,7 @@ const Orchestration = () => {
         setLoadingCreateAccount,
         handleToggle,
         setStatusText,
+        {}
       ).catch(error => {
         addNotification!({
           text: `Transaction failed: ${error.message}`,
@@ -102,8 +113,8 @@ const Orchestration = () => {
       });
       setLoadingCreateAccount(false);
       handleToggle();
-      setLoadingCreateAccount(false);
-      handleToggle();
+      // setLoadingCreateAccount(false);
+      // handleToggle();
     }
   };
 
@@ -113,6 +124,10 @@ const Orchestration = () => {
     setStatusText('Submitted');
     if (walletConnection) {
       openModal('Create & Fund Account...', selectedChain);
+      
+      const { brands } = useContractStore.getState();
+      const give = { Deposit: { brand: brands.BLD, value: BigInt(1000) } };
+
       makeOffer(
         walletConnection,
         addNotification!,
@@ -122,6 +137,7 @@ const Orchestration = () => {
         setLoadingCreateAndFund,
         handleToggle,
         setStatusText,
+        give
       ).catch(error => {
         addNotification!({
           text: `Transaction failed: ${error.message}`,
@@ -140,7 +156,15 @@ const Orchestration = () => {
     }
   };
 
-  const handleDeposit = (address: string) => {
+  const handleDeposit = async (address: string) => {
+    try {
+      const client = walletConnection.signingClient;
+      const accountAddress = walletConnection.address;
+      const balances = await client.getAllBalances(accountAddress);
+      setWalletBalances([...balances]); 
+    } catch (error) {
+      console.error('Failed to fetch wallet balances:', error);
+    }
     openModal('Deposit', address);
   };
 
@@ -247,6 +271,54 @@ const Orchestration = () => {
     setLoadingUnstake(prevState => ({ ...prevState, [address]: false }));
   };
 
+  const executeFundAndDelegate = () => {
+    setLoadingCreateAndFund(true);
+    setStatusText('Submitted');
+    if (walletConnection) {
+      // const { brands } = useContractStore.getState();
+  
+      const give = { Deposit: { brand: fundDenom, value: BigInt(fundAmount)} };
+  
+      makeOffer(
+        walletConnection,
+        addNotification!,
+        selectedChain,
+        'makeFundAndDelegateInvitation',
+        {
+          chainName: selectedChain,
+          validator: "osmovaloper1qjtcxl86z0zua2egcsz4ncff2gzlcndzs93m43"
+        },
+        setLoadingCreateAndFund,
+        handleToggle,
+        setStatusText,
+        give 
+      ).catch(error => {
+        addNotification!({
+          text: `Transaction failed: ${error.message}`,
+          status: 'error',
+        });
+        setLoadingCreateAndFund(false);
+        handleToggle();
+      });
+    } else {
+      addNotification!({
+        text: 'Error: Please connect your wallet or check your connection to RPC endpoints',
+        status: 'error',
+      });
+      setLoadingCreateAndFund(false);
+      handleToggle();
+    }
+  };
+
+  const openFundModal = async () => {
+      setModalContent('Fund and Delegate');
+      const client = walletConnection.signingClient;
+      const accountAddress = walletConnection.address;
+      const balances = await client.getAllBalances(accountAddress);
+      setWalletBalances([...balances]); 
+      handleToggle();
+  };
+
   return (
     <div className="flex w-full flex-col items-center">
       <div className="w-full p-4">
@@ -255,6 +327,7 @@ const Orchestration = () => {
         >
           <AccountList
             balances={balances}
+            delegations={delegations}
             handleDeposit={handleDeposit}
             handleWithdraw={handleWithdraw}
             handleStake={handleStake}
@@ -275,6 +348,7 @@ const Orchestration = () => {
               handleCreateAndFund={handleCreateAndFund}
               loadingCreateAccount={loadingCreateAccount}
               loadingCreateAndFund={loadingCreateAndFund}
+              openFundModal={openFundModal}
             />
           </div>
         </div>
@@ -317,18 +391,22 @@ const Orchestration = () => {
           {modalContent === 'Deposit' && (
             <div>
               <label className="block">
-                <span className="text-gray-700">Select Denom</span>
-                <select
-                  value={selectedDenom}
-                  onChange={e => setSelectedDenom(e.target.value)}
-                  className="form-select mt-1 block w-1/2"
-                >
-                  <option value="ubld">BLD</option>
-                  <option value="uist">IST</option>
-                  <option value="uosmo">OSMO</option>
-                  {/* Add more options as needed */}
-                </select>
-              </label>
+                  <span className="text-gray-700">Select Denom</span>
+                  <div className="form-control">
+                    <label className="label text-gray-700">Select Denom</label>
+                    <select
+                      value={selectedDenom}
+                      onChange={e => setSelectedDenom(e.target.value)}
+                      className="form-select mt-1 block w-1/2"
+                    >
+                      {walletBalances.map((bal, idx) => (
+                        <option key={idx} value={bal.denom}>
+                          {bal.denom.toUpperCase()} ({bal.amount})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </label>
               <label className="mt-4 block">
                 <span className="text-gray-700">Amount</span>
                 <input
@@ -365,6 +443,49 @@ const Orchestration = () => {
                   ) : (
                     'Confirm'
                   )}
+                </button>
+                <button
+                  className="daisyui-btn daisyui-btn-neutral daisyui-btn-sm"
+                  onClick={handleToggle}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {modalContent === 'Fund and Delegate' && (
+            <div>
+              <label className="block">
+                <div className="form-control">
+                  <label className="label text-gray-700">Select Denom</label>
+                  <select
+                    value={fundDenom}
+                    onChange={e => setFundDenom(e.target.value)}
+                    className="form-select mt-1 block w-1/2"
+                  >
+                    {walletBalances.map((bal, idx) => (
+                      <option key={idx} value={bal.denom}>
+                        {bal.denom.toUpperCase()} ({bal.amount})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
+              <label className="mt-4 block">
+                <span className="text-gray-700">Amount</span>
+                <input
+                  type="number"
+                  value={fundAmount}
+                  onChange={e => setFundAmount(parseInt(e.target.value))}
+                  className="form-input mt-1 block w-1/2"
+                />
+              </label>
+              <div className="modal-action mt-4">
+                <button
+                  className="daisyui-btn daisyui-btn-info daisyui-btn-sm mr-2"
+                  onClick={executeFundAndDelegate} 
+                >
+                  Confirm
                 </button>
                 <button
                   className="daisyui-btn daisyui-btn-neutral daisyui-btn-sm"

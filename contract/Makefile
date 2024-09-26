@@ -7,7 +7,7 @@ ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
 # your deployer address made from make add-address
-ADDR=agoric1mqvg26gpv6xzch2v0wpv569md3c2z4cdxq9clz
+ADDR=agoric1aj5atgepztuv6qpl4a6993tvzthq4gdtvmgptj
 PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 PROPOSAL=1
@@ -152,8 +152,13 @@ fund: fund-provision-pool check-balance
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet ${CLIENTADDR} 10000000000000uist -y;
 	make fund-osmo
 
-fund-osmo:
+fund-osmo: fund-osmo-ibc
 	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx bank send faucet ${CLIENT_OSMO_ADDR} 9870000000uosmo --fees 1000uosmo -y;
+
+fund-osmo-ibc:
+	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx ibc-transfer transfer transfer channel-0 ${CLIENTADDR} 1000000uosmo --from faucet --chain-id osmosislocal --node http://127.0.0.1:26657 --fees 5000uosmo -y;
+	kubectl exec -i osmosislocal-genesis-0 -c validator -- osmosisd tx ibc-transfer transfer transfer channel-1 ${CLIENTADDR} 1000000uosmo --from faucet --chain-id osmosislocal --node http://127.0.0.1:26657 --fees 5000uosmo -y;
+
 check-balance:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd q bank balances $(ADDR)
 fund-wallet:
@@ -259,10 +264,9 @@ e2e:
 	make copy-project  
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn install"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @endo/patterns@1.3.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
-	make copy-bn-js  
+	# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
+	# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
+	# kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
