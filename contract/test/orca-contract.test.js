@@ -13,6 +13,7 @@ import { startOrcaContract, chainDetails } from '../src/orca.proposal.js';
 import { makeMockTools, mockBootstrapPowers } from './boot-tools.js';
 import { getBundleId } from '../tools/bundle-tools.js';
 import { startOrchCoreEval } from '../tools/startOrch.js';
+import { installContract } from '../src/platform-goals/start-contract.js';
 
 /**
  * @import {IcaAccount, MakeCosmosInterchainService} from '@agoric/orchestration';
@@ -197,14 +198,25 @@ test('Start Orca contract using core-eval', async t => {
   t.log('run orca core-eval');
   const bundleID = getBundleId(bundles.orca);
   t.log('bundleID', bundleID);
+
   const name = 'orca';
+
+  // the script produced by agoric run wraps startOrcaContract
+  // in such a way that the contract gets installed automatically
+  const startOrcaWrapped = async (permittedPowers, config) => {
+    await installContract(permittedPowers, {
+      name,
+      bundleID,
+    });
+    await startOrcaContract(permittedPowers, config);
+  };
   try {
     const result = await runCoreEval({
       name,
-      behavior: startOrcaContract,
+      behavior: startOrcaWrapped,
       entryFile: scriptRoot.orca,
       config: {
-        options: { orca: { bundleID, chainDetails } },
+        options: { orca: { chainDetails } },
       },
     });
 
