@@ -71,7 +71,10 @@ export const allValues = async obj => {
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {orca: Installation<OrcaSF>}}}} permittedPowers
- * @param {{options: {[contractName]: {bundleID: string}}}} config
+ * @param {{options: {[contractName]: {
+ *   bundleID: string;
+ *   chainDetails: Record<string, ChainInfo>,
+ * }}}} config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
   trace('startOrcaContract()... 0.0.93', config);
@@ -96,28 +99,19 @@ export const startOrcaContract = async (permittedPowers, config) => {
     },
   } = permittedPowers;
 
-  // NOTE: during contract tests, orcaInstallation doesn't provide the installation, config is also undefined during actual deployment
-  // this ensures both work, with config, and without. Revisit this to see if there is a way to coerce this without conditional check
-  let installation;
-  if (config.options == undefined) {
-    trace('config is undefined, assigning installation to orcaInstallation');
-    installation = await orcaInstallation;
-  } else {
-    trace('config is NOT undefined, using config.options');
-    installation = await installContract(permittedPowers, {
-      name: contractName,
-      bundleID: config.options[contractName].bundleID,
-    });
-  }
+  const installation = await orcaInstallation;
 
   const storageNode = await E(chainStorage).makeChildNode('orca');
   const marshaller = await E(board).getPublishingMarshaller();
+
+  const { chainDetails: nameToInfo = chainDetails } =
+    config.options[contractName];
 
   /** @type {StartUpgradableOpts<ContractStartFunction & OrcaSF>} **/
   const startOpts = {
     label: 'orca',
     installation,
-    terms: { chainDetails },
+    terms: { chainDetails: nameToInfo },
     privateArgs: {
       localchain: await localchain,
       orchestrationService: await cosmosInterchainService,
@@ -160,12 +154,18 @@ const orcaManifest = {
 };
 harden(orcaManifest);
 
-export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
+export const getManifestForOrca = (
+  { restoreRef },
+  { installKeys, chainDetails },
+) => {
   trace('getManifestForOrca', installKeys);
   return harden({
     manifest: orcaManifest,
     installations: {
       [contractName]: restoreRef(installKeys[contractName]),
+    },
+    options: {
+      [contractName]: { chainDetails },
     },
   });
 };
