@@ -3,7 +3,7 @@ import { assert } from '@endo/errors';
 import { E, Far } from '@endo/far';
 import { Nat } from '@endo/nat';
 import { makePromiseKit } from '@endo/promise-kit';
-import { flags, makeAgd, makeCopyFiles } from './agd-lib.js';
+import { flags, makeAgd, makeContainer } from './agd-lib.js';
 import { makeHttpClient, makeAPI } from './makeHttpClient.js';
 import { dedup, makeQueryKit, poll } from './queryKit.js';
 import { makeVStorage } from './batchQuery.js';
@@ -439,7 +439,7 @@ const runCoreEval = async (
  * @param {string} [io.apiAddress]
  * @param {(...parts: string[]) => string} [io.join]
  */
-export const makeE2ETools = async (
+export const makeE2ETools = (
   log,
   bundleCache,
   {
@@ -690,7 +690,7 @@ export const makeE2ETools = async (
     return proposal;
   };
 
-  const copyFiles = makeCopyFiles({ execFileSync, log });
+  const { copyFiles } = makeContainer({ execFileSync, log });
 
   const vstorageClient = makeQueryKit(vstorage).query;
 

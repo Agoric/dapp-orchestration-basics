@@ -3,7 +3,7 @@
 // @ts-check
 import '@endo/init';
 import fsp from 'node:fs/promises';
-import { execFile, execFileSync, execSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { basename } from 'node:path';
 import { execa } from 'execa';
 import fse from 'fs-extra';
@@ -12,37 +12,32 @@ import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { parseArgs } from 'node:util';
 import { makeE2ETools } from '../tools/e2e-tools.js';
 import { createRequire } from 'module';
+import { makeContainer } from '../tools/agd-lib.js';
 
 const nodeRequire = createRequire(import.meta.url);
 const { readJSON } = fse;
 
 /** @type {import('node:util').ParseArgsConfig['options']} */
+const options = {
+  help: { type: 'boolean' },
+  install: { type: 'string' },
+  eval: { type: 'string', multiple: true },
+  builder: { type: 'string' },
+  pod: { type: 'string', default: 'agoriclocal-genesis-0' },
+  container: { type: 'string', default: 'validator' },
+  service: { type: 'string', default: 'agd' },
+  workdir: { type: 'string' },
+};
 /**
  * @typedef {{
  *   help: boolean,
  *   install?: string,
  *   eval?: string[],
+ *   builder?: string,
+ *   pod: string,
+ *   container: string,
  *   service: string,
- *   workdir: string,
- * }} DeployOptions
- */
-
-/** @type {import('node:util').ParseArgsConfig['options']} */
-const options = {
-  help: { type: 'boolean' },
-  builder: { type: 'string' },
-  service: { type: 'string', default: 'agd' },
-  workdir: { type: 'string', default: '/workspace/contract' },
-  install: { type: 'string' },
-  eval: { type: 'string', multiple: true },
-};
-/**
- * @typedef {{
- *   help: boolean,
- *   builder: string,
- *   service: string,
- *   workdir: string,
- *   install: string,
+ *   workdir?: string,
  * }} DeployOptions
  */
 
@@ -54,9 +49,12 @@ Options:
   --install            entry module of contract to install
   --eval               entry module of core evals to run
                        (cf rollup.config.mjs)
+  --pod POD            default: ${options.pod.default}
+                       Use . for no pod (docker or host).
+  --container C        k8s container. default: ${options.container.default}
   --service SVC        docker compose service to run agd (default: ${options.service.default}).
-                       Use . to run agd outside docker.
-  --workdir DIR        workdir for docker service (default: ${options.workdir.default})
+                       Use . to run on the host.
+  --workdir DIR        workdir service
 `;
 
 const mockExecutionContext = () => {
@@ -87,31 +85,30 @@ const main = async (bundleDir = 'bundles') => {
     progress(Usage);
     return;
   }
-  /** @type {{ _workdir: string, service: string }} */
-  const { service } = flags;
+  /** @type {{ service: string, pod: string } & { [k:string]: unknown }} */
+  const { service, pod, workdir } = flags;
 
-  /** @type {import('../tools/agd-lib.js').ExecSync} */
-
-  const dockerExec = (
-    file,
-    dargs,
-    opts = { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 2000 },
-  ) => {
-    console.log('docker exec try 1: ', file);
-    opts.verbose && console.log('exec', JSON.stringify([file, ...dargs]));
-    console.log('docker exec try 2');
-
-    const command = `${file} ${dargs.join(' ')}`;
-    console.log('command: ', command);
-    console.log(service);
-
-    return execSync(command, opts);
+  const runtimes = {
+    host: { execFileSync },
+    k8s: makeContainer({
+      container: flags.container,
+      pod: flags.pod,
+      execFileSync,
+      cmd: ['kubectl', 'exec', '-i'],
+    }).withFlags({ workdir, tty: false }),
+    docker: makeContainer({
+      container: service,
+      cmd: ['docker', 'compose', 'exec'],
+      execFileSync,
+    }).withFlags({ workdir }),
   };
+  const runtime =
+    runtimes[service === '.' ? 'host' : pod === '.' ? 'docker' : 'k8s'];
 
   const t = mockExecutionContext();
   const tools = await makeE2ETools(t, bundleCache, {
     execFile,
-    execFileSync: service === '.' ? execFileSync : dockerExec,
+    execFileSync: runtime.execFileSync,
     fetch,
     setTimeout,
     writeFile,
