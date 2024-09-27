@@ -3,20 +3,10 @@ import assert from 'node:assert';
 
 const { freeze } = Object;
 
-const kubectlBinary = 'kubectl';
-const binaryArgs = [
-  'exec',
-  '-i',
-  'agoriclocal-genesis-0',
-  '-c',
-  'validator',
-  '--tty=false',
-  '--',
-  'agd',
-];
+const agdBinary = 'agd';
 
 /**
- * @param {Record<string, string | undefined>} record - e.g. { color: 'blue' }
+ * @param {Record<string, unknown>} record - e.g. { color: 'blue' }
  * @returns {string[]} - e.g. ['--color', 'blue']
  */
 export const flags = record => {
@@ -35,6 +25,9 @@ export const flags = record => {
  * @param {{ encoding: 'utf-8' } & { [k: string]: unknown }} opts
  * @returns {string}
  */
+
+/** tell execFileSync to return a string, not a Buffer */
+const returnString = /** @type {const} */ ({ encoding: 'utf-8' });
 
 /**
  * @param {{ execFileSync: ExecSync }} io
@@ -62,10 +55,8 @@ export const makeAgd = ({ execFileSync }) => {
      * @param {string[]} args
      * @param {*} [opts]
      */
-    const exec = (
-      args,
-      opts = { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
-    ) => execFileSync(kubectlBinary, [...binaryArgs, ...args], opts);
+    const exec = (args, opts = { encoding: 'utf-8' }) =>
+      execFileSync(agdBinary, args, opts);
 
     const outJson = flags({ output: 'json' });
 
@@ -75,6 +66,7 @@ export const makeAgd = ({ execFileSync }) => {
        * @param {| [kind: 'gov', domain: string, ...rest: any]
        *         | [kind: 'tx', txhash: string]
        *         | [mod: 'vstorage', kind: 'data' | 'children', path: string]
+       *         | [mod: 'ibc', ...rest: string[]]
        * } qArgs
        */
       query: async qArgs => {
@@ -131,8 +123,8 @@ export const makeAgd = ({ execFileSync }) => {
           ...(yes ? ['--yes'] : []),
           ...outJson,
         ];
-        console.log('$$$ agd', ...args);
-        const out = exec(args, { stdio: ['ignore', 'pipe', 'ignore'] });
+        console.log('$$$', agdBinary, ...args);
+        const out = exec(args);
         try {
           const detail = JSON.parse(out);
           if (detail.code !== 0) {
@@ -155,20 +147,14 @@ export const makeAgd = ({ execFileSync }) => {
          */
         add: (name, mnemonic) => {
           return execFileSync(
-            kubectlBinary,
-            [...binaryArgs, ...keyringArgs, 'keys', 'add', name, '--recover'],
-            {
-              encoding: 'utf-8',
-              input: mnemonic,
-              stdio: ['pipe', 'pipe', 'ignore'],
-            },
+            agdBinary,
+            [...keyringArgs, 'keys', 'add', name, '--recover'],
+            { encoding: 'utf-8', input: mnemonic },
           ).toString();
         },
         /** @param {string} name */
         delete: name => {
-          return exec([...keyringArgs, 'keys', 'delete', name, '-y'], {
-            stdio: ['pipe', 'pipe', 'ignore'],
-          });
+          return exec([...keyringArgs, 'keys', 'delete', name, '-y']);
         },
       },
       /**
@@ -183,40 +169,57 @@ export const makeAgd = ({ execFileSync }) => {
 
 /** @typedef {ReturnType<makeAgd>} Agd */
 
-/** @param {{ execFileSync: typeof import('child_process').execFileSync, log: typeof console.log }} powers */
-export const makeCopyFiles = (
-  { execFileSync, log },
-  {
-    podName = 'agoriclocal-genesis-0',
-    containerName = 'validator',
-    // destDir = '/tmp/contracts',
-    destDir = '/root',
-  } = {},
-) => {
-  /** @param {string[]} paths } */
-  return paths => {
-    // Create the destination directory if it doesn't exist
-    execFileSync(
-      kubectlBinary,
-      `exec -i ${podName} -c ${containerName} -- mkdir -p ${destDir}`.split(
-        ' ',
-      ),
-      { stdio: ['ignore', 'pipe', 'ignore'] },
-    );
-    for (const path of paths) {
-      execFileSync(
-        kubectlBinary,
-        `cp ${path} ${podName}:${destDir}/ -c ${containerName}`.split(' '),
-        { stdio: ['ignore', 'pipe', 'ignore'] },
-      );
-      log(`Copied ${path} to ${destDir} in pod ${podName}`);
-    }
-    const lsOutput = execFileSync(
-      kubectlBinary,
-      `exec -i ${podName} -c ${containerName}  -- ls ${destDir}`.split(' '),
-      { stdio: ['ignore', 'pipe', 'ignore'], encoding: 'utf-8' },
-    );
-    log(`ls ${destDir}:\n${lsOutput}`);
-    return lsOutput;
+/**
+ * @param {{
+ *   pod?: string;
+ *   container?: string;
+ *   cmd?: string[];
+ *   destDir?: string;
+ *   execFileSync: ExecSync;
+ *   log?: Console['log'];
+ * }} io
+ */
+export const makeContainer = ({
+  execFileSync,
+  pod = 'agoriclocal-genesis-0',
+  container = 'validator',
+  destDir = '/root',
+  cmd = ['kubectl', 'exec', '-i'],
+  log = console.log,
+}) => {
+  /** @param {{ [k: string]: unknown }} hFlags */
+  const make = (hFlags = {}) => {
+    const runtime = {
+      /**
+       * @type {ExecSync}
+       */
+      execFileSync: (file, args, opts = returnString) => {
+        const execArgs = [...cmd.slice(1), container];
+        log(`${pod}/${container}$`, ...[file, ...args].map(x => `${x}`));
+        const exFlags = flags({ container, ...hFlags });
+        const [hFile, ...hArgs] = [...cmd, pod, ...exFlags];
+        return execFileSync(hFile, [...hArgs, '--', file, ...args], opts);
+      },
+      /** @param {string[]} paths } */
+      copyFiles: paths => {
+        // Create the destination directory if it doesn't exist
+        runtime.execFileSync('mkdir', ['-p', destDir], returnString);
+        for (const path of paths) {
+          execFileSync(
+            'kubectl',
+            [`cp`, path, `${pod}:${destDir}/`, ...flags({ container })],
+            returnString,
+          );
+          log(`Copied ${path} to ${destDir} in pod ${pod}`);
+        }
+        const lsOutput = runtime.execFileSync('ls', [destDir], returnString);
+        log(`ls ${destDir}:\n`, lsOutput);
+        return lsOutput;
+      },
+      /** @param {{ [k: string]: unknown }} newFlags */
+      withFlags: newFlags => make({ ...hFlags, ...newFlags }),
+    };
+    return runtime;
   };
+  return make();
 };
