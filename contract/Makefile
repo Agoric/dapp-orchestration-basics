@@ -6,8 +6,6 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-
-# fetch the address of the deployer account from the chain - you may need to adjust this to match your setup
 USERNAME ?= user1
 
 ADDR := $(shell kubectl exec -i agoriclocal-genesis-0 -c validator -- sh -c '\
