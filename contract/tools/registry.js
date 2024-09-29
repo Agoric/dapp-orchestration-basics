@@ -6,6 +6,7 @@ import path from 'path';
 // };
 
 /**
+ * @deprecated dead code?
  * @param {Object} [options]
  * @param {string} [options.dirname]
  * @param {Function} [options.join]
@@ -21,13 +22,16 @@ export const makeGetFile = ({
 };
 
 /**
+ * @deprecated dead code?
  * @param {(path: string) => string} getFile
  * @returns { (options?: { config?: string }) => Promise<{ useChain: any }> }
  */
 export const makeSetupRegistry = getFile => {
   let initialized = false;
 
-  const setupRegistry = async ({ config = '../config.yaml' } = {}) => {
+  const setupRegistry = async ({
+    config = '../../e2e-testing/config.yaml',
+  } = {}) => {
     if (initialized) return { useChain };
     const configFile = getFile(config);
     console.log('configFile', configFile);

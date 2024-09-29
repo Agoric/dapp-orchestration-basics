@@ -1,3 +1,4 @@
+# TODO, consider removing in favor of e2e-testing (starship)
 version: '3.5'
 
 services:

@@ -1,62 +1,94 @@
-import path from 'path';
-import { execa } from 'execa';
-import fse from 'fs-extra';
-import childProcess from 'child_process';
-import { makeAgdTools } from '../tools/agd-tools.js';
-import { makeGetFile, makeSetupRegistry } from '../tools/registry.js';
-import { generateMnemonic } from '../tools/wallet.js';
 import { makeRetryUntilCondition } from '../tools/sleep.js';
 import { makeDeployBuilder } from '../tools/deploy.js';
+import { makeContainer } from '../tools/agd-lib.js';
+import { promisify } from 'node:util';
+import { makeE2ETools } from '../tools/e2e-tools.js';
 
-const setupRegistry = makeSetupRegistry(
-  makeGetFile({
-    dirname: path.dirname(new URL(import.meta.url).pathname),
-    join: path.join,
-  }),
-);
+/**
+ * @import {Agd} from '../tools/agd-lib.js';
+ */
+const { entries, fromEntries } = Object;
 
-const chainConfig = {
+export const chainConfig = {
   cosmoshub: { expectedAddressPrefix: 'cosmos' },
   osmosis: { expectedAddressPrefix: 'osmo' },
   agoric: { expectedAddressPrefix: 'agoric' },
 };
 
-const makeKeyring = async e2eTools => {
-  //   let _keys = ['user1'];
-  let _keys = ['alice'];
-  //   const setupTestKeys = async (keys = ['user1']) => {
-  const setupTestKeys = async (keys = ['alice']) => {
-    _keys = keys;
-    const wallets = {};
-    for (const name of keys) {
-      const res = await e2eTools.addKey(name, generateMnemonic());
-      const { address } = JSON.parse(res);
-      wallets[name] = address;
-    }
-    return wallets;
-  };
-
-  const deleteTestKeys = (keys = []) =>
-    Promise.allSettled(
-      Array.from(new Set([...keys, ..._keys])).map(key =>
-        e2eTools.deleteKey(key).catch(),
-      ),
-    ).catch();
-
-  return { setupTestKeys, deleteTestKeys };
+export const chainAccounts = {
+  agoric: {
+    address: 'agoric1v8qxguqqjtfyfwqr8ln2wlu858vkx4860jzf6g',
+    mnemonic:
+      'swift element zoo argue predict ugly awful alert glance net tourist body',
+  },
+  cosmoshub: {
+    address: 'agoric17th0tvrzmwc2fqpeneuwmrwcm8armyjlgmypuf',
+    mnemonic:
+      'joke lecture black sniff goddess grain then forum level achieve pen alone',
+  },
+  osmosis: {
+    address: 'agoric17hglh4q5k087nthneq0kegk4y838vmt3vk80u3',
+    mnemonic:
+      'burden noise endorse upon waste sibling slot can banner equip chalk small',
+  },
 };
 
-const commonSetup = async t => {
-  const { useChain } = await setupRegistry();
-  const tools = await makeAgdTools(t.log, childProcess);
-  const keyring = await makeKeyring(tools);
-  const deployBuilder = makeDeployBuilder(tools, fse.readJSON, execa);
-  const retryUntilCondition = makeRetryUntilCondition({
-    log: t.log,
-    setTimeout: globalThis.setTimeout,
+/**
+ * @param {Agd['keys']} keyring
+ * @param {{[name: string]: { mnemonic: string, address: string }}} [accounts]
+ */
+export const ensureAccounts = async (keyring, accounts = chainAccounts) => {
+  for (const [name, detail] of entries(accounts)) {
+    let actual = '?';
+    try {
+      actual = await keyring.showAddress(name);
+    } catch (lookupErr) {
+      // XXX ambient console
+      console.debug('TODO: if "not found", suppress; else re-throw', lookupErr);
+      actual = 'ERR';
+    }
+    if (actual === detail.address) {
+      console.debug(name, ': key already in keyring');
+      continue;
+    }
+    if (actual !== 'ERR') {
+      console.debug(name, ': delete');
+      await keyring.delete(name);
+    }
+    await keyring.add(name, detail.mnemonic);
+    console.debug(name, ': added', detail.address);
+  }
+  const nameToAddr = harden(
+    fromEntries(entries(accounts).map(([p, v]) => [p, v.address])),
+  );
+  return nameToAddr;
+};
+
+export const commonSetup = (
+  t,
+  { execFile, container, bundleCache, readFile, fetch, setTimeout, log },
+) => {
+  const tools = makeE2ETools(log, bundleCache, {
+    execFileSync: container.execFileSync,
+    copyFiles: container.copyFiles,
+    fetch,
+    setTimeout,
   });
 
-  return { useChain, ...tools, ...keyring, retryUntilCondition, deployBuilder };
-};
+  /** @param {string} path */
+  const readJSON = path => readFile(path, 'utf-8').then(x => JSON.parse(x));
+  const execFileP = promisify(execFile);
+  /**
+   * @param {string} file
+   * @param {string[]} args
+   */
+  const npx = (file, args) => execFileP('npx', ['--no-install', file, ...args]);
+  const deployBuilder = makeDeployBuilder(tools, readJSON, npx);
 
-export { chainConfig, commonSetup };
+  const retryUntilCondition = makeRetryUntilCondition({
+    log: t.log,
+    setTimeout,
+  });
+
+  return { ...tools, retryUntilCondition, deployBuilder };
+};

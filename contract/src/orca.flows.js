@@ -3,7 +3,6 @@
  * @import {Amount} from '@agoric/ertp/src/types.js';
  * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
  * @import {ChainAddress, Orchestrator} from '@agoric/orchestration';
- * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
  * @import {ZoeTools} from '@agoric/orchestration/src/utils/zoe-tools.js';
  * @import {Transfer} from './orca.contract.js';
  * @import {DenomArg} from '@agoric/orchestration';
@@ -25,14 +24,12 @@ const trace = makeTracer('OrchFlows');
  * @param {{ chainName: string, denom: string }} offerArgs
  */
 export const makeAccount = async (orch, _ctx, seat, offerArgs) => {
-  trace('version 0.1.36');
+  trace('makeAccount');
   mustMatch(offerArgs, M.splitRecord({ chainName: M.string() }));
   const { chainName } = offerArgs;
   trace('chainName', chainName);
   seat.exit();
   const chain = await orch.getChain(chainName);
-  trace('chain object');
-  trace(chain);
   const chainAccount = await chain.makeAccount();
   trace('chainAccount', chainAccount);
   return chainAccount.asContinuingOffer();
@@ -59,11 +56,8 @@ export const makeCreateAndFund = async (
     `invoked makeCreateAndFund with chain ${chainName}, and denom ${denom}`,
   );
   const { give } = seat.getProposal();
-  const [[_kw, amt]] = Object.entries(give);
-  trace('orch', orch);
-  trace('_kw', _kw);
-  trace('amt', amt);
   trace('give:', give);
+  const [[_kw, amt]] = Object.entries(give);
 
   const [agoric, chain] = await Promise.all([
     orch.getChain('agoric'),
@@ -86,13 +80,9 @@ export const makeCreateAndFund = async (
     remoteAccount.getAddress(),
   ]);
 
-  // vstorage tests
-  trace('writing');
-
   trace('localAddress', localAddress);
   trace('remoteAddress', remoteAddress);
   trace('fund new orch account 2');
-  trace('seat', seat);
 
   await localTransfer(seat, localAccount, give);
   trace('after transfer');

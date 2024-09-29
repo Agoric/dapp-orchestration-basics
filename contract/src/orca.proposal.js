@@ -8,10 +8,8 @@ import { makeTracer } from './tools/debug.js';
 /**
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
- * @import {OrchestrationPowers} from './exos/cosmos-interchain-service.js';
- * @import {Remote} from '@agoric/vow';
+ * @import {ChainInfo, IBCConnectionInfo,} from '@agoric/orchestration';
  * @import {OrcaSF} from './orca.contract.js';
- * @import {LocalChain} from '@agoric/vats/src/localchain.js';
  * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
 
@@ -20,9 +18,44 @@ const { entries, fromEntries } = Object;
 
 trace('start proposal module evaluating');
 
-const { Fail } = assert;
-
 const contractName = 'orca';
+
+/** @type {IBCConnectionInfo} */
+const c1 = harden({
+  id: 'connection-0',
+  client_id: 'client-0',
+  state: 3, // OPEN
+  counterparty: harden({
+    client_id: 'client-0',
+    connection_id: 'connection-0',
+    prefix: {
+      key_prefix: 'key-prefix-0',
+    },
+  }),
+  transferChannel: harden({
+    portId: 'transfer',
+    channelId: 'channel-0',
+    counterPartyPortId: 'transfer',
+    counterPartyChannelId: 'channel-1',
+    ordering: 2, // ORDERED
+    version: '1',
+    state: 3, // OPEN
+  }),
+});
+
+// TODO: rename chainDetails to defaultChainDetails? or move back to test?
+/** @type {Record<string, ChainInfo>} */
+export const chainDetails = harden({
+  agoric: {
+    chainId: `agoriclocal`,
+    stakingTokens: [{ denom: 'ubld' }],
+    connections: { osmosislocal: c1 },
+  },
+  osmosis: {
+    chainId: `osmosislocal`,
+    stakingTokens: [{ denom: 'uosmo' }],
+  },
+});
 
 /**
  * Given a record whose values may be promise, return a promise for a record with all the values resolved.
@@ -38,10 +71,13 @@ export const allValues = async obj => {
 
 /**
  * @param {BootstrapPowers & {installation: {consume: {orca: Installation<OrcaSF>}}}} permittedPowers
- * @param {{options: {[contractName]: {bundleID: string}}}} config
+ * @param {{options: {[contractName]: {
+ *   bundleID: string;
+ *   chainDetails: Record<string, ChainInfo>,
+ * }}}} config
  */
 export const startOrcaContract = async (permittedPowers, config) => {
-  trace('startOrcaContract()... 0.0.93');
+  trace('startOrcaContract()... 0.0.93', config);
   console.log(permittedPowers);
   console.log(config);
   const {
@@ -63,48 +99,19 @@ export const startOrcaContract = async (permittedPowers, config) => {
     },
   } = permittedPowers;
 
-  trace('config', config);
-  trace('permittedPowers', permittedPowers);
-  trace('produceInstance:');
-  trace('orcaInstallation', orcaInstallation);
+  const installation = await orcaInstallation;
 
-  // NOTE: during contract tests, orcaInstallation doesn't provide the installation, config is also undefined during actual deployment
-  // this ensures both work, with config, and without. Revisit this to see if there is a way to coerce this without conditional check
-  let installation;
-  if (config.options == undefined) {
-    trace('config is undefined, assigning installation to orcaInstallation');
-    installation = await orcaInstallation;
-  } else {
-    trace('config is NOT undefined, using config.options');
-    installation = await installContract(permittedPowers, {
-      name: contractName,
-      bundleID: config.options[contractName].bundleID,
-    });
-  }
-
-  console.log('installation:');
-  console.log(installation);
-
-  console.log('permittedPowers');
-  console.log(permittedPowers);
-  console.log('from inside startOrcaContract:', produceInstance);
-
-  console.log(cosmosInterchainService);
-  console.log(agoricNames); // make storage node
-  console.log('chainStorage');
-  console.log(chainStorage);
   const storageNode = await E(chainStorage).makeChildNode('orca');
-
-  console.log(storageNode);
-  console.log('DONE MAKING NODES v0.3');
   const marshaller = await E(board).getPublishingMarshaller();
-  console.log(marshaller);
+
+  const { chainDetails: nameToInfo = chainDetails } =
+    config.options[contractName];
 
   /** @type {StartUpgradableOpts<ContractStartFunction & OrcaSF>} **/
   const startOpts = {
     label: 'orca',
     installation,
-    terms: undefined,
+    terms: { chainDetails: nameToInfo },
     privateArgs: {
       localchain: await localchain,
       orchestrationService: await cosmosInterchainService,
@@ -147,16 +154,18 @@ const orcaManifest = {
 };
 harden(orcaManifest);
 
-export const getManifestForOrca = ({ restoreRef }, { installKeys }) => {
-  trace('getting manifest for orca');
-  trace('installKeys');
-  trace(installKeys);
-  trace('restoreRef');
-  trace(restoreRef);
+export const getManifestForOrca = (
+  { restoreRef },
+  { installKeys, chainDetails },
+) => {
+  trace('getManifestForOrca', installKeys);
   return harden({
     manifest: orcaManifest,
     installations: {
       [contractName]: restoreRef(installKeys[contractName]),
+    },
+    options: {
+      [contractName]: { chainDetails },
     },
   });
 };
