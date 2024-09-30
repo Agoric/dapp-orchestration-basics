@@ -5,10 +5,15 @@ import { Tabs } from './components/Tabs';
 import { wallets } from 'cosmos-kit';
 import { ThemeProvider, useTheme } from '@interchain-ui/react';
 import '@agoric/react-components/dist/style.css';
+import { useEffect } from 'react';
 // import { Button, Modal } from 'react-daisyui';
 
 function App() {
-  const { themeClass } = useTheme();
+  const { themeClass, setTheme, setColorMode } = useTheme();
+  useEffect(() => {
+    setColorMode('dark');
+    setTheme('dark');
+  }, [setTheme, setColorMode]);
 
   return (
     <ThemeProvider>
@@ -26,6 +31,17 @@ function App() {
               apis: {
                 rest: ['http://localhost:1317'],
                 rpc: ['http://localhost:26657'],
+              },
+            },
+            {
+              testChain: {
+                chainId: 'agoric-emerynet-8',
+                chainName: 'emerynet',
+                iconUrl: 'agoric.svg',
+              },
+              apis: {
+                rest: ['https://emerynet.api.agoric.net'],
+                rpc: ['https://emerynet.rpc.agoric.net'],
               },
             },
           ]}
