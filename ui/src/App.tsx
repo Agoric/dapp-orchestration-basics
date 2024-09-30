@@ -5,13 +5,18 @@ import { Tabs } from './components/Tabs';
 import { wallets } from 'cosmos-kit';
 import { ThemeProvider, useTheme } from '@interchain-ui/react';
 import '@agoric/react-components/dist/style.css';
+import { useEffect } from 'react';
 // import { Button, Modal } from 'react-daisyui';
 
 function App() {
-  const { themeClass } = useTheme();
+  const { themeClass, setTheme, setColorMode } = useTheme();
+  useEffect(() => {
+    setColorMode('dark');
+    setTheme('dark');
+  }, [setTheme, setColorMode]);
 
   return (
-    <ThemeProvider forceColorMode="dark">
+    <ThemeProvider>
       <div className={themeClass}>
         <AgoricProvider
           // @ts-expect-error XXX _chainWalletMap' is protected but type 'MainWalletBase' is not a class derived from 'MainWalletBase
