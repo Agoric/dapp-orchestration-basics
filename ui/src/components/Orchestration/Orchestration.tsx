@@ -7,7 +7,7 @@ import ChainSelector from './ChainSelector';
 import CreateAccountButton from './CreateAccountButton';
 import { fetchBalances } from './FetchBalances';
 import { makeOffer } from './MakeOffer';
-import { ibcChannels } from '../../util';
+import { getIbcChannel } from '../../util';
 
 const Orchestration = () => {
   const { walletConnection, chainName: agoricChainName } = useAgoric();
@@ -173,11 +173,12 @@ const Orchestration = () => {
         }
         console.log('message sent successfully');
       } else {
+        const sourceChannel = await getIbcChannel(agoricChainName, chain);
         const sendMsg = {
           typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
           value: {
             sourcePort: 'transfer',
-            sourceChannel: ibcChannels[agoricChainName][chain], // TODO: fetch channel id from vstorage
+            sourceChannel,
             token: { denom: selectedDenom, amount: amount.toString() },
             sender: address,
             receiver: modalAddress,
