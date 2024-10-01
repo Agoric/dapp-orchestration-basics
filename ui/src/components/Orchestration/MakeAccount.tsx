@@ -5,7 +5,7 @@ import { Button } from 'react-daisyui';
 import { NotificationContext } from '../../context/NotificationContext';
 import { useContractStore } from '../../store/contract';
 import { DynamicToastChild } from '../Tabs';
-import { ibcChannels, rpcEndpoints } from '../../util';
+import { rpcEndpoints, getIbcChannel } from '../../util';
 
 const fetchBalances = async (addresses, agoricChainName) => {
   return Promise.all(
@@ -223,11 +223,12 @@ const MakeAccount = () => {
         }
         console.log('message sent successfully');
       } else {
+        const sourceChannel = await getIbcChannel(agoricChainName, chain);
         const sendMsg = {
           typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
           value: {
             sourcePort: 'transfer',
-            sourceChannel: ibcChannels[agoricChainName][chain],
+            sourceChannel,
             token: { denom: 'uosmo', amount: '1000000' },
             sender: walletAddress,
             receiver: address,
