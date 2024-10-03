@@ -259,26 +259,7 @@ test-orca:
 
 # todo remove clean install steps after debugging
 e2e:
-	make clean
-	make cleanc
-	yarn cache clean
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn cache clean"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "rm -rf -v /root/*"
-# yarn run build:deployer
-	make copy-project  
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn install"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @endo/patterns@1.3.0"
-#kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @agoric/orchestration@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @agoric/vow@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn add @agoric/async-flow@0.1.1-dev-9c9e5cf.0"
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "cd /root/ ; yarn build:deployer"
-
-# yarn node scripts/deploy-contract.js --install /root/src/orca.contract.js --eval /root/src/orca.proposal.js
-	yarn node scripts/deploy-contract.js --install ${PWD}/src/orca.contract.js,${PWD}/src/orca.proposal.js --eval /root/src/orca.proposal.js
-
-# todo: figure out why this sequence # is always off by 1 forcing a retry
-# yarn node script/deploy-contract.js
-
+	npx tsx ../e2e-testing/scripts/deploy-cli.ts test/builder/init-orca.js
 lint:
 	yarn lint --fix-dry-run --ignore-pattern "*patch*" 
 
