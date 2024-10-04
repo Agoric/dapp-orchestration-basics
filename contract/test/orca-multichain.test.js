@@ -21,7 +21,7 @@ const configFile = nodeRequire.resolve('../../e2e-testing/config.yaml');
 const test = anyTest;
 
 const contractName = 'orca';
-const contractBuilder = './test/builder/init-orca.js';
+const contractBuilder = './src/builder/init-orca.js';
 
 const makeTestContext = async t => {
   t.log('configure starship regisry', configFile);
