@@ -11,7 +11,7 @@ export const rpcEndpoints = {
 
 const ibcChannels = {
   emerynet: {
-    osmosis: 'channel-115',
+    osmosis: 'channel-132',
   },
 };
 
