@@ -20,6 +20,8 @@ VOTE_OPTION=yes
 CLIENTADDR=agoric12j5kzvrwunqvrga5vm4zpy3mkeh3lvyld0amz5
 CLIENT_OSMO_ADDR=osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z
 
+DEPLOY=npx --no-install tsx ../e2e-testing/scripts/deploy-cli.ts
+
 .PHONY: list
 # https://stackoverflow.com/a/73159833/7963
 list:
@@ -259,7 +261,7 @@ test-orca:
 
 # todo remove clean install steps after debugging
 e2e:
-	npx tsx ../e2e-testing/scripts/deploy-cli.ts test/builder/init-orca.js
+	$(DEPLOY) src/builder/init-orca.js
 lint:
 	yarn lint --fix-dry-run --ignore-pattern "*patch*" 
 
