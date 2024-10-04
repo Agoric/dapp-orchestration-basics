@@ -572,7 +572,7 @@ export const makeE2ETools = (
       // generate plan, etc
       // const keyring = await makeKeyring(tools);
       // const deployBuilder = makeDeployBuilder(tools, fse.readJSON, execa);
-      const contractBuilder = './test/builder/init-orca.js';
+      const contractBuilder = './src/builder/init-orca.js';
       // await deployBuilder(contractBuilder);
       const { stdout } = await execa`agoric run ${contractBuilder}`;
       const match = stdout.match(/ (?<name>[-\w]+)-permit.json/);
