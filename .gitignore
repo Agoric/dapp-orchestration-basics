@@ -1,3 +1,9 @@
+# Contract intermediate files
+contract/startOrcaContract-permit.json
+contract/startOrcaContract-plan.json
+contract/startOrcaContract.js
+
+
 # Logs
 logs
 *.log

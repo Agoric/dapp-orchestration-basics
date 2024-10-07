@@ -7,74 +7,38 @@
 The Orchestration Basics dApp showcases various features of the orchestration API running inside of an end-to-end environment, and a user interface:
 
 
-# Interface
-you can run `yarn dev` inside of the `ui` folder. 
+## Set up the local environment
 
-<img src="./images/ui.png" width="100%" />
+- Follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
 
+- Run the following in the top level directory of `dapp-orchestration-basics` to run `hermes update` in the background:
 
-# Setting up the local environment
-See `agoric-sdk/multichain-testing/README.md` for more setup instructions
-
-you can run , run `agd status` to check if this was successful. If not try `make port-forward` again.
-
-Once this is running, you need to also run `make override-chain-registry`. This will update vstorage to work with the local startship environment. 
-
-From `agoric-sdk/multichain-testing`, you can use this command to restart your environment for any reason.
-```
-make teardown ; make stop; make stop-forward; make clean; make; make port-forward
+```sh
+make hermes-update & 
 ```
 
-## Multichain-testing Makefile Helpers
-You can add these commands to the bottom of the `multichain-testing` `Makefile` for now:
-```Makefile
-
-teardown: stop-forward stop clean delete
-
-corepack-setup:
-	corepack prepare yarn@4 --activate
-corepack-enable:
-	corepack enable
-test:
-	yarn test test/install-contracts.test.ts
-
-all: setup install
-	sleep 3
-	make port-forward
-	sleep 120
-	make fund-provision-pool
-	sleep 10
-	make add-address
-	echo "done running"
-
-hermes-update:
-	kubectl exec -i hermes-agoric-osmosis-0 -c relayer -- hermes update client --host-chain agoriclocal --client 07-tendermint-1
-	sleep 60
-	make hermes-update
-```
-
-
-
-# Add a new address to the keychain inside of the kubernetes pod (for building/deploying inside of the pod)
-From top level directory:
-```
-make add-address
-```
-paste address in the `Makefile` for `ADDR`.
-
-# Fund the account
-This will fund the pool, provision the smart wallet, and will also fund `CLIENTADDR` and `CLIENT_OSMO_ADDR`. `CLIENTADDR` is your address from your browser wallet that you will use to interact with the orchestration dapp. `CLIENT_OSMO_ADDR` is the same, but your osmosis account.
-
-This can be ran from the top-level directory
+## Fund the account
+- Run the following in the `contract/` directory of `dapp-orchestration-basics`:
 ```
 make fund
 ```
+This will fund `ADDR`, `CLIENTADDR`, and `CLIENT_OSMO_ADDR` as defined in `contract/Makefile`.
 
-# Build & Deploy the dapp
-From the top level directory, run:
+## Build & Deploy the dapp
+- From the `contract/` directory of `dapp-orchestration-basics`, run:
 ```
-make
+make e2e
 ```
+Wait for this step to complete (this could take a while!) before you start UI in the next.
+## Start UI
+- Run the following inside of the `ui/` directory of `dapp-orchestration-basics`:
+```sh
+yarn dev
+```
+
+<img src="./images/ui.png" width="100%" />
+
+--- 
 
 # Tests
 From top-level directory:
@@ -145,4 +109,7 @@ http://127.0.0.1:26657/abci_query?path=%22/cosmos.bank.v1beta1.Query/AllBalances
 agd tx bank send keplr1 agoric15ch7da0d8nvqc8hk6dguq4ext0lvskpjcwm3patf8sygm63chmpqjlzt74 1000uist -y --chain-id agoriclocal
 ```
 
-# 
+# Interface
+you can run `yarn dev` inside of the `ui` folder. 
+
+<img src="./images/ui.png" width="100%" />
