@@ -13242,6 +13242,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.15.0"
     agoric: "npm:^0.22.0-u17.1"
     ava: "npm:^5.3.1"
+    dapp-agoric-orca-proto: "workspace:*"
     eslint: "npm:^8.57.0"
     eslint-config-airbnb-base: "npm:^15.0.0"
     eslint-config-jessie: "npm:^0.0.6"
@@ -13265,7 +13266,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"dapp-agoric-orca-proto@workspace:protos":
+"dapp-agoric-orca-proto@workspace:*, dapp-agoric-orca-proto@workspace:protos":
   version: 0.0.0-use.local
   resolution: "dapp-agoric-orca-proto@workspace:protos"
   dependencies:
