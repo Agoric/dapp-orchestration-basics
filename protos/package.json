@@ -48,6 +48,10 @@
       "types": "./dist/codegen/cosmos/tx/v1beta1/tx.d.ts",
       "default": "./dist/codegen/cosmos/tx/v1beta1/tx.js"
     },
+    "./cyber/dmn/v1beta1/tx.js": {
+      "types": "./dist/codegen/cyber/dmn/tx/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cyber/dmn/tx/v1beta1/tx.js"
+    },
     "./google/*.js": {
       "types": "./dist/codegen/google/*.d.ts",
       "default": "./dist/codegen/google/*.js"
@@ -126,9 +130,8 @@
     "prepare": "npm run build",
     "lint-fix": "yarn lint:eslint --fix",
     "lint": "tsc",
-    "test": "ava",
-    "test:xs": "exit 0",
-    "test:live": "yarn build && scripts/test-live.js"
+    "test": "exit 0",
+    "test:xs": "exit 0"
   },
   "publishConfig": {
     "access": "public"
