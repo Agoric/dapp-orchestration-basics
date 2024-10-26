@@ -8,6 +8,7 @@
   "useWorkspaces": true,
   "workspaces": [
     "contract",
+    "protos",
     "ui"
   ],
   "resolutions-note": "needed until @agoric/orchestration is available using this",
