@@ -2,8 +2,7 @@
 contract/startOrcaContract-permit.json
 contract/startOrcaContract-plan.json
 contract/startOrcaContract.js
-
-
+contract/bundles
 # Logs
 logs
 *.log
