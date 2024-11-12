@@ -8,7 +8,6 @@ BLD=000000ubld
 ATOM_DENOM=ibc/BA313C4A19DFBF943586C0387E6B11286F9E416B4DD27574E6909CABE0E342FA
 ATOM=000000$(ATOM_DENOM)
 
-# your deployer address made from make add-address
 # ADDR=agoric1k78s7qz7rxy8afyjrqk3dntg8m83zaw3upe60p
 USERNAME ?= user1
 
@@ -62,4 +61,4 @@ provision-smart-wallet:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx swingset provision-one wallet $(ADDR) SMART_WALLET --from ${ADDR} -y -b block
 
 e2e:
-	$(DEPLOY) src/builder/init-orca.js
+	$(DEPLOY) scripts/init-orca.js
