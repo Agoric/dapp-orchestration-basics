@@ -43,7 +43,7 @@ jobs:
           yarn link-cli
           echo "$HOME/bin" >> $GITHUB_PATH
 
-      - name: Build dapp-agoric-basics
+      - name: Build dapp-orchestration-basics
         run: yarn build
 
       - name: Setup Starship Infrastructure

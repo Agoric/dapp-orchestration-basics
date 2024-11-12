@@ -41,7 +41,11 @@
   "scripts": {
     "start:ui": "cd ui && yarn dev",
     "format": "yarn prettier --write .github contract ui",
-    "lint:format": "yarn prettier --check .github contract ui"
+    "lint:format": "yarn prettier --check .github contract ui",
+    "lint": "yarn lint:format && yarn workspaces foreach --all run lint",
+    "test": "yarn workspaces foreach --all run test",
+    "integration-test": "cd contract && yarn ava ./test/orca-multichain.test.js",
+    "build": "yarn workspaces foreach --all run build"
   },
   "devDependencies": {
     "@types/node": "npm:20.16.8",

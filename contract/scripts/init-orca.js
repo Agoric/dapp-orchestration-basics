@@ -18,10 +18,7 @@ import {
 import { M, mustMatch } from '@endo/patterns';
 import { execFileSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
-import {
-  getManifestForOrca,
-  startOrcaContract,
-} from '../src/orca.proposal.js';
+import { getManifestForOrca, startOrcaContract } from '../src/orca.proposal.js';
 import { makeAgd } from '../tools/agd-lib.js';
 
 /**

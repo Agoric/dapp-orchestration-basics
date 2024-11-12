@@ -33,7 +33,7 @@ const { entries, fromEntries, keys } = Object;
  * @param {import('ava').ExecutionContext} t
  * @param {{
  *   wallet: import('./wallet-tools.js').MockWallet;
- *   queryTool: Pick<import('../tools/ui-kit-goals/queryKit.js').QueryTool, 'queryData'>;
+ *   queryTool: Pick<import('../tools/queryKit.js').QueryTool, 'queryData'>;
  * }} mine
  * @param {{
  *   rxAddr: string,

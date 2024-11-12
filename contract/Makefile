@@ -29,7 +29,7 @@ PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 CLIENTADDR=agoric12j5kzvrwunqvrga5vm4zpy3mkeh3lvyld0amz5
 CLIENT_OSMO_ADDR=osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z
 
-DEPLOY=npx --no-install tsx ../e2e-testing/scripts/deploy-cli.ts
+DEPLOY=npx --no-install tsx scripts/deploy-cli.ts
 
 # 1
 fund-provision-pool:
