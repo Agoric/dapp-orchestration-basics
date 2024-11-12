@@ -1,6 +1,5 @@
 import { E } from '@endo/far';
-import { installContract } from './platform-goals/start-contract.js';
-import { makeTracer } from './tools/debug.js';
+import { makeTracer } from './debug.js';
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>

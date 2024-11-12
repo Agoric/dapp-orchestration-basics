@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "ava",
+    "build:deployer": "rollup -c rollup.config.mjs",
     "lint": "tsc && eslint '**/*.js'",
     "lint:fix": "eslint --fix '**/*.js'"
   },
