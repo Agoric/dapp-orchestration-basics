@@ -86,10 +86,10 @@ jobs:
         if: always()
         run: kubectl logs hermes-agoric-osmosis-0 --container=relayer || true
 
-      - name: Capture and print agoric-cosmos relayer logs
+      - name: Capture and print agoric-gaia relayer logs
         if: always()
         run: kubectl logs hermes-agoric-gaia-0 --container=relayer || true
 
-      - name: verify contracts started onchain
+      - name: verify contract(s) started onchain
         run: |
           curl http://localhost:1317/agoric/vstorage/data/published.agoricNames.instance | grep orca
