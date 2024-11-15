@@ -45,7 +45,9 @@
     "lint": "yarn lint:format && yarn workspaces foreach --all run lint",
     "test": "yarn workspaces foreach --all run test",
     "integration-test": "cd contract && yarn ava ./test/orca-multichain.test.js",
-    "build": "yarn workspaces foreach --all run build"
+    "build": "yarn workspaces foreach --all run build",
+    "lint:fix": "yarn format && yarn workspaces foreach --all run lint:fix",
+    "postinstall": "npx patch-package"
   },
   "devDependencies": {
     "@types/node": "npm:20.16.8",
