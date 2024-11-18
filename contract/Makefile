@@ -254,9 +254,9 @@ build:
 buildc:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn build:deployer"
 deployc:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js"
+	kubectl exec -i agoriclocal-genesis-0 -c validator -- bash -c "yarn node scripts/deploy-contract.js --install src/orca.contract.ts --eval src/orca.proposal.js"
 deploy:
-	yarn node scripts/deploy-contract.js --install src/orca.contract.js --eval src/orca.proposal.js
+	yarn node scripts/deploy-contract.js --install src/orca.contract.ts --eval src/orca.proposal.js
 test-orca:
 	yarn test ./test/orca-contract.test.js
 

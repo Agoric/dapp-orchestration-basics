@@ -77,7 +77,7 @@
     "@agoric/store": "^0.9.3-u17.1",
     "@agoric/vats": "^0.16.0-u17.1",
     "@agoric/zoe": "^0.26.3-u17.1",
-    "@endo/bundle-source": "^3.4.0",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/errors": "^1.2.4",
     "@endo/far": "^1.1.4",
     "@endo/init": "^1.1.3",
