@@ -1211,6 +1211,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ava/typescript@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@ava/typescript@npm:5.0.0"
+  dependencies:
+    escape-string-regexp: "npm:^5.0.0"
+    execa: "npm:^8.0.1"
+  checksum: 10c0/4f0f9fbcf34f632a95d5565d2c0f7b397873cdc9b55288c54bc7d1dde58fbf600beaa470639e5367aceb99841efa3d4b8c0b5b4bf4778fe8fe5f7e926e4a3fad
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.24.2, @babel/code-frame@npm:^7.24.7":
   version: 7.24.7
   resolution: "@babel/code-frame@npm:7.24.7"
@@ -8220,7 +8230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.16.8, @types/node@npm:>=13.7.0, @types/node@npm:^20.11.13":
+"@types/node@npm:*, @types/node@npm:20.16.8, @types/node@npm:>=13.7.0":
   version: 20.16.8
   resolution: "@types/node@npm:20.16.8"
   dependencies:
@@ -8240,6 +8250,15 @@ __metadata:
   version: 12.20.55
   resolution: "@types/node@npm:12.20.55"
   checksum: 10c0/3b190bb0410047d489c49bbaab592d2e6630de6a50f00ba3d7d513d59401d279972a8f5a598b5bb8ddc1702f8a2f4ec57a65d93852f9c329639738e7053637d1
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.9.0":
+  version: 22.9.0
+  resolution: "@types/node@npm:22.9.0"
+  dependencies:
+    undici-types: "npm:~6.19.8"
+  checksum: 10c0/3f46cbe0a49bab4ba30494025e4c8a6e699b98ac922857aa1f0209ce11a1313ee46e6808b8f13fe5b8b960a9d7796b77c8d542ad4e9810e85ef897d5593b5d51
   languageName: node
   linkType: hard
 
@@ -11076,6 +11095,7 @@ __metadata:
     "@agoric/vow": "npm:^0.2.0-u17.1"
     "@agoric/zoe": "npm:^0.26.3-u17.1"
     "@agoric/zone": "npm:^0.3.0-u17.1"
+    "@ava/typescript": "npm:^5.0.0"
     "@cosmjs/proto-signing": "npm:^0.32.3"
     "@endo/bundle-source": "npm:^3.5.0"
     "@endo/errors": "npm:^1.2.4"
@@ -11094,7 +11114,7 @@ __metadata:
     "@rollup/plugin-replace": "npm:^5.0.5"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/fs-extra": "npm:^11"
-    "@types/node": "npm:^20.11.13"
+    "@types/node": "npm:^22.9.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.0.2"
     "@typescript-eslint/parser": "npm:^7.15.0"
     agoric: "npm:^0.22.0-u17.1"
@@ -11115,9 +11135,10 @@ __metadata:
     prettier-plugin-jsdoc: "npm:^1.0.0"
     rollup: "npm:^4.18.0"
     starshipjs: "npm:^2.4.0"
+    ts-node: "npm:^10.9.2"
     tsimp: "npm:^2.0.10"
     type-coverage: "npm:^2.26.3"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:^5.6.3"
     typescript-eslint: "npm:^7.18.0"
   languageName: unknown
   linkType: soft
@@ -18927,7 +18948,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.1.6 - 5.6.x":
+"typescript@npm:5.1.6 - 5.6.x, typescript@npm:^5.6.3":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -18937,7 +18958,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.2.2, typescript@npm:^5.3.3, typescript@npm:^5.5.2, typescript@npm:~5.6.1-rc":
+"typescript@npm:^5.2.2, typescript@npm:^5.5.2, typescript@npm:~5.6.1-rc":
   version: 5.6.2
   resolution: "typescript@npm:5.6.2"
   bin:
@@ -18947,7 +18968,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.1.6 - 5.6.x#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.1.6 - 5.6.x#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.6.3#optional!builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=74658d"
   bin:
@@ -18957,7 +18978,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.5.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.6.1-rc#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.5.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A~5.6.1-rc#optional!builtin<compat/typescript>":
   version: 5.6.2
   resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=74658d"
   bin:
@@ -19009,7 +19030,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.19.2":
+"undici-types@npm:~6.19.2, undici-types@npm:~6.19.8":
   version: 6.19.8
   resolution: "undici-types@npm:6.19.8"
   checksum: 10c0/078afa5990fba110f6824823ace86073b4638f1d5112ee26e790155f481f2a868cc3e0615505b6f4282bdf74a3d8caad715fd809e870c2bb0704e3ea6082f344
