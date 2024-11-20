@@ -3,7 +3,7 @@ import { E } from '@endo/far';
 import { VowShape } from '@agoric/vow';
 import { makeTracer } from '@agoric/internal';
 import { atob } from '@endo/base64';
-import { ChainAddressShape } from '../typeGuards.js';
+import { ChainAddressShape } from './typeGuards.js';
 
 const trace = makeTracer('AutoStakeItTap');
 

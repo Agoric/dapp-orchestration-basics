@@ -81,10 +81,10 @@ classDiagram
     }
 
 %% In api consumer vats
-  
+
     LocalOrchestrationAccount --* LocalChainAccount
     CosmosOrchestrationAccount --* IcaAccount
-    
+
     class LocalOrchestrationAccount {
       account: LocalChainAccount
       address: ChainAddress
