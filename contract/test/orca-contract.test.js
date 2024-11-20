@@ -18,12 +18,12 @@ import { installContract } from '../src/platform-goals/start-contract.js';
  * @import {IcaAccount, MakeCosmosInterchainService} from '@agoric/orchestration';
  * @import {LocalChain,LocalChainAccount} from '@agoric/vats/src/localchain.js';
  * @import {TargetRegistration} from '@agoric/vats/src/bridge-target.js';
- * @import {OrcaSF} from '../src/orca.contract.ts';
+ * @import {OrcaSF} from '../src/orca.contract.js';
  */
 
 const nodeRequire = createRequire(import.meta.url);
 
-const contractPath = nodeRequire.resolve(`../src/orca.contract.ts`);
+const contractPath = nodeRequire.resolve(`../src/orca.contract.js`);
 const scriptRoot = {
   orca: nodeRequire.resolve('../src/orca.proposal.js'),
 };

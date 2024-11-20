@@ -9,7 +9,7 @@ import {
   CosmosChainInfoShape,
   IBCConnectionInfoShape,
 } from '../typeGuards.js';
-import { getBech32Prefix } from '../utils/address.js';
+import { getBech32Prefix } from '../../utils/address.js';
 
 /**
  * @import {NameHub} from '@agoric/vats';

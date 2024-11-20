@@ -17,7 +17,7 @@ const contractName = 'auto-stake-it';
 const contractFile = `${dirname}/../src/${contractName}.contract.js`;
 
 type StartFn =
-  typeof import('/Users/lupin/work/agoric/dapp-orchestration-basics/contract/src/auto-stake-it.contract.js').start;
+  typeof import('../src/auto-stake-it.contract.js').start;
 
 test('make accounts, register tap, return invitationMakers', async t => {
   t.log('bootstrap, orchestration core-eval');
