@@ -26,7 +26,7 @@
     "@agoric/inter-protocol": "^0.17.0-u17.1",
     "@agoric/internal": "^0.4.0-u17.1",
     "@agoric/network": "0.1.1-dev-d1562a1.0",
-    "@agoric/orchestration": "patch:@agoric/orchestration@npm%3A0.2.0-upgrade-17-dev-ec448b0.0#~/.yarn/patches/@agoric-orchestration-npm-0.2.0-upgrade-17-dev-ec448b0.0-f94046c01d.patch",
+    "@agoric/orchestration": "0.2.0-u18.1",
     "@agoric/smart-wallet": "^0.5.4-u17.1",
     "@agoric/store": "^0.9.3-u17.1",
     "@agoric/time": "^0.3.3-u17.1",

@@ -20,7 +20,8 @@ import type {
   LocalAccountMethods,
   ICQQueryFunction,
 } from './types.js';
-import type { ResolvedContinuingOfferResult } from './utils/zoe-tools.js';
+import type { ResolvedContinuingOfferResult } from '@agoric/orchestration/src/utils/zoe-tools.js';
+// import type { ResolvedContinuingOfferResult } from '../utils/zoe-tools.js';
 
 /**
  * A denom that designates a path to a token type on some blockchain.
