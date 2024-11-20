@@ -8,7 +8,7 @@ import {
   ChainAddressShape,
   DenomAmountShape,
   IBCTransferOptionsShape,
-} from '../typeGuards.js';
+} from '../src/typeGuards.js';
 
 /** @import {OrchestrationAccountI} from '../orchestration-api.js'; */
 
