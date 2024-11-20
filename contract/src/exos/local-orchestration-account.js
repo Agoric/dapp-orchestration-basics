@@ -18,12 +18,12 @@ import {
   TimestampProtoShape,
   TypedJsonShape,
 } from '../typeGuards.js';
-import { maxClockSkew, toDenomAmount } from '../utils/cosmos.js';
-import { orchestrationAccountMethods } from '../utils/orchestrationAccount.js';
-import { makeTimestampHelper } from '../utils/time.js';
+import { maxClockSkew, toDenomAmount } from '../../utils/cosmos.js';
+import { orchestrationAccountMethods } from '../../utils/orchestrationAccount.js';
+import { makeTimestampHelper } from '../../utils/time.js';
 import { preparePacketTools } from './packet-tools.js';
 import { prepareIBCTools } from './ibc-packet.js';
-import { coerceCoin, coerceDenomAmount } from '../utils/amounts.js';
+import { coerceCoin, coerceDenomAmount } from '../../utils/amounts.js';
 
 /**
  * @import {HostOf} from '@agoric/async-flow';

@@ -10,8 +10,8 @@ import {
   Proto3Shape,
   TxBodyOptsShape,
 } from '../typeGuards.js';
-import { findAddressField } from '../utils/address.js';
-import { makeTxPacket, parseTxPacket } from '../utils/packet.js';
+import { findAddressField } from '../../utils/address.js';
+import { makeTxPacket, parseTxPacket } from '../../utils/packet.js';
 
 /**
  * @import {HostOf} from '@agoric/async-flow';

@@ -1,14 +1,14 @@
 import { prepareAsyncFlowTools } from '@agoric/async-flow';
-import { prepareVowTools } from '@agoric/vow';
+import { prepareVowTools } from '@agoric/vow/vat.js';
 import { prepareRecorderKitMakers } from '@agoric/zoe/src/contractSupport/recorder.js';
 import { makeDurableZone } from '@agoric/zone/durable.js';
-import { makeChainHub } from '../exos/chain-hub.js';
-import { prepareCosmosOrchestrationAccount } from '../exos/cosmos-orchestration-account.js';
-import { prepareLocalChainFacade } from '../exos/local-chain-facade.js';
-import { prepareLocalOrchestrationAccountKit } from '../exos/local-orchestration-account.js';
-import { prepareOrchestrator } from '../exos/orchestrator.js';
-import { prepareRemoteChainFacade } from '../exos/remote-chain-facade.js';
-import { makeOrchestrationFacade } from '../facade.js';
+import { makeChainHub } from '../src/exos/chain-hub.js';
+import { prepareCosmosOrchestrationAccount } from '../src/exos/cosmos-orchestration-account.js';
+import { prepareLocalChainFacade } from '../src/exos/local-chain-facade.js';
+import { prepareLocalOrchestrationAccountKit } from '../src/exos/local-orchestration-account.js';
+import { prepareOrchestrator } from '../src/exos/orchestrator.js';
+import { prepareRemoteChainFacade } from '../src/exos/remote-chain-facade.js';
+import { makeOrchestrationFacade } from '../src/facade.js';
 import { makeZoeTools } from './zoe-tools.js';
 import { makeZcfTools } from './zcf-tools.js';
 

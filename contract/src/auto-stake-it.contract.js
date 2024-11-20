@@ -5,13 +5,13 @@ import {
 import { M } from '@endo/patterns';
 import { prepareChainHubAdmin } from './exos/chain-hub-admin.js';
 import { preparePortfolioHolder } from './exos/portfolio-holder-kit.js';
-import { withOrchestration } from './utils/start-helper.js';
+import { withOrchestration } from '../utils/start-helper.js';
 import { prepareStakingTap } from './auto-stake-it-tap-kit.js';
 import * as flows from './auto-stake-it.flows.js';
 
 /**
  * @import {Zone} from '@agoric/zone';
- * @import {OrchestrationPowers, OrchestrationTools} from './utils/start-helper.js';
+ * @import {OrchestrationPowers, OrchestrationTools} from '../utils/start-helper.js';
  * @import { Marshaller } from '@agoric/internal/src/lib-chainStorage.js';
  */
 

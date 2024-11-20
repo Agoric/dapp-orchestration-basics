@@ -53,7 +53,7 @@ import {
   Proto3Shape,
   TxBodyOptsShape,
 } from '../typeGuards.js';
-import { coerceCoin, coerceDenom } from '../utils/amounts.js';
+import { coerceCoin, coerceDenom } from '../../utils/amounts.js';
 import {
   maxClockSkew,
   toCosmosDelegationResponse,
@@ -61,9 +61,9 @@ import {
   toDenomAmount,
   toTruncatedDenomAmount,
   tryDecodeResponse,
-} from '../utils/cosmos.js';
-import { orchestrationAccountMethods } from '../utils/orchestrationAccount.js';
-import { makeTimestampHelper } from '../utils/time.js';
+} from '../../utils/cosmos.js';
+import { orchestrationAccountMethods } from '../../utils/orchestrationAccount.js';
+import { makeTimestampHelper } from '../../utils/time.js';
 
 /**
  * @import {HostOf} from '@agoric/async-flow';
