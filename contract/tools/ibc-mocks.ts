@@ -22,7 +22,10 @@ import type {
 import { LOCALCHAIN_DEFAULT_ADDRESS } from '@agoric/vats/tools/fake-bridge.js';
 import { atob, btoa, decodeBase64, encodeBase64 } from '@endo/base64';
 import type { ChainAddress } from '@agoric/orchestration/src/orchestration-api.js';
-import { makeQueryPacket, makeTxPacket } from '@agoric/orchestration/src/utils/packet.js';
+import {
+  makeQueryPacket,
+  makeTxPacket,
+} from '@agoric/orchestration/src/utils/packet.js';
 
 interface EncoderI<T> {
   encode: (message: T) => {
