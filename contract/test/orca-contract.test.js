@@ -1,7 +1,6 @@
 // @ts-check
 
 import { test as anyTest } from './prepare-test-env-ava.js';
-
 import { createRequire } from 'module';
 import { E, Far, passStyleOf } from '@endo/far';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
@@ -365,6 +364,7 @@ const orchestrationAccountAndFundScenario = test.macro({
     );
 
     let offerResult;
+    offerResult = await E(seat).getOfferResult();
     await t.throwsAsync(
       async () => (offerResult = await vt.when(E(seat).getOfferResult())),
       { message: /TODO: use IBC mocks or something/ },

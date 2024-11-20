@@ -6,8 +6,8 @@ import { denomHash } from '../utils/denomHash.js';
  * @import {GuestInterface} from '@agoric/async-flow';
  * @import {CosmosValidatorAddress, Orchestrator, CosmosInterchainService, Denom, OrchestrationAccount, StakingAccountActions, OrchestrationFlow} from '@agoric/orchestration';
  * @import {MakeStakingTap} from './auto-stake-it-tap-kit.js';
- * @import {MakePortfolioHolder} from '../exos/portfolio-holder-kit.js';
- * @import {ChainHub} from '../exos/chain-hub.js';
+ * @import {MakePortfolioHolder} from './exos/portfolio-holder-kit.js';
+ * @import {ChainHub} from './exos/chain-hub.js';
  */
 
 /**
