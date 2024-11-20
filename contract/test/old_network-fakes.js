@@ -2,6 +2,7 @@
 import {
   prepareEchoConnectionKit,
   prepareLoopbackProtocolHandler,
+  prepareNetworkPowers,
   preparePortAllocator,
   prepareRouterProtocol,
 } from '@agoric/network';
@@ -211,8 +212,11 @@ export const makeFakeIBCBridge = zone => {
 };
 
 export const setupFakeNetwork = (zone, { vowTools }) => {
-  const makeRouterProtocol = prepareRouterProtocol(zone, vowTools);
-  const makePortAllocator = preparePortAllocator(zone, vowTools);
+  const powers = prepareNetworkPowers(zone, vowTools);
+  const makeRouterProtocol = prepareRouterProtocol(zone, powers);
+  const makePortAllocator = preparePortAllocator(zone, powers);
+  // const makeRouterProtocol = prepareRouterProtocol(zone, vowTools);
+  // const makePortAllocator = preparePortAllocator(zone, vowTools);
   const makeLoopbackProtocolHandler = prepareLoopbackProtocolHandler(
     zone,
     vowTools,

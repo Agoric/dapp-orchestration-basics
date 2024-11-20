@@ -8,7 +8,7 @@ import {
   DEFAULT_ICQ_VERSION,
   makeICAChannelAddress,
   makeICQChannelAddress,
-} from '../utils/address.js';
+} from '../../utils/address.js';
 import { prepareIcaAccountKit } from './ica-account-kit.js';
 import { prepareICQConnectionKit } from './icq-connection-kit.js';
 
@@ -20,7 +20,7 @@ import { prepareICQConnectionKit } from './icq-connection-kit.js';
  * @import {RemoteIbcAddress} from '@agoric/vats/tools/ibc-utils.js';
  * @import {Vow, VowTools} from '@agoric/vow';
  * @import {ICQConnection, IcaAccount, ICQConnectionKit, IcaAccountKit} from '../types.js';
- * @import {ICAChannelAddressOpts} from '../utils/address.js';
+ * @import {ICAChannelAddressOpts} from '../../utils/address.js';
  */
 
 const { Vow$ } = NetworkShape; // TODO #9611

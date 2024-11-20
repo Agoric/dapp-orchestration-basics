@@ -1,13 +1,11 @@
-import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
+import { test } from './prepare-test-env-ava.js';
 import { setUpZoeForTest } from '@agoric/zoe/tools/setup-zoe.js';
-import { createRequire } from 'module';
 import { E } from '@endo/far';
 import { heapVowE } from '@agoric/vow/vat.js';
 import path from 'path';
 import { eventLoopIteration } from '@agoric/internal/src/testing-utils.js';
 import { MsgDelegateResponse } from '@agoric/cosmic-proto/cosmos/staking/v1beta1/tx.js';
 import type { IBCEvent } from '@agoric/vats';
-import type { AutoStakeItSF } from '../src/auto-stake-it.contract.js';
 import { commonSetup } from './supports.js';
 import {
   buildMsgResponseString,
@@ -15,15 +13,11 @@ import {
 } from '../tools/ibc-mocks.js';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
-
-const nodeRequire = createRequire(import.meta.url);
-
-const contractFile = nodeRequire.resolve('../src/auto-stake-it.contract.js');
 const contractName = 'auto-stake-it';
-// const contractFile = `${dirname}/../src/${contractName}.contract.js`;
-// const contractFile = '/Users/lupin/work/agoric/dapp-orchestration-basics/contract/src/auto-stake-it.contract.js';
-// type StartFn =
-  // typeof import('/Users/lupin/work/agoric/dapp-orchestration-basics/contract/src/auto-stake-it.contract.js').start;
+const contractFile = `${dirname}/../src/${contractName}.contract.js`;
+
+type StartFn =
+  typeof import('/Users/lupin/work/agoric/dapp-orchestration-basics/contract/src/auto-stake-it.contract.js').start;
 
 test('make accounts, register tap, return invitationMakers', async t => {
   t.log('bootstrap, orchestration core-eval');
@@ -37,7 +31,7 @@ test('make accounts, register tap, return invitationMakers', async t => {
   const { zoe, bundleAndInstall } = await setUpZoeForTest();
 
   t.log('contract coreEval', contractName);
-  const installation: Installation<AutoStakeItSF> =
+  const installation: Installation<StartFn> =
     await bundleAndInstall(contractFile);
   const storageNode = await E(storage.rootNode).makeChildNode(contractName);
   const autoAutoStakeItKit = await E(zoe).startInstance(
