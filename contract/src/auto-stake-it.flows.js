@@ -1,5 +1,6 @@
 import { Fail } from '@endo/errors';
-import { denomHash } from '../utils/denomHash.js';
+import { denomHash } from '@agoric/orchestration/src/utils/denomHash.js';
+// import { denomHash } from '../utils/denomHash.js';
 
 /**
  * @import {ResolvedPublicTopic} from '@agoric/zoe/src/contractSupport/topics.js';

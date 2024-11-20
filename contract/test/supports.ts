@@ -20,10 +20,10 @@ import { withAmountUtils } from '@agoric/zoe/tools/test-utils.js';
 import { makeHeapZone } from '@agoric/zone';
 import { E } from '@endo/far';
 import type { ExecutionContext } from 'ava';
-import { registerKnownChains } from '../src/chain-info.js';
-import { makeChainHub } from '../src/exos/chain-hub.js';
-import { prepareCosmosInterchainService } from '../src/exos/cosmos-interchain-service.js';
-import fetchedChainInfo from '../src/fetched-chain-info.js';
+import { registerKnownChains } from '@agoric/orchestration/src/chain-info.js';
+import { makeChainHub } from '@agoric/orchestration/src/exos/chain-hub.js';
+import { prepareCosmosInterchainService } from '@agoric/orchestration/src/exos/cosmos-interchain-service.js';
+import fetchedChainInfo from '@agoric/orchestration/src/fetched-chain-info.js';
 import { buildVTransferEvent } from '../tools/ibc-mocks.js';
 import { setupFakeNetwork } from './network-fakes.js';
 
