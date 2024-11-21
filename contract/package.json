@@ -5,6 +5,11 @@
   "description": "Agoric Orchestration Contract",
   "type": "module",
   "scripts": {
+    "start:docker": "echo 'Please follow the instructions in the README file at https://github.com/Agoric/agoric-sdk/tree/master/multichain-testing to start a multichain environment needed for this DApp to run.' && exit 1",
+    "docker:logs": "kubectl logs agoriclocal-genesis-0 -c validator -f",
+    "docker:bash": "kubectl exec -it agoriclocal-genesis-0 -c validator -- /bin/bash",
+    "format": "prettier --write .",
+    "start": "make e2e",
     "test": "ava",
     "build": "yarn build:deployer",
     "build:deployer": "rollup -c rollup.config.mjs",
