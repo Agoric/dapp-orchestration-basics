@@ -1,7 +1,7 @@
 // @ts-check
 
 import { Far } from '@endo/far';
-import { makeTracer } from '../src/tools/debug.js';
+import { makeTracer } from '../src/debug.js';
 
 const trace = makeTracer('startOrch');
 

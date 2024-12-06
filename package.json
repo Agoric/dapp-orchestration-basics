@@ -39,21 +39,17 @@
     "protobufjs@npm:^7.2.5": "patch:protobufjs@npm%3A6.11.4#~/.yarn/patches/protobufjs-npm-6.11.4-af11968b80.patch"
   },
   "scripts": {
-    "start:docker": "cd contract && docker compose up -d",
-    "stop:docker": "cd contract && docker compose down",
-    "docker:logs": "cd contract; docker compose logs --tail 200 -f",
-    "docker:bash": "cd contract; docker compose exec agd bash",
-    "docker:make": "cd contract; docker compose exec agd make -C /workspace/contract",
-    "make:help": "make -C contract list",
-    "start:contract": "cd contract && yarn start",
-    "integration-test": "cd contract && yarn ava ./test/orca-multichain.test.js",
     "start:ui": "cd ui && yarn dev",
+    "start:docker": "echo 'Please follow the instructions in the README file at https://github.com/Agoric/agoric-sdk/tree/master/multichain-testing to start a multichain environment needed for this DApp to run.' && exit 1",
+    "docker:logs": "kubectl logs agoriclocal-genesis-0 -c validator -f",
+    "docker:bash": "kubectl exec -it agoriclocal-genesis-0 -c validator -- /bin/bash",
     "format": "yarn prettier --write .github contract ui",
     "lint:format": "yarn prettier --check .github contract ui",
     "lint": "yarn lint:format && yarn workspaces foreach --all run lint",
-    "lint:fix": "yarn format && yarn workspaces foreach --all run lint:fix",
     "test": "yarn workspaces foreach --all run test",
+    "integration-test": "cd contract && yarn ava ./test/orca-multichain.test.js",
     "build": "yarn workspaces foreach --all run build",
+    "lint:fix": "yarn format && yarn workspaces foreach --all run lint:fix",
     "postinstall": "npx patch-package"
   },
   "devDependencies": {

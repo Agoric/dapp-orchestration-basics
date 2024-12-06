@@ -18,11 +18,8 @@ import {
 import { M, mustMatch } from '@endo/patterns';
 import { execFileSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
-import {
-  getManifestForOrca,
-  startOrcaContract,
-} from '../../src/orca.proposal.js';
-import { makeAgd } from '../../tools/agd-lib.js';
+import { getManifestForOrca, startOrcaContract } from '../src/orca.proposal.js';
+import { makeAgd } from '../tools/agd-lib.js';
 
 /**
  * @import {CoreEvalBuilder} from '@agoric/deploy-script-support/src/externalTypes.js'
@@ -43,12 +40,12 @@ export const defaultProposalBuilder = async (
   { chainDetails },
 ) => {
   return harden({
-    sourceSpec: '../../src/orca.proposal.js',
+    sourceSpec: '../src/orca.proposal.js',
     getManifestCall: [
       getManifestForOrca.name,
       {
         installKeys: {
-          orca: publishRef(install('../../src/orca.contract.js')),
+          orca: publishRef(install('../src/orca.contract.js')),
         },
         chainDetails,
       },

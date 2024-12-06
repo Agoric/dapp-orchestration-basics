@@ -2,7 +2,7 @@
 contract/startOrcaContract-permit.json
 contract/startOrcaContract-plan.json
 contract/startOrcaContract.js
-
+contract/bundles
 
 # Logs
 logs
@@ -37,3 +37,8 @@ dist-ssr
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+e2e-testing/revise-chain-info-permit.json
+e2e-testing/revise-chain-info-plan.json
+e2e-testing/revise-chain-info.js
+e2e-testing/starship-chain-info.js
