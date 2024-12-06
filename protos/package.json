@@ -1,0 +1,166 @@
+{
+  "name": "dapp-agoric-orca-proto",
+  "version": "0.4.0",
+  "description": "Protobuf message builders for dapp-orca",
+  "keywords": [],
+  "author": "Agoric",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json",
+    "./agoric/*.js": {
+      "types": "./dist/codegen/agoric/*.d.ts",
+      "default": "./dist/codegen/agoric/*.js"
+    },
+    "./cosmos/*.js": {
+      "types": "./dist/codegen/cosmos/*.d.ts",
+      "default": "./dist/codegen/cosmos/*.js"
+    },
+    "./cosmos/bank/v1beta1/query.js": {
+      "types": "./dist/codegen/cosmos/bank/v1beta1/query.d.ts",
+      "default": "./dist/codegen/cosmos/bank/v1beta1/query.js"
+    },
+    "./cosmos/bank/v1beta1/tx.js": {
+      "types": "./dist/codegen/cosmos/bank/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cosmos/bank/v1beta1/tx.js"
+    },
+    "./cosmos/distribution/v1beta1/query.js": {
+      "types": "./dist/codegen/cosmos/distribution/v1beta1/query.d.ts",
+      "default": "./dist/codegen/cosmos/distribution/v1beta1/query.js"
+    },
+    "./cosmos/distribution/v1beta1/tx.js": {
+      "types": "./dist/codegen/cosmos/distribution/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cosmos/distribution/v1beta1/tx.js"
+    },
+    "./cosmos/staking/v1beta1/query.js": {
+      "types": "./dist/codegen/cosmos/staking/v1beta1/query.d.ts",
+      "default": "./dist/codegen/cosmos/staking/v1beta1/query.js"
+    },
+    "./cosmos/staking/v1beta1/tx.js": {
+      "types": "./dist/codegen/cosmos/staking/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cosmos/staking/v1beta1/tx.js"
+    },
+    "./cosmos/tx/v1beta1/tx.js": {
+      "types": "./dist/codegen/cosmos/tx/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cosmos/tx/v1beta1/tx.js"
+    },
+    "./cyber/dmn/v1beta1/tx.js": {
+      "types": "./dist/codegen/cyber/dmn/tx/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cyber/dmn/tx/v1beta1/tx.js"
+    },
+    "./google/*.js": {
+      "types": "./dist/codegen/google/*.d.ts",
+      "default": "./dist/codegen/google/*.js"
+    },
+    "./google/protobuf/any.js": {
+      "types": "./dist/codegen/google/protobuf/any.d.ts",
+      "default": "./dist/codegen/google/protobuf/any.js"
+    },
+    "./ibc/*.js": {
+      "types": "./dist/codegen/ibc/*.d.ts",
+      "default": "./dist/codegen/ibc/*.js"
+    },
+    "./ibc/applications/interchain_accounts/v1/packet.js": {
+      "types": "./dist/codegen/ibc/applications/interchain_accounts/v1/packet.d.ts",
+      "default": "./dist/codegen/ibc/applications/interchain_accounts/v1/packet.js"
+    },
+    "./ibc/applications/transfer/v1/tx.js": {
+      "types": "./dist/codegen/ibc/applications/transfer/v1/tx.d.ts",
+      "default": "./dist/codegen/ibc/applications/transfer/v1/tx.js"
+    },
+    "./ibc/core/channel/v1/channel.js": {
+      "types": "./dist/codegen/ibc/core/channel/v1/channel.d.ts",
+      "default": "./dist/codegen/ibc/core/channel/v1/channel.js"
+    },
+    "./ibc/core/connection/v1/connection.js": {
+      "types": "./dist/codegen/ibc/core/connection/v1/connection.d.ts",
+      "default": "./dist/codegen/ibc/core/connection/v1/connection.js"
+    },
+    "./icq/*.js": {
+      "types": "./dist/codegen/icq/*.d.ts",
+      "default": "./dist/codegen/icq/v1/*.js"
+    },
+    "./icq/v1/packet.js": {
+      "types": "./dist/codegen/icq/v1/packet.d.ts",
+      "default": "./dist/codegen/icq/v1/packet.js"
+    },
+    "./swingset/msgs.js": {
+      "types": "./dist/codegen/agoric/swingset/msgs.d.ts",
+      "default": "./dist/codegen/agoric/swingset/msgs.js"
+    },
+    "./swingset/query.js": {
+      "types": "./dist/codegen/agoric/swingset/query.d.ts",
+      "default": "./dist/codegen/agoric/swingset/query.js"
+    },
+    "./swingset/swingset.js": {
+      "types": "./dist/codegen/agoric/swingset/swingset.d.ts",
+      "default": "./dist/codegen/agoric/swingset/swingset.js"
+    },
+    "./tendermint/*.js": {
+      "types": "./dist/codegen/tendermint/*.d.ts",
+      "default": "./dist/codegen/tendermint/*.js"
+    },
+    "./tendermint/abci/types.js": {
+      "types": "./dist/codegen/tendermint/abci/types.d.ts",
+      "default": "./dist/codegen/tendermint/abci/types.js"
+    },
+    "./vstorage/query.js": {
+      "types": "./dist/codegen/agoric/vstorage/query.d.ts",
+      "default": "./dist/codegen/agoric/vstorage/query.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "lib": "src"
+  },
+  "files": [
+    "dist",
+    "!CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "clean": "rimraf dist",
+    "codegen": "node scripts/codegen.cjs",
+    "prepare": "npm run build",
+    "lint-fix": "yarn lint:eslint --fix",
+    "lint": "tsc",
+    "test": "exit 0",
+    "test:xs": "exit 0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@agoric/cosmos": "^0.34.1",
+    "@ava/typescript": "^4.1.0",
+    "@cosmology/telescope": "https://gitpkg.vercel.app/agoric-labs/telescope/packages/telescope?8d2c2f6ba637a5578eead09a7368dc41c262a9d0",
+    "@endo/bundle-source": "^3.4.2",
+    "@endo/import-bundle": "^1.3.1",
+    "ava": "^5.3.1",
+    "rimraf": "^5.0.0",
+    "tsd": "^0.31.1",
+    "tsimp": "^2.0.11",
+    "typescript": "~5.6.2"
+  },
+  "dependencies": {
+    "@endo/base64": "^1.0.8",
+    "@endo/init": "^1.1.6"
+  },
+  "ava": {
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      },
+      "compile": false
+    },
+    "files": [
+      "test/**/*.test.*"
+    ]
+  }
+}
