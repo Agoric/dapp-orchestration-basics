@@ -28,8 +28,8 @@ PROVISION_POOL_ADDR=agoric1megzytg65cyrgzs6fvzxgrcqvwwl7ugpt62346
 
 # `CLIENTADDR` is your address from your browser wallet that you will use to interact with the orchestration dapp. 
 #`CLIENT_OSMO_ADDR` is the same, but your osmosis account.
-CLIENTADDR=agoric12j5kzvrwunqvrga5vm4zpy3mkeh3lvyld0amz5
-CLIENT_OSMO_ADDR=osmo1rhvgsqq96n3qyv3u0zlwleyaunpmal6uhnam4z
+CLIENTADDR=agoric1rwwley550k9mmk6uq6mm6z4udrg8kyuyvfszjk
+CLIENT_OSMO_ADDR=osmo1n4j0cy98dac5q6d9y5nhlmk5d6e4wzve0sytdj
 
 DEPLOY=npx --no-install tsx scripts/deploy-cli.ts
 
@@ -63,4 +63,5 @@ provision-smart-wallet:
 	$(EXEC_AGD) tx swingset provision-one wallet $(ADDR) SMART_WALLET --from ${ADDR} -y -b block
 
 e2e:
-	$(DEPLOY) scripts/init-orca.js
+#	$(DEPLOY) scripts/init-orca.js
+	$(DEPLOY) scripts/init-autoStakeIt.js

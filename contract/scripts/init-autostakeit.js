@@ -1,10 +1,10 @@
 /**
- * @file build core eval script to deploy auto-stake-it contract
+ * @file build core eval script to deploy autoStakeIt contract
  *
  * Usage:
- *   agoric run init-auto-stake-it.js
+ *   agoric run init-autoStakeIt.js
  * or
- *   agoric run init-auto-stake-it.js --net emerynet \
+ *   agoric run init-autoStakeIt.js --net emerynet \
  *     --peer osmosis:connection-128:channel-115:uosmo
  */
 import { makeHelpers } from '@agoric/deploy-script-support';
@@ -18,8 +18,8 @@ import { parseArgs } from 'node:util';
 import {
   getManifestForAutoStakeIt,
   startAutoStakeItContract,
-} from '../../src/auto-stake-it.proposal.js';
-import { makeAgd } from '../../tools/agd-lib.js';
+} from '../src/autoStakeIt.proposal.js';
+import { makeAgd } from '../tools/agd-lib.js';
 
 const options = {
   net: { type: 'string' },
@@ -31,12 +31,12 @@ export const defaultProposalBuilder = async (
   { chainDetails },
 ) => {
   return harden({
-    sourceSpec: '../../src/auto-stake-it.proposal.js',
+    sourceSpec: '../src/autoStakeIt.proposal.js',
     getManifestCall: [
       getManifestForAutoStakeIt.name,
       {
         installKeys: {
-          autoStakeIt: publishRef(install('../../src/auto-stake-it.contract.js')),
+          autoStakeIt: publishRef(install('../src/autoStakeIt.contract.js')),
         },
         chainDetails,
       },
@@ -85,7 +85,7 @@ export default async (homeP, endowments) => {
         .query(['ibc', 'client', 'state', client_id])
         .then(x => x.client_state);
       const { chain_id: peerId } = clientState;
-      
+
       chainDetails[peerName] = { chainId: peerId, stakingTokens: [{ denom }] };
 
       const chan = await agd

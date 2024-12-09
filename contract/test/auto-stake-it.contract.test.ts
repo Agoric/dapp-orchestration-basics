@@ -13,10 +13,10 @@ import {
 } from '../tools/ibc-mocks.js';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
-const contractName = 'auto-stake-it';
+const contractName = 'autoStakeIt';
 const contractFile = `${dirname}/../src/${contractName}.contract.js`;
 
-type StartFn = typeof import('../src/auto-stake-it.contract.js').start;
+type StartFn = typeof import('../src/autoStakeIt.contract.js').start;
 
 test('make accounts, register tap, return invitationMakers', async t => {
   t.log('bootstrap, orchestration core-eval');

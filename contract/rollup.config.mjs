@@ -20,7 +20,8 @@ import {
 } from './tools/rollup-plugin-core-eval.js';
 
 // import { permit as daoPermit } from './src/privacy-coin.proposal.js';
-import { permit as orcaPermit } from './src/orca.proposal.js';
+// import { permit as orcaPermit } from './src/orca.proposal.js';
+import { permit as asiPermit } from './src/autoStakeIt.proposal.js';
 
 import { permit as boardAuxPermit } from './src/platform-goals/board-aux.core.js';
 
@@ -98,8 +99,8 @@ const config = [
   //   contractEntry: null,
   // }),
   config1({
-    name: 'orca',
-    permit: orcaPermit,
+    name: 'autoStakeIt',
+    permit: asiPermit,
   }),
 ];
 export default config;

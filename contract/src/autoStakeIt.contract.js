@@ -7,8 +7,8 @@ import { prepareChainHubAdmin } from '@agoric/orchestration/src/exos/chain-hub-a
 import { preparePortfolioHolder } from '@agoric/orchestration/src/exos/portfolio-holder-kit.js';
 // import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
 import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
-import { prepareStakingTap } from './auto-stake-it-tap-kit.js';
-import * as flows from './auto-stake-it.flows.js';
+import { prepareStakingTap } from './autoStakeIt-tap-kit.js';
+import * as flows from './autoStakeIt.flows.js';
 
 /**
  * @import {Zone} from '@agoric/zone';
@@ -17,7 +17,7 @@ import * as flows from './auto-stake-it.flows.js';
  */
 
 /**
- * AutoStakeIt allows users to to create an auto-forwarding address that
+ * autoStakeIt allows users to to create an auto-forwarding address that
  * transfers and stakes tokens on a remote chain when received.
  *
  * To be wrapped with `withOrchestration`.
@@ -51,8 +51,8 @@ const contract = async (
   });
 
   const publicFacet = zone.exo(
-    'AutoStakeIt Public Facet',
-    M.interface('AutoStakeIt Public Facet', {
+    'autoStakeIt Public Facet',
+    M.interface('autoStakeIt Public Facet', {
       makeAccountsInvitation: M.callWhen().returns(InvitationShape),
     }),
     {

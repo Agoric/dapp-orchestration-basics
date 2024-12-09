@@ -1,6 +1,6 @@
-// auto-stake-it.proposal.js
+// autoStakeIt.proposal.js
 import { E } from '@endo/far';
-import { makeTracer } from './tools/debug.js';
+import { makeTracer } from './debug.js';
 
 /// <reference types="@agoric/vats/src/core/types-ambient"/>
 /// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
@@ -9,7 +9,7 @@ import { makeTracer } from './tools/debug.js';
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
  * @import {ChainInfo, IBCConnectionInfo} from '@agoric/orchestration';
- * @import {AutoStakeItSF} from './auto-stake-it.contract.js';
+ * @import {AutoStakeItSF} from './autoStakeIt.contract.js';
  * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
 
@@ -18,7 +18,7 @@ const { entries, fromEntries } = Object;
 
 trace('start proposal module evaluating');
 
-const contractName = 'auto-stake-it';
+const contractName = 'autoStakeIt';
 
 /** @type {IBCConnectionInfo} */
 const c1 = harden({
@@ -38,7 +38,7 @@ const c1 = harden({
     counterPartyPortId: 'transfer',
     counterPartyChannelId: 'channel-1',
     ordering: 2,
-    version: '1', 
+    version: '1',
     state: 3,
   }),
 });
@@ -51,7 +51,7 @@ export const chainDetails = harden({
     connections: { osmosislocal: c1 },
   },
   osmosis: {
-    chainId: 'osmosislocal', 
+    chainId: 'osmosislocal',
     stakingTokens: [{ denom: 'uosmo' }],
   },
 });
@@ -90,21 +90,22 @@ export const startAutoStakeItContract = async (permittedPowers, config) => {
       consume: { autoStakeIt: autoStakeItInstallation },
     },
     instance: {
+      // @ts-expect-error not a WellKnownName
       produce: { autoStakeIt: produceInstance },
     },
   } = permittedPowers;
 
   const installation = await autoStakeItInstallation;
 
-  const storageNode = await E(chainStorage).makeChildNode('auto-stake-it');
+  const storageNode = await E(chainStorage).makeChildNode('autoStakeIt');
   const marshaller = await E(board).getPublishingMarshaller();
 
-  const { chainDetails: nameToInfo = chainDetails } = 
+  const { chainDetails: nameToInfo = chainDetails } =
     config.options[contractName];
 
   /** @type {StartUpgradableOpts<ContractStartFunction & AutoStakeItSF>} **/
   const startOpts = {
-    label: 'auto-stake-it',
+    label: 'autoStakeIt',
     installation,
     terms: { chainDetails: nameToInfo },
     privateArgs: {

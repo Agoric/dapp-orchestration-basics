@@ -531,8 +531,10 @@ export const makeE2ETools = (
       console.log(containerPath);
 
       // load bundle
-      const bundle = await bundleCache.load(fullPath, 'orca');
-      const bundle_proposal = await bundleCache.load(proposalPath, 'orca');
+      // const bundle = await bundleCache.load(fullPath, 'orca');
+      // const bundle_proposal = await bundleCache.load(proposalPath, 'orca');
+      const bundle = await bundleCache.load(fullPath, 'autoStakeIt');
+      const bundle_proposal = await bundleCache.load(proposalPath, 'autoStakeIt');
 
       console.log('bundle');
       console.log(bundle);
@@ -571,7 +573,8 @@ export const makeE2ETools = (
       // generate plan, etc
       // const keyring = await makeKeyring(tools);
       // const deployBuilder = makeDeployBuilder(tools, fse.readJSON, execa);
-      const contractBuilder = './src/builder/init-orca.js';
+      // const contractBuilder = './scripts/init-orca.js';
+      const contractBuilder = './scripts/init-autoStakeIt.js';
       // await deployBuilder(contractBuilder);
       const { stdout } = await execa`agoric run ${contractBuilder}`;
       const match = stdout.match(/ (?<name>[-\w]+)-permit.json/);
