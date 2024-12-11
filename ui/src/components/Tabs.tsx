@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NotificationContext } from '../context/NotificationContext';
 import { Notifications } from './Notifications';
 import Orchestration from './Orchestration';
+import AutoStakeIt from './AutoStakeIt';
 import { TabWrapper } from './TabWrapper';
 
 // notification related types
@@ -60,13 +61,14 @@ const Tabs = () => {
           > */}
           {/* <Swap /> */}
           {/* </TabWrapper> */}
-          {/* <TabWrapper
-            tab="Pay"
+           <TabWrapper
+            tab="AutoStakeIt"
             activeTab={activeTab}
             handleTabClick={handleTabClick}
           >
-            <Pay />
+            <AutoStakeIt />
           </TabWrapper>
+          {/*
           <TabWrapper
             tab="Vote"
             activeTab={activeTab}

@@ -42,3 +42,5 @@ e2e-testing/revise-chain-info-permit.json
 e2e-testing/revise-chain-info-plan.json
 e2e-testing/revise-chain-info.js
 e2e-testing/starship-chain-info.js
+contract/startAutoStakeItContract.js
+contract/startAutoStakeItContract-plan.json
