@@ -38,7 +38,7 @@ import { permit as boardAuxPermit } from './src/platform-goals/board-aux.core.js
 const config1 = ({
   name,
   coreEntry = `./src/${name}.proposal.js`,
-  contractEntry = `./src/${name}.contract.js`,
+  contractEntry = `./src/${name}.contract.ts`,
   coreScript = `bundles/deploy-${name}.js`,
   coreScriptOptions = undefined,
   permitFile = `deploy-${name}-permit.json`,
