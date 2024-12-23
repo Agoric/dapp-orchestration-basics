@@ -216,7 +216,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@agoric/deploy-script-support@npm:^0.10.4-u18.4":
+"@agoric/deploy-script-support@npm:0.10.4-upgrade-18-dev-ef001c0.0":
   version: 0.10.4-upgrade-18-dev-ef001c0.0
   resolution: "@agoric/deploy-script-support@npm:0.10.4-upgrade-18-dev-ef001c0.0"
   dependencies:
@@ -236,6 +236,29 @@ __metadata:
     "@endo/promise-kit": "npm:^1.1.7"
     "@endo/zip": "npm:^1.0.8"
   checksum: 10c0/5b8c28f081e0ef6f7c6b362b99197137a9a87cad79f09ce755eb3ed47220fa4d8711cc423a83c8d7177b22594c1387954ec7684957c21121eb371cae9d0388ae
+  languageName: node
+  linkType: hard
+
+"@agoric/deploy-script-support@patch:@agoric/deploy-script-support@npm%3A0.10.4-upgrade-18-dev-ef001c0.0#~/.yarn/patches/@agoric-deploy-script-support-npm-0.10.4-upgrade-18-dev-ef001c0.0-39c74744cc.patch":
+  version: 0.10.4-upgrade-18-dev-ef001c0.0
+  resolution: "@agoric/deploy-script-support@patch:@agoric/deploy-script-support@npm%3A0.10.4-upgrade-18-dev-ef001c0.0#~/.yarn/patches/@agoric-deploy-script-support-npm-0.10.4-upgrade-18-dev-ef001c0.0-39c74744cc.patch::version=0.10.4-upgrade-18-dev-ef001c0.0&hash=8fff56"
+  dependencies:
+    "@agoric/ertp": "npm:0.16.3-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@agoric/import-manager": "npm:0.3.12-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@agoric/internal": "npm:0.3.3-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@agoric/notifier": "npm:0.6.3-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@agoric/store": "npm:0.9.3-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@agoric/time": "npm:0.3.3-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@agoric/zoe": "npm:0.26.3-upgrade-18-dev-ef001c0.0+ef001c0"
+    "@endo/base64": "npm:^1.0.8"
+    "@endo/bundle-source": "npm:^3.4.2"
+    "@endo/errors": "npm:^1.2.7"
+    "@endo/far": "npm:^1.1.8"
+    "@endo/marshal": "npm:^1.6.1"
+    "@endo/nat": "npm:^5.0.12"
+    "@endo/promise-kit": "npm:^1.1.7"
+    "@endo/zip": "npm:^1.0.8"
+  checksum: 10c0/5c3694f8396e9538fcd780dda8b2df869a1a51f11ac7e491eecca71b3031b5a63c8fa013fb9853525f444341f259e03e31fd41aea759d364be3d293215aa88ad
   languageName: node
   linkType: hard
 
@@ -11541,7 +11564,7 @@ __metadata:
   resolution: "dapp-agoric-orca-contract@workspace:contract"
   dependencies:
     "@agoric/async-flow": "npm:^0.1.1-u17.1"
-    "@agoric/deploy-script-support": "npm:^0.10.4-u18.4"
+    "@agoric/deploy-script-support": "patch:@agoric/deploy-script-support@npm%3A0.10.4-upgrade-18-dev-ef001c0.0#~/.yarn/patches/@agoric-deploy-script-support-npm-0.10.4-upgrade-18-dev-ef001c0.0-39c74744cc.patch"
     "@agoric/ertp": "npm:^0.16.3-u17.1"
     "@agoric/eslint-config": "npm:^0.4.1-u17.1"
     "@agoric/governance": "npm:^0.10.4-u17.1"
