@@ -34,6 +34,7 @@ const Tabs = () => {
   };
 
   return (
+ 
     <div className="my-4 flex w-full flex-row justify-center">
       <Notifications
         notifications={notifications}
@@ -44,7 +45,7 @@ const Tabs = () => {
       >
         <div
           role="tablist"
-          className="daisyui-tabs-boxed daisyui-tabs daisyui-tabs-lg"
+          className="daisyui-tabs-boxed daisyui-tabs daisyui-tabs-lg w-1/2"
         >
           <TabWrapper
             tab="Interchain Accounts"
