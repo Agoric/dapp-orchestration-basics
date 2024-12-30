@@ -1,0 +1,17 @@
+{
+  "name": "startAutoStakeItContract",
+  "script": "startAutoStakeItContract.js",
+  "permit": "startAutoStakeItContract-permit.json",
+  "bundles": [
+    {
+      "entrypoint": "../src/autoStakeIt.contract.js",
+      "bundleID": "b1-464ba07b916df1cbbad93d99036594326aaa6c37f959ca984fc7075a35b6120003ed11d6d1e43bafac1537c7a43f708c3820e74750355bef541d209e3582862f",
+      "fileName": "/Users/lupin/.agoric/cache/b1-464ba07b916df1cbbad93d99036594326aaa6c37f959ca984fc7075a35b6120003ed11d6d1e43bafac1537c7a43f708c3820e74750355bef541d209e3582862f.json"
+    },
+    {
+      "entrypoint": "../src/autoStakeIt.proposal.js",
+      "bundleID": "b1-6241044c01892c17d65b82f3e2916e83804bf37da63982e7cd414e284a735e64f1b4a66081fc77183cf0098276c9039f673958ade0a5ffab107611fa3e7b393b",
+      "fileName": "/Users/lupin/.agoric/cache/b1-6241044c01892c17d65b82f3e2916e83804bf37da63982e7cd414e284a735e64f1b4a66081fc77183cf0098276c9039f673958ade0a5ffab107611fa3e7b393b.json"
+    }
+  ]
+}

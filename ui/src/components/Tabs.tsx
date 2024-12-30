@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NotificationContext } from '../context/NotificationContext';
 import { Notifications } from './Notifications';
 import Orchestration from './Orchestration';
+import AutoStakeIt from './AutoStakeIt';
 import { TabWrapper } from './TabWrapper';
 
 // notification related types
@@ -33,6 +34,7 @@ const Tabs = () => {
   };
 
   return (
+ 
     <div className="my-4 flex w-full flex-row justify-center">
       <Notifications
         notifications={notifications}
@@ -43,7 +45,7 @@ const Tabs = () => {
       >
         <div
           role="tablist"
-          className="daisyui-tabs-boxed daisyui-tabs daisyui-tabs-lg"
+          className="daisyui-tabs-boxed daisyui-tabs daisyui-tabs-lg w-1/2"
         >
           <TabWrapper
             tab="Interchain Accounts"
@@ -60,13 +62,14 @@ const Tabs = () => {
           > */}
           {/* <Swap /> */}
           {/* </TabWrapper> */}
-          {/* <TabWrapper
-            tab="Pay"
+           <TabWrapper
+            tab="AutoStakeIt"
             activeTab={activeTab}
             handleTabClick={handleTabClick}
           >
-            <Pay />
+            <AutoStakeIt />
           </TabWrapper>
+          {/*
           <TabWrapper
             tab="Vote"
             activeTab={activeTab}
