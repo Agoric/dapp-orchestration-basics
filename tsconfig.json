@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "noUnusedLocals": false
+    },
+    "include": [
+      "node_modules/@agoric/ertp/src/types.ts"
+    ]
+  }
+  
