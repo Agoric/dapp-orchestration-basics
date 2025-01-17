@@ -1578,18 +1578,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@classic-terra/terra.proto@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@classic-terra/terra.proto@npm:1.1.0"
-  dependencies:
-    "@improbable-eng/grpc-web": "npm:^0.14.1"
-    google-protobuf: "npm:^3.17.3"
-    long: "npm:^4.0.0"
-    protobufjs: "npm:~6.11.2"
-  checksum: 10c0/b285534bf7242286a9780a484d10d901af491bbfad1b3697f7b3439dc824ae7658ad8d2a8c3af179ef772c66a2c3c5d6118b055b0a087bea29e5a98abdfd6072
-  languageName: node
-  linkType: hard
-
 "@coinbase/wallet-sdk@npm:^3.6.6":
   version: 3.7.2
   resolution: "@coinbase/wallet-sdk@npm:3.7.2"
@@ -4735,11 +4723,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hexxagon/feather.js@npm:^1.0.9-beta.8":
-  version: 1.0.11
-  resolution: "@hexxagon/feather.js@npm:1.0.11"
+"@hexxagon/feather.js@npm:@terra-money/feather.js@1.0.3":
+  version: 1.0.3
+  resolution: "@terra-money/feather.js@npm:1.0.3"
   dependencies:
-    "@classic-terra/terra.proto": "npm:^1.1.0"
     "@terra-money/legacy.proto": "npm:@terra-money/terra.proto@^0.1.7"
     "@terra-money/terra.proto": "npm:3.0.5"
     axios: "npm:^0.27.2"
@@ -4754,7 +4741,7 @@ __metadata:
     tmp: "npm:^0.2.1"
     utf-8-validate: "npm:^5.0.5"
     ws: "npm:^7.5.9"
-  checksum: 10c0/912e3133e059b73eb587a47774db29d0299750f762bd7ef8a10a6b7ccd3ba05100d8c9d31c04b67097522ea64883ff864970d69875fb68652f239c54b0ad424b
+  checksum: 10c0/ef64997bd65e08db40f0c717eac403ab76c971870d593fe0a426567b8103893e6cb8f2c8cc6fe268793b4a1f408409d5fdf477f84e2cd9a098151a0b379cf4a2
   languageName: node
   linkType: hard
 

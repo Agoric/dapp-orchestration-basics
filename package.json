@@ -36,7 +36,8 @@
     "protobufjs@npm:~6.11.2": "patch:protobufjs@npm%3A6.11.4#~/.yarn/patches/protobufjs-npm-6.11.4-af11968b80.patch",
     "protobufjs@npm:^6.11.2": "patch:protobufjs@npm%3A6.11.4#~/.yarn/patches/protobufjs-npm-6.11.4-af11968b80.patch",
     "protobufjs@npm:^6.10.3": "patch:protobufjs@npm%3A6.11.4#~/.yarn/patches/protobufjs-npm-6.11.4-af11968b80.patch",
-    "protobufjs@npm:^7.2.5": "patch:protobufjs@npm%3A6.11.4#~/.yarn/patches/protobufjs-npm-6.11.4-af11968b80.patch"
+    "protobufjs@npm:^7.2.5": "patch:protobufjs@npm%3A6.11.4#~/.yarn/patches/protobufjs-npm-6.11.4-af11968b80.patch",
+    "@hexxagon/feather.js": "npm:@terra-money/feather.js@1.0.3"
   },
   "scripts": {
     "start:ui": "cd ui && yarn dev",
