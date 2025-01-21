@@ -1,0 +1,94 @@
+name: Integration Tests
+
+on:
+  pull_request:
+  schedule:
+    - cron: '17 6 * * *'
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest-16core
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Clone and build agoric-sdk
+        run: |
+          git clone --depth 1 --branch dev-upgrade-17 https://github.com/Agoric/agoric-sdk.git
+          cd agoric-sdk
+          yarn install
+          yarn build
+          yarn link-cli
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: Build dapp-orchestration-basics
+        run: yarn build
+
+      - name: Setup Starship Infrastructure
+        id: starship-infra
+        uses: cosmology-tech/starship-action@0.3.0
+        with:
+          # uses ghcr.io/agoric/agoric-sdk:dev image (latest master)
+          values: ./e2e-testing/config.yaml
+          port-forward: true
+          version: 0.2.10
+          timeout: 30m
+          namespace: agoric-multichain
+
+      - name: Fund Provision Pool
+        run: |
+          kubectl config set-context --current --namespace=agoric-multichain
+          kubectl get pods
+          make fund-provision-pool
+        working-directory: ./e2e-testing
+
+      - name: Ensure ports are forwarded
+        run: |
+          curl --fail --retry 3 --retry-delay 10 http://localhost:26657/status || (echo "agoriclocal node is available")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/agoriclocal || (echo "agoriclocal URL check failed")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/osmosislocal || (echo "osmosislocal URL check failed")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/gaialocal || (echo "gaialocal URL check failed")
+
+      - name: Override Chain Registry
+        run: make override-chain-registry
+        working-directory: ./e2e-testing
+
+      - name: Run Integration Test
+        run: yarn integration-test
+
+      - name: Capture and print agoric validator logs
+        if: always()
+        run: kubectl logs agoriclocal-genesis-0 --container=validator || true
+
+      - name: Capture and print agoric-osmosis relayer logs
+        if: always()
+        run: kubectl logs hermes-agoric-osmosis-0 --container=relayer || true
+
+      - name: Capture and print agoric-gaia relayer logs
+        if: always()
+        run: kubectl logs hermes-agoric-gaia-0 --container=relayer || true
+
+      - name: verify contract(s) started onchain
+        run: |
+          curl http://localhost:1317/agoric/vstorage/data/published.agoricNames.instance | grep orca
+
+      - name: Notify on failure
+        id: slack
+        if: failure() && github.event_name != 'pull_request'
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "Job ${{ github.job }} in workflow ${{ github.workflow }} of ${{ github.repository }} status ${{ job.status }}\nDetails at ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "username": "GitHub"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
