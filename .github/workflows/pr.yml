@@ -56,6 +56,7 @@ jobs:
           version: 0.2.10
           timeout: 30m
           namespace: agoric-multichain
+          repo: https://hyperweb-io.github.io/starship
 
       - name: Fund Provision Pool
         run: |
