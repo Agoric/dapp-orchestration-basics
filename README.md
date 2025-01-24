@@ -8,7 +8,13 @@ The Orchestration Basics dApp showcases various features of the orchestration AP
 
 ## Set up the local environment
 
-- Follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
+- Clone the [agoric-sdk](https://github.com/Agoric/agoric-sdk) repository.
+
+- Inside `agoric-sdk/` directory, run `yarn instals` and `yarn build` commands in that order.
+
+- Now, follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
+
+- Clone the [dapp-orchestration-basics](https://github.com/Agoric/dapp-orchestration-basics) repository in you haven't already, and run `yarn install` in the root directory `dapp-orchestration-basics/`.
 
 ## Fund the account
 
