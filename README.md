@@ -18,6 +18,8 @@ The Orchestration Basics dApp showcases various features of the orchestration AP
 
 ## Fund the account
 
+- Open Keplr wallet extension in your browser and create a new account if you don't have one.
+- Copy the address of the account from Keplr wallet and save it as `CLIENTADDR` in `contract/Makefile` file, i.e, search for `CLIENTADDR=`, and replace the value with the copied address.
 - Run the following in the `contract/` directory of `dapp-orchestration-basics`:
 
 ```
