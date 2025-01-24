@@ -10,12 +10,6 @@ The Orchestration Basics dApp showcases various features of the orchestration AP
 
 - Follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
 
-- Run the following in the top level directory of `dapp-orchestration-basics` to run `hermes update` in the background:
-
-```sh
-make hermes-update &
-```
-
 ## Fund the account
 
 - Run the following in the `contract/` directory of `dapp-orchestration-basics`:
