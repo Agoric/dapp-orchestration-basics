@@ -1,0 +1,77 @@
+name: agoric-multichain-testing
+version: 0.2.20
+
+chains:
+  - id: agoriclocal
+    name: agoric
+    image: ghcr.io/agoric/agoric-sdk:dev
+    numValidators: 1
+    env:
+      - name: DEBUG
+        value: SwingSet:vat,SwingSet:ls
+    genesis:
+      app_state:
+        staking:
+          params:
+            unbonding_time: '2m'
+        swingset:
+          params:
+            bootstrap_vat_config: '@agoric/vm-config/decentral-itest-orchestration-config.json'
+    scripts:
+      updateConfig:
+        file: scripts/update-config.sh
+    faucet:
+      enabled: false
+    ports:
+      rest: 1317
+      rpc: 26657
+      exposer: 38087
+      grpc: 9090
+    resources:
+      cpu: 1
+      memory: 4Gi
+  - id: ixolocal
+    name: custom
+    image: ghcr.io/ixofoundation/ixo-blockchain:v3.0.0
+    binary: ixod
+    denom: uixo
+    home: /ixo/.ixod
+    prefix: ixo
+    numValidators: 1
+    scripts:
+      createGenesis:
+        file: scripts/ixo/create-genesis.sh
+      updateGenesis:
+        file: scripts/ixo/update-genesis.sh
+    faucet:
+      enabled: true
+      type: cosmjs
+      concurrency: 5
+    ports:
+      rest: 1314
+      rpc: 26654
+      grpc: 9092
+      faucet: 8083
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+
+relayers:
+  - name: agoric-ixo
+    type: hermes
+    replicas: 1
+    chains:
+      - agoriclocal
+      - ixolocal
+
+explorer:
+  enabled: false
+
+registry:
+  enabled: true
+  ports:
+    rest: 8081
