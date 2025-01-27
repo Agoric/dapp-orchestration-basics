@@ -114,7 +114,7 @@ export default async (homeP, endowments) => {
         counterparty: {
           client_id: connInfo.counterparty.client_id,
           connection_id: connInfo.counterparty.connection_id,
-          prefix: { key_prefix: 'arbitrary - not used?' },
+          // prefix: { key_prefix: 'arbitrary - not used?' },
         },
         id: myConn,
         state: connInfo.state,

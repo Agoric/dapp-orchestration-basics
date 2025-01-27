@@ -14,7 +14,7 @@
     "test:e2e": "exit 0"
   },
   "dependencies": {
-    "@agoric/react-components": "0.2.1-dev-e6f79e0.0",
+    "@agoric/react-components": "0.3.0",
     "buffer": "^6.0.3",
     "chain-registry": "1.28.0",
     "cosmos-kit": "^2.8.5",
