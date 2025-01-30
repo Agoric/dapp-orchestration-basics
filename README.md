@@ -8,16 +8,31 @@ The Orchestration Basics dApp showcases various features of the orchestration AP
 
 ## Set up the local environment
 
-- Follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
+- Clone the [agoric-sdk](https://github.com/Agoric/agoric-sdk) repository.
 
-- Run the following in the top level directory of `dapp-orchestration-basics` to run `hermes update` in the background:
+- Inside `agoric-sdk/` directory, run
 
 ```sh
-make hermes-update &
+yarn install
+yarn build
 ```
+
+commands in that order.
+
+- Now, follow the instructions in `agoric-sdk/multichain-testing/README.md` to setup local multi-chain environment needed to run and test dApp. You can run `agd status` to check if this was successful.
+
+- Clone the [dapp-orchestration-basics](https://github.com/Agoric/dapp-orchestration-basics) repository in you haven't already, and run
+
+```sh
+yarn install
+```
+
+in the root directory `dapp-orchestration-basics/`.
 
 ## Fund the account
 
+- Open Keplr wallet extension in your browser and create a new account if you don't have one.
+- Copy the address of the account from Keplr wallet and save it as `CLIENTADDR` in `contract/Makefile` file, i.e, search for `CLIENTADDR=`, and replace the value with the copied address.
 - Run the following in the `contract/` directory of `dapp-orchestration-basics`:
 
 ```
