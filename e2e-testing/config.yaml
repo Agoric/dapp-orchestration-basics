@@ -25,8 +25,8 @@ chains:
       exposer: 38087
       grpc: 9090
     resources:
-      cpu: 1
-      memory: 4Gi
+      cpu: 0.5
+      memory: 3Gi
   - id: osmosislocal
     name: osmosis
     numValidators: 1
@@ -55,9 +55,6 @@ chains:
       rpc: 26655
       grpc: 9093
       faucet: 8084
-    resources:
-      cpu: 1
-      memory: 1Gi
   - id: gaialocal
     name: cosmoshub
     numValidators: 1
@@ -79,9 +76,6 @@ chains:
       rpc: 26654
       grpc: 9092
       faucet: 8083
-    resources:
-      cpu: 1
-      memory: 1Gi
 
 relayers:
   - name: osmosis-gaia
