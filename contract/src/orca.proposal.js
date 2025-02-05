@@ -8,7 +8,7 @@ import { makeTracer } from './debug.js';
  * @import {ERef} from '@endo/far';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js';
  * @import {ChainInfo, IBCConnectionInfo,} from '@agoric/orchestration';
- * @import {OrcaSF} from './orca.contract.js';
+ * @import {OrcaSF} from './orca.contract.ts';
  * @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js';
  */
 

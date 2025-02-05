@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index 6bbb9f9ef6ec6f0d181e3a7886c55c7970000f7b..e28a9a6ed0ef10b90a212d19b9ad6b4abd876a6d 100644
+--- a/package.json
++++ b/package.json
+@@ -42,7 +42,7 @@
+     "@agoric/time": "0.3.3-upgrade-18-dev-ef001c0.0+ef001c0",
+     "@agoric/zoe": "0.26.3-upgrade-18-dev-ef001c0.0+ef001c0",
+     "@endo/base64": "^1.0.8",
+-    "@endo/bundle-source": "^3.4.2",
++    "@endo/bundle-source": "^3.5.0",
+     "@endo/errors": "^1.2.7",
+     "@endo/far": "^1.1.8",
+     "@endo/marshal": "^1.6.1",
