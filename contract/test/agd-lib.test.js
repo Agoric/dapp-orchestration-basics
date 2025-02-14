@@ -249,7 +249,6 @@ test('orca-multichain.test style usage', async t => {
   const wallets = await ensureAccounts(tools.agd.keys);
   t.deepEqual(wallets, {
     agoric: 'agoric1v8qxguqqjtfyfwqr8ln2wlu858vkx4860jzf6g',
-    cosmoshub: 'agoric17th0tvrzmwc2fqpeneuwmrwcm8armyjlgmypuf',
     osmosis: 'agoric17hglh4q5k087nthneq0kegk4y838vmt3vk80u3',
   });
 

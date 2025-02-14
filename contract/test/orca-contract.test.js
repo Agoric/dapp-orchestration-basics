@@ -235,11 +235,6 @@ test('Start Orca contract using core-eval', async t => {
 });
 
 export const chainConfigs = {
-  cosmoshub: {
-    chainId: 'gaialocal',
-    denom: 'uatom',
-    expectedAddressPrefix: 'cosmos',
-  },
   osmosis: {
     chainId: 'osmosislocal',
     denom: 'uosmo',
