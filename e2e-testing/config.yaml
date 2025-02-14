@@ -25,8 +25,8 @@ chains:
       exposer: 38087
       grpc: 9090
     resources:
-      cpu: 1
-      memory: 4Gi
+      cpu: 2
+      memory: 3Gi
   - id: osmosislocal
     name: osmosis
     numValidators: 1
@@ -55,9 +55,6 @@ chains:
       rpc: 26655
       grpc: 9093
       faucet: 8084
-    resources:
-      cpu: 1
-      memory: 1Gi
 
 relayers:
   - name: agoric-osmosis
