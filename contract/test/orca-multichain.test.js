@@ -228,7 +228,6 @@ const makeCreateAndFundScenario = test.macro({
 });
 
 test.serial(makeAccountScenario, 'agoric');
-test.serial(makeAccountScenario, 'cosmoshub');
 test.serial(makeAccountScenario, 'osmosis');
 
 // use IBC/E7827844CB818EE9C4DB2C159F1543FF62B26213B44CE8029D5CEFE52F0EE596

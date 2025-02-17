@@ -10,7 +10,6 @@ import { makeE2ETools } from '../tools/e2e-tools.js';
 const { entries, fromEntries } = Object;
 
 export const chainConfig = {
-  cosmoshub: { expectedAddressPrefix: 'cosmos' },
   osmosis: { expectedAddressPrefix: 'osmo' },
   agoric: { expectedAddressPrefix: 'agoric' },
 };
@@ -20,11 +19,6 @@ export const chainAccounts = {
     address: 'agoric1v8qxguqqjtfyfwqr8ln2wlu858vkx4860jzf6g',
     mnemonic:
       'swift element zoo argue predict ugly awful alert glance net tourist body',
-  },
-  cosmoshub: {
-    address: 'agoric17th0tvrzmwc2fqpeneuwmrwcm8armyjlgmypuf',
-    mnemonic:
-      'joke lecture black sniff goddess grain then forum level achieve pen alone',
   },
   osmosis: {
     address: 'agoric17hglh4q5k087nthneq0kegk4y838vmt3vk80u3',
