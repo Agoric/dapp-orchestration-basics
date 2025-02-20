@@ -87,13 +87,10 @@ export const makeCreateAndFund = async (
   await localTransfer(seat, localAccount, give);
   trace('after transfer');
 
-  await localAccount.transfer(
-    {
-      denom: 'ubld',
-      value: amt.value / 2n,
-    },
-    remoteAddress,
-  );
+  await localAccount.transfer(remoteAddress, {
+    denom: 'ubld',
+    value: amt.value / 2n,
+  });
   seat.exit();
   const remoteChainBalance = await remoteAccount.getBalance('uosmo');
   console.log('remoteChainBalance', remoteChainBalance);

@@ -27,9 +27,9 @@ const c1 = harden({
   counterparty: harden({
     client_id: 'client-0',
     connection_id: 'connection-0',
-    prefix: {
-      key_prefix: 'key-prefix-0',
-    },
+    // prefix: {
+    //   key_prefix: 'key-prefix-0',
+    // },
   }),
   transferChannel: harden({
     portId: 'transfer',
