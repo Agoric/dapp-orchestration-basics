@@ -1,20 +1,21 @@
+/// <reference types="@agoric/vats/src/core/types-ambient"/>
+/// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
+
 import { AmountShape } from '@agoric/ertp';
 import { makeTracer } from '@agoric/internal';
 import { withOrchestration } from '@agoric/orchestration/src/utils/start-helper.js';
 import { ChainInfoShape } from '@agoric/orchestration/src/typeGuards.js';
 import { InvitationShape } from '@agoric/zoe/src/typeGuards.js';
 import { M } from '@endo/patterns';
-import * as flows from './orca.flows.js';
+import * as flows from './orca.flows.ts';
 
-/**
- * @import {Marshaller} from '@agoric/internal/src/lib-chainStorage.js';
- * @import {CosmosChainInfo} from '@agoric/orchestration';
- * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
- * @import {Zone} from '@agoric/zone';
- */
-
-/// <reference types="@agoric/vats/src/core/types-ambient"/>
-/// <reference types="@agoric/zoe/src/contractFacet/types-ambient"/>
+import type { Marshaller } from '@agoric/internal/src/lib-chainStorage.js';
+import type { CosmosChainInfo } from '@agoric/orchestration';
+import type {
+  OrchestrationPowers,
+  OrchestrationTools,
+} from '@agoric/orchestration/src/utils/start-helper.js';
+import type { Zone } from '@agoric/zone';
 
 const { entries, keys } = Object;
 const trace = makeTracer('OrchDev1');
@@ -34,8 +35,7 @@ const OrchestrationPowersShape = M.splitRecord({
   agoricNames: M.remotable('agoricNames'),
 });
 
-/** @type {ContractMeta} */
-export const meta = {
+export const meta: ContractMeta = {
   privateArgsShape: M.and(
     OrchestrationPowersShape,
     M.splitRecord({
@@ -48,23 +48,15 @@ export const meta = {
 };
 harden(meta);
 
-/**
- * @typedef {{
- *   chainDetails: Record<string, CosmosChainInfo>
- * }} OrcaTerms
- *
- * @param {ZCF<OrcaTerms>} zcf
- * @param {OrchestrationPowers & {
- *   marshaller: Marshaller;
- * }} privateArgs
- * @param {Zone} zone
- * @param {OrchestrationTools} tools
- */
+type OrcaTerms = {
+  chainDetails: Record<string, CosmosChainInfo>;
+};
+
 const contract = async (
-  zcf,
-  privateArgs,
-  zone,
-  { orchestrateAll, zoeTools, chainHub },
+  zcf: ZCF<OrcaTerms>,
+  privateArgs: OrchestrationPowers & { marshaller: Marshaller },
+  zone: Zone,
+  { orchestrateAll, zoeTools, chainHub }: OrchestrationTools,
 ) => {
   trace('orca start contract');
 
@@ -113,4 +105,4 @@ const contract = async (
 export const start = withOrchestration(contract);
 harden(start);
 
-/** @typedef {typeof start} OrcaSF */
+export type OrcaSF = typeof start;

@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@agoric/async-flow": "^0.1.1-u17.1",
-    "@agoric/deploy-script-support": "^0.10.4-u17.1",
+    "@agoric/deploy-script-support": "patch:@agoric/deploy-script-support@npm%3A0.10.4-upgrade-18-dev-ef001c0.0#~/.yarn/patches/@agoric-deploy-script-support-npm-0.10.4-upgrade-18-dev-ef001c0.0-39c74744cc.patch",
     "@agoric/eslint-config": "^0.4.1-u17.1",
     "@agoric/inter-protocol": "^0.17.0-u17.1",
     "@agoric/smart-wallet": "^0.5.4-u17.1",
@@ -73,7 +73,7 @@
     "@agoric/store": "^0.9.3-u17.1",
     "@agoric/vats": "^0.16.0-u17.1",
     "@agoric/zoe": "^0.26.3-u17.1",
-    "@endo/bundle-source": "^3.4.0",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/errors": "^1.2.4",
     "@endo/far": "^1.1.4",
     "@endo/init": "^1.1.3",

@@ -45,7 +45,7 @@ export const defaultProposalBuilder = async (
       getManifestForOrca.name,
       {
         installKeys: {
-          orca: publishRef(install('../src/orca.contract.js')),
+          orca: publishRef(install('../src/orca.contract.ts')),
         },
         chainDetails,
       },
